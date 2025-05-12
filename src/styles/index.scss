@@ -1,0 +1,25 @@
+@use "./reset";
+@use "./transition";
+@use "./themes";
+:root {
+	accent-color: var(--primary-color);
+}
+html,
+body {
+	min-height: 100vh;
+}
+#app {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+.svg-inline--hidden {
+	display: none;
+}
+.icon {
+	width: 1em;
+	height: 1em;
+	vertical-align: -0.125em;
+	fill: currentColor;
+	overflow: hidden;
+}

@@ -1,0 +1,8 @@
+:root {
+	--primary-color: #1677ff;
+	--success-color: #67c23a;
+	--warning-color: #e6a23c;
+	--danger-color: #f56c6c;
+	--lighten-primary-color: color-mix(in srgb, var(--primary-color), white 80%);
+	--darken-primary-color: color-mix(in srgb, var(--primary-color), black 20%);
+}
