@@ -18,11 +18,16 @@ import Setter from "./components/setter/Setter.vue";
 .editor {
 	height: 100vh;
 	display: grid;
+	background-color: #232323;
 	grid-template-areas:
 		"toolbar toolbar toolbar"
 		"property renderer setter";
+	grid-template-rows: 70px auto;
+	grid-template-columns: 300px auto 400px;
 	.toolbar {
 		grid-area: toolbar;
+		box-shadow: 0 0 3px 1px #666;
+		z-index: 2;
 	}
 	.property {
 		grid-area: property;

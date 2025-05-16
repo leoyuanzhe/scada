@@ -2,6 +2,7 @@
 @use "./transition";
 @use "./themes";
 :root {
+	color-scheme: dark;
 	accent-color: var(--primary-color);
 }
 html,

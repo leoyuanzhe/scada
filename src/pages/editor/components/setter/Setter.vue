@@ -4,4 +4,8 @@
 	<div class="setter"></div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.setter {
+	background-color: #333;
+}
+</style>
