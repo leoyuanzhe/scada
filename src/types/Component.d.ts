@@ -1,7 +1,7 @@
-export interface Component {
+export interface Component<Props = any> {
 	id: string;
 	name: string;
-	cover: string;
+	active: boolean;
 	nestable: boolean;
 	locked: boolean;
 	hidden: boolean;
@@ -10,8 +10,6 @@ export interface Component {
 	top: number;
 	width: number;
 	height: number;
-	property: {
-		text: string;
-		color: string;
-	};
+	props: Props;
+	children: Component[];
 }

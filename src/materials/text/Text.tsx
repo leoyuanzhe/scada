@@ -1,23 +1,28 @@
 import type { Material } from "@/types/Material";
 import TextComponent from "./Text.vue";
 
-export const Text: Material = {
+interface Props {
+	text: string;
+	color: string;
+}
+export const Text = (): Material<Props> => ({
 	id: "text",
 	name: "文本",
-	cover: "",
+	active: false,
 	nestable: false,
 	locked: false,
 	hidden: false,
 	snap: { v: [], h: [] },
 	left: 0,
 	top: 0,
-	width: 0,
-	height: 0,
-	property: {
-		text: "",
+	width: 100,
+	height: 50,
+	props: {
+		text: "这是一段文本",
 		color: "#ffffff",
 	},
+	children: [],
 	render: (component) => {
-		return <TextComponent component={component}>{component.text}</TextComponent>;
+		return <TextComponent component={component}>{component.props.text}</TextComponent>;
 	},
-};
+});

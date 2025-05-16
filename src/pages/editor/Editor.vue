@@ -31,12 +31,14 @@ import Setter from "./components/setter/Setter.vue";
 	}
 	.property {
 		grid-area: property;
+		box-shadow: 0 0 3px 1px #666;
 	}
 	.renderer {
 		grid-area: renderer;
 	}
 	.setter {
 		grid-area: setter;
+		box-shadow: 0 0 3px 1px #666;
 	}
 }
 </style>

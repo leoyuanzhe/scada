@@ -10,7 +10,8 @@ export const useMaterial = defineStore("material", {
 	},
 	actions: {
 		init() {
-			this.materials.push(Text);
+			this.materials.length = 0;
+			this.materials.push(Text());
 		},
 	},
 });

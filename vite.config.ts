@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,5 +15,5 @@ export default defineConfig({
 		alias: { "@": resolve(import.meta.dirname, "src") },
 		extensions: [".js", ".ts", ".tsx"],
 	},
-	plugins: [vue()],
+	plugins: [vue(), vueJsx()],
 });

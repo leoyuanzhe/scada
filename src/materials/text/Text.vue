@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
-	<span class="text" :style="{ color: props.component.property.color }">
+	<span class="text" :style="{ color: props.component.props.color }">
 		<slot></slot>
 	</span>
 </template>
