@@ -5,7 +5,7 @@ export const useClient = defineStore("client", {
 		return {
 			canvasLeft: 20,
 			canvasTop: 20,
-			canvasScale: 1,
+			canvasScale: 1.2,
 			spaceKey: false,
 			ctrlKey: false,
 		};

@@ -5,6 +5,7 @@ import { useDragger } from "../../hooks/useDragger";
 import RulerH from "./components/ruler/RulerH.vue";
 import RulerV from "./components/ruler/RulerV.vue";
 import RecursiveComponent from "./components/recursive-component/RecursiveComponent.vue";
+import Selector from "./components/selector/Selector.vue";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
@@ -18,7 +19,7 @@ const dragger = useDragger();
 			cursor: clientStore.spaceKey ? 'move' : 'default',
 		}"
 		@wheel="dragger.rendererWheel($event)"
-		@mousedown="dragger.rendererMousedown()"
+		@mousedown="dragger.rendererMousedown($event)"
 	>
 		<div
 			class="canvas"
@@ -37,6 +38,7 @@ const dragger = useDragger();
 		</div>
 		<RulerH />
 		<RulerV />
+		<Selector />
 	</div>
 </template>
 
@@ -44,6 +46,7 @@ const dragger = useDragger();
 .renderer {
 	position: relative;
 	overflow: hidden;
+	user-select: none;
 	.canvas {
 		position: absolute;
 		transform-origin: 0 0;
