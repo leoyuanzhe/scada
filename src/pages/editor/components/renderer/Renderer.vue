@@ -33,7 +33,7 @@ const dragger = useDragger();
 			@dragover.prevent
 			@drop="dragger.canvasDrap($event)"
 		>
-			<RecursiveComponent v-for="v in schemaStore.components" :key="v.id" :component="v" />
+			<RecursiveComponent v-for="v in schemaStore.components" :key="v.id" :component="v" @mousedown.stop="dragger.componentMousedown(v)" />
 		</div>
 		<RulerH />
 		<RulerV />

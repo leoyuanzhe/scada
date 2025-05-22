@@ -23,6 +23,8 @@ const rendererWheel = (e: WheelEvent) => {
 };
 const rendererMousedown = () => {
 	const clientStore = useClient();
+	const schemaStore = useSchema();
+	schemaStore.components.forEach((v) => v.active && (v.active = false));
 	document.body.addEventListener("mousemove", mousemove);
 	document.body.addEventListener("mouseup", mouseup);
 	function mousemove(e: MouseEvent) {
@@ -61,10 +63,22 @@ const canvasDrap = (e: DragEvent) => {
 		schemaStore.components.push(component);
 	}
 };
+const componentMousedown = (component: Component) => {
+	const schemaStore = useSchema();
+	component.active = true;
+	document.body.addEventListener("mousemove", mousemove);
+	document.body.addEventListener("mouseup", mouseup);
+	function mousemove(e: MouseEvent) {}
+	function mouseup() {
+		document.body.removeEventListener("mousemove", mousemove);
+		document.body.removeEventListener("mouseup", mouseup);
+	}
+};
 
 export const useDragger = () => ({
 	propertyDragstart,
 	rendererWheel,
 	rendererMousedown,
 	canvasDrap,
+	componentMousedown,
 });

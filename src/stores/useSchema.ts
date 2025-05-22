@@ -12,5 +12,10 @@ export const useSchema = defineStore("schema", {
 			components: [] as Component[],
 		};
 	},
+	getters: {
+		flattenedComponents() {
+			return this.components.flatMap((component) => (component.children ? [component, ...component.children] : [component]));
+		},
+	},
 	actions: {},
 });
