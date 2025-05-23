@@ -1,6 +1,7 @@
 export interface Component<Props = any> {
 	id: string;
 	name: string;
+	title: string;
 	active: boolean;
 	nestable: boolean;
 	locked: boolean;

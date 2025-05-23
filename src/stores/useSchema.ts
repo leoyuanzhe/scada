@@ -13,8 +13,8 @@ export const useSchema = defineStore("schema", {
 		};
 	},
 	getters: {
-		flattenedComponents() {
-			return this.components.flatMap((component) => (component.children ? [component, ...component.children] : [component]));
+		flattenedComponents(): Component[] {
+			return this.components.filter((v) => v.active);
 		},
 	},
 	actions: {},

@@ -33,33 +33,44 @@ const rendererMousedown = (e: MouseEvent) => {
 	const schemaStore = useSchema();
 	if (!clientStore.spaceKey) {
 		schemaStore.components.forEach((v) => v.active && (v.active = false));
-		selector.left = e.offsetX;
-		selector.top = e.offsetY;
 	}
+	const oRenderer = document.querySelector(".renderer") as HTMLDivElement;
+	const startX = e.clientX; // 鼠标按下时的X坐标
+	const startY = e.clientY;
+	const startLeft = e.pageX - oRenderer.offsetLeft; // 鼠标按下时的选择器的Left
+	const startTop = e.pageY - oRenderer.offsetTop;
+	let left = startLeft; // 选择器的Left
+	let top = startTop;
+	let width = 0; // 选择器的Width
+	let height = 0;
 	document.body.addEventListener("mousemove", mousemove);
 	document.body.addEventListener("mouseup", mouseup);
 	function mousemove(e: MouseEvent) {
-		console.log(e.target);
 		if (clientStore.spaceKey) {
 			clientStore.canvasLeft += e.movementX;
 			clientStore.canvasTop += e.movementY;
 		} else {
-			selector.height += e.movementY;
-			// 鼠标在选择器左边
-			console.log(e);
-
-			if (selector.left + e.movementX > e.offsetX) {
-				if (e.movementX > 0) {
-					selector.left += e.movementX;
-					selector.width -= e.movementX;
-				} else {
-					selector.left += e.movementX;
-					selector.width += -e.movementX;
-				}
+			const moveX = e.clientX - startX; // 移动的X轴距离
+			const moveY = e.clientY - startY;
+			// 鼠标向左框选
+			if (e.clientX < startX) {
+				left = startLeft - -moveX;
+				width = -moveX;
 			} else {
-				console.log("aaa");
-				selector.width += e.movementX;
+				left = startLeft;
+				width = moveX;
 			}
+			if (e.clientY < startY) {
+				top = startTop - -moveY;
+				height = -moveY;
+			} else {
+				top = startTop;
+				height = moveY;
+			}
+			selector.left = left;
+			selector.top = top;
+			selector.width = width;
+			selector.height = height;
 		}
 	}
 	function mouseup() {
@@ -79,8 +90,9 @@ const canvasDrap = (e: DragEvent) => {
 	if (property) {
 		e.dataTransfer?.setData("propertyId", property.id);
 		const component: Component = {
-			id: property.material.id,
+			id: Date.now().toString(),
 			name: property.material.name,
+			title: property.material.title,
 			active: true,
 			nestable: property.material.nestable,
 			locked: property.material.locked,
@@ -94,10 +106,17 @@ const canvasDrap = (e: DragEvent) => {
 			children: property.material.children,
 		};
 		schemaStore.components.push(component);
+		console.log(schemaStore.components);
 	}
 };
-const componentMousedown = (component: Component) => {
+const componentMousedown = (e: MouseEvent, component: Component) => {
+	const clientStore = useClient();
 	const schemaStore = useSchema();
+	if (e.ctrlKey) {
+		e.preventDefault();
+	} else {
+		schemaStore.components.forEach((v) => v.active && (v.active = false));
+	}
 	component.active = true;
 	document.body.addEventListener("mousemove", mousemove);
 	document.body.addEventListener("mouseup", mouseup);

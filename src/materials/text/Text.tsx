@@ -7,7 +7,8 @@ interface Props {
 }
 export const Text = (): Material<Props> => ({
 	id: "text",
-	name: "文本",
+	name: "text",
+	title: "文本",
 	active: false,
 	nestable: false,
 	locked: false,

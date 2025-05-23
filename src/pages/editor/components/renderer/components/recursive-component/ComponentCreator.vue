@@ -7,7 +7,7 @@ interface Props {
 }
 const materialStore = useMaterial();
 const props = withDefaults(defineProps<Props>(), {});
-const RenderComponent = () => materialStore.materials.find((v) => v.id == props.component.id)?.render(props.component);
+const RenderComponent = () => materialStore.materials.find((v) => v.name == props.component.name)?.render(props.component);
 </script>
 
 <template>

@@ -3,9 +3,9 @@ import { defineStore } from "pinia";
 export const useClient = defineStore("client", {
 	state() {
 		return {
-			canvasLeft: 20,
-			canvasTop: 20,
-			canvasScale: 1.2,
+			canvasLeft: 40,
+			canvasTop: 40,
+			canvasScale: 1,
 			spaceKey: false,
 			ctrlKey: false,
 		};
