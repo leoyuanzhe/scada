@@ -19,7 +19,7 @@ const propertyDragstart = (e: DragEvent, propertyId: string) => {
 };
 const rendererWheel = (e: WheelEvent) => {
 	const clientStore = useClient();
-	if (clientStore.ctrlKey) {
+	if (e.ctrlKey) {
 		e.preventDefault();
 		if (e.deltaY > 0) {
 			clientStore.canvasScale = Math.max(clientStore.canvasScale - 0.04, 0.01);
@@ -73,7 +73,32 @@ const rendererMousedown = (e: MouseEvent) => {
 			selector.height = height;
 		}
 	}
-	function mouseup() {
+	function mouseup(e: MouseEvent) {
+		if (!e.shiftKey) {
+			schemaStore.components.forEach((v) => v.active && (v.active = false));
+		}
+		// 正框选（从左上往右下）
+		if (startX < e.clientX || startY < e.clientY) {
+			schemaStore.components.forEach((component) => {
+				const componentLeft = component.left * clientStore.canvasScale + clientStore.canvasLeft;
+				const componentTop = component.top * clientStore.canvasScale + clientStore.canvasTop;
+				const componentWidth = component.width * clientStore.canvasScale;
+				const componentHeight = component.height * clientStore.canvasScale;
+				if (componentLeft >= selector.left && componentLeft + componentWidth <= selector.left + selector.width && componentTop >= selector.top && componentTop + componentHeight <= selector.top + selector.height) {
+					component.active = true;
+				}
+			});
+		} else {
+			schemaStore.components.filter((component) => {
+				const componentLeft = component.left * clientStore.canvasScale + clientStore.canvasLeft;
+				const componentTop = component.top * clientStore.canvasScale + clientStore.canvasTop;
+				const componentWidth = component.width * clientStore.canvasScale;
+				const componentHeight = component.height * clientStore.canvasScale;
+				if (componentLeft < selector.left + selector.width && componentLeft + componentWidth > selector.left && componentTop < selector.top + selector.height && componentTop + componentHeight > selector.top) {
+					component.active = true;
+				}
+			});
+		}
 		selector.left = 0;
 		selector.top = 0;
 		selector.width = 0;
@@ -112,7 +137,7 @@ const canvasDrap = (e: DragEvent) => {
 const componentMousedown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	if (e.ctrlKey) {
+	if (e.shiftKey) {
 		e.preventDefault();
 	} else {
 		schemaStore.components.forEach((v) => v.active && (v.active = false));

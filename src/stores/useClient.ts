@@ -7,7 +7,6 @@ export const useClient = defineStore("client", {
 			canvasTop: 40,
 			canvasScale: 1,
 			spaceKey: false,
-			ctrlKey: false,
 		};
 	},
 	actions: {
@@ -17,18 +16,12 @@ export const useClient = defineStore("client", {
 					case " ":
 						this.spaceKey = true;
 						break;
-					case "Control":
-						this.ctrlKey = true;
-						break;
 				}
 			});
 			window.addEventListener("keyup", (e) => {
 				switch (e.key) {
 					case " ":
 						this.spaceKey = false;
-						break;
-					case "Control":
-						this.ctrlKey = false;
 						break;
 				}
 			});
