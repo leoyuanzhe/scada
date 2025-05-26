@@ -89,7 +89,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				}
 			});
 		} else {
-			schemaStore.components.filter((component) => {
+			schemaStore.components.forEach((component) => {
 				const componentLeft = component.left * clientStore.canvasScale + clientStore.canvasLeft;
 				const componentTop = component.top * clientStore.canvasScale + clientStore.canvasTop;
 				const componentWidth = component.width * clientStore.canvasScale;
