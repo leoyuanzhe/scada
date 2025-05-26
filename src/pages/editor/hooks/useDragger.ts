@@ -78,7 +78,7 @@ const rendererMousedown = (e: MouseEvent) => {
 			schemaStore.components.forEach((v) => v.active && (v.active = false));
 		}
 		// 正框选（从左上往右下）
-		if (startX < e.clientX || startY < e.clientY) {
+		if (startX < e.clientX && startY < e.clientY) {
 			schemaStore.components.forEach((component) => {
 				const componentLeft = component.left * clientStore.canvasScale + clientStore.canvasLeft;
 				const componentTop = component.top * clientStore.canvasScale + clientStore.canvasTop;
@@ -151,6 +151,11 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 		document.body.removeEventListener("mouseup", mouseup);
 	}
 };
+const computedSelector = () => {
+	const schemaStore = useSchema();
+	schemaStore.activeComponents.forEach((component) => {});
+};
+// function getComponentRect
 
 export const useDragger = () => ({
 	selector,

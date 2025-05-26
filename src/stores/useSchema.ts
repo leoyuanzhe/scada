@@ -13,6 +13,9 @@ export const useSchema = defineStore("schema", {
 		};
 	},
 	getters: {
+		activeComponents(): Component[] {
+			return this.components.filter((v) => v.active);
+		},
 		flattenedComponents(): Component[] {
 			return this.components.filter((v) => v.active);
 		},

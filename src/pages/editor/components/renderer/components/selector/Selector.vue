@@ -31,7 +31,7 @@ const dragger = useDragger();
 	position: absolute;
 	z-index: 9;
 	box-shadow: 0 0 1px 1px #ff0000;
-	background-color: #23232333;
+	background-color: #ff000022;
 	pointer-events: none;
 	div {
 		position: absolute;
