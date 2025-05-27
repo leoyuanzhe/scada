@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useSchema } from "@/stores/useSchema";
+import { computed } from "vue";
 
+const schemaStore = useSchema();
 const dragger = useDragger();
+const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1);
 </script>
 
 <template>
@@ -15,14 +19,14 @@ const dragger = useDragger();
 			height: dragger.selector.height + 'px',
 		}"
 	>
-		<div class="t"></div>
-		<div class="tr"></div>
-		<div class="r"></div>
-		<div class="rb"></div>
-		<div class="b"></div>
-		<div class="lb"></div>
-		<div class="l"></div>
-		<div class="lt"></div>
+		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorMousedown('t')"></div>
+		<div v-show="showDirection" class="tr" @mousedown.stop="dragger.selectorMousedown('tr')"></div>
+		<div v-show="showDirection" class="r" @mousedown.stop="dragger.selectorMousedown('r')"></div>
+		<div v-show="showDirection" class="rb" @mousedown.stop="dragger.selectorMousedown('rb')"></div>
+		<div v-show="showDirection" class="b" @mousedown.stop="dragger.selectorMousedown('b')"></div>
+		<div v-show="showDirection" class="lb" @mousedown.stop="dragger.selectorMousedown('lb')"></div>
+		<div v-show="showDirection" class="l" @mousedown.stop="dragger.selectorMousedown('l')"></div>
+		<div v-show="showDirection" class="lt" @mousedown.stop="dragger.selectorMousedown('lt')"></div>
 	</div>
 </template>
 
