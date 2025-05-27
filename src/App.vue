@@ -13,9 +13,6 @@ function init() {
 	clientStore.init();
 	materialStore.init();
 	propertyStore.init();
-	clientStore.canvasScale = 1.2;
-	schemaStore.canvas.width = 400;
-	schemaStore.canvas.height = 400;
 	schemaStore.components.push({
 		id: Date.now().toString(),
 		name: "text",
@@ -25,8 +22,8 @@ function init() {
 		locked: false,
 		hidden: false,
 		snap: { v: [], h: [] },
-		left: 0,
-		top: 0,
+		left: 15,
+		top: 15,
 		width: 100,
 		height: 50,
 		props: {

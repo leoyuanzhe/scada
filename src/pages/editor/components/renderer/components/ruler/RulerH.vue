@@ -4,10 +4,10 @@ import { useClient } from "@/stores/useClient";
 
 const clientStore = useClient();
 const oCanvas = ref<HTMLCanvasElement | null>(null);
-watch([() => clientStore.canvasScale, () => clientStore.canvasLeft], () => drawRuler());
+watch([() => clientStore.canvas.scale, () => clientStore.canvas.left], () => drawRuler());
 onMounted(() => drawRuler());
 function drawRuler() {
-	const rulerStart = clientStore.canvasLeft - 20;
+	const rulerStart = clientStore.canvas.left - 20;
 	if (oCanvas.value) {
 		oCanvas.value.width = oCanvas.value.offsetWidth;
 		oCanvas.value.height = oCanvas.value.offsetHeight;
@@ -24,7 +24,7 @@ function drawRuler() {
 				ctx.stroke();
 				ctx.font = "10px Arial";
 				ctx.fillStyle = "#cccccc";
-				const value = Math.round((i - rulerStart) / clientStore.canvasScale);
+				const value = Math.round((i - rulerStart) / clientStore.canvas.scale);
 				ctx.fillText(value.toString(), i + 5, 10);
 				ctx.restore();
 			}

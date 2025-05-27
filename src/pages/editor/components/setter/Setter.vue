@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "../../hooks/useDragger";
 import { type Text } from "@/materials/text/Text";
 
+const clientStore = useClient();
 const schemaStore = useSchema();
 const dragger = useDragger();
 const props = computed<Text["props"]>(() => schemaStore.targetComponent?.props || {});
@@ -11,6 +13,24 @@ const props = computed<Text["props"]>(() => schemaStore.targetComponent?.props |
 
 <template>
 	<div class="setter">
+		<form>
+			<article>
+				<label for="setter-left">X坐标</label>
+				<input id="setter-left" type="number" :value="clientStore.canvas.left" @input="(clientStore.canvas.left = Number(($event.target as HTMLInputElement).value)), dragger.computedSelector()" />
+			</article>
+			<article>
+				<label for="setter-top">Y坐标</label>
+				<input id="setter-top" type="number" :value="clientStore.canvas.top" @input="(clientStore.canvas.top = Number(($event.target as HTMLInputElement).value)), dragger.computedSelector()" />
+			</article>
+			<article>
+				<label for="setter-width">宽度</label>
+				<input id="setter-width" type="number" :value="schemaStore.canvas.width" @input="(schemaStore.canvas.width = Number(($event.target as HTMLInputElement).value)), dragger.computedSelector()" />
+			</article>
+			<article>
+				<label for="setter-height">高度</label>
+				<input id="setter-height" type="number" :value="schemaStore.canvas.height" @input="schemaStore.canvas.height = Number(($event.target as HTMLInputElement).value)" />
+			</article>
+		</form>
 		<form>
 			<template v-if="schemaStore.targetComponent">
 				<article>

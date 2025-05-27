@@ -31,6 +31,9 @@ export const useSchema = defineStore("schema", {
 		activeComponents(): Component[] {
 			return this.components.filter((v) => v.active);
 		},
+		unActiveComponents(): Component[] {
+			return this.components.filter((v) => !v.locked && !v.active);
+		},
 		activeFlatComponents(): Component[] {
 			return this.flatComponents.filter((v) => v.active);
 		},
