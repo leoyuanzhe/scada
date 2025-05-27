@@ -5,7 +5,8 @@ interface Props {
 	text: string;
 	color: string;
 }
-export const Text = (): Material<Props> => ({
+export interface Text extends Material<Props> {}
+export const Text = (): Text => ({
 	id: "text",
 	name: "text",
 	title: "文本",
