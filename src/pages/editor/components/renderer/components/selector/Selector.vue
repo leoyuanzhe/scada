@@ -5,7 +5,7 @@ import { computed } from "vue";
 
 const schemaStore = useSchema();
 const dragger = useDragger();
-const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1);
+const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1 && schemaStore.targetComponent?.resizable);
 </script>
 
 <template>

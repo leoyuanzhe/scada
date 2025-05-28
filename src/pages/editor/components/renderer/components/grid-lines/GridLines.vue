@@ -1,7 +1,15 @@
 <script lang="ts" setup>
 import { useClient } from "@/stores/useClient";
+import { computed } from "vue";
 
 const clientStore = useClient();
+const gridSize = computed(() => {
+	const size = scaleSize(clientStore.grid.span * clientStore.canvas.scale);
+	return size;
+});
+function scaleSize(size: number): number {
+	return size < 6 ? scaleSize(size * 2) : size;
+}
 </script>
 
 <template>
@@ -10,7 +18,7 @@ const clientStore = useClient();
 		class="grid-lines"
 		:style="{
 			backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
-			backgroundSize: `${clientStore.grid.span * clientStore.canvas.scale}px ${clientStore.grid.span * clientStore.canvas.scale}px`,
+			backgroundSize: `${gridSize}px ${gridSize}px`,
 		}"
 	></div>
 </template>

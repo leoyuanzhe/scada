@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Component } from "@/types/Component";
-import ComponentCreator from "./ComponentCreator.vue";
+import ComponentDetails from "./ComponentDetails.vue";
 
 interface Props {
 	component: Component;
@@ -9,7 +9,9 @@ const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
-	<ComponentCreator :component="props.component">
+	<ComponentDetails :component="props.component">
 		<RecursiveComponent v-for="v in props.component.children" :key="v.id" :component="v" />
-	</ComponentCreator>
+	</ComponentDetails>
 </template>
+
+<style scoped lang="scss"></style>

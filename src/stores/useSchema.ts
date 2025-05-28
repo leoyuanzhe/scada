@@ -15,14 +15,14 @@ export const useSchema = defineStore("schema", {
 	},
 	getters: {
 		targetComponent(): Component | null {
-			if (this.activeFlatComponents.length == 0) {
+			if (this.targetComponentId) {
+				return this.activeFlatComponents.find((v) => v.id === this.targetComponentId) || null;
+			} else if (this.activeFlatComponents.length == 0) {
 				this.targetComponentId = "";
 				return null;
 			} else if (this.activeFlatComponents.length === 1) {
 				this.targetComponentId = this.activeFlatComponents[0].id;
 				return this.activeFlatComponents[0];
-			} else if (this.targetComponentId) {
-				return this.activeFlatComponents.find((v) => v.id === this.targetComponentId) || null;
 			} else {
 				this.targetComponentId = this.activeFlatComponents[this.activeFlatComponents.length - 1].id;
 				return this.activeFlatComponents[this.activeFlatComponents.length - 1];

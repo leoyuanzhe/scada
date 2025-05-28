@@ -2,13 +2,13 @@
 import { onMounted, useTemplateRef, watch } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import { useDragger } from "../../hooks/useDragger";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 import GridLines from "./components/grid-lines/GridLines.vue";
 import RulerH from "./components/ruler/RulerH.vue";
 import RulerV from "./components/ruler/RulerV.vue";
 import AlignLineV from "./components/align-line/AlignLineV.vue";
 import AlignLineH from "./components/align-line/AlignLineH.vue";
-import RecursiveComponent from "./components/recursive-component/RecursiveComponent.vue";
+import ComponentCreator from "./components/component-creator/ComponentCreator.vue";
 import Selector from "./components/selector/Selector.vue";
 
 const clientStore = useClient();
@@ -52,7 +52,7 @@ function computedCanvas() {
 			@dragover.prevent
 			@drop="dragger.canvasDrap($event)"
 		>
-			<RecursiveComponent v-for="v in schemaStore.components" :key="v.id" :component="v" @mousedown="dragger.componentMousedown($event, v)" />
+			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" @mousedown="dragger.componentMousedown($event, v)" />
 		</div>
 		<GridLines />
 		<RulerH />

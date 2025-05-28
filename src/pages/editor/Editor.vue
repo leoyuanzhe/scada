@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import Toolbar from "./components/toolbar/Toolbar.vue";
-import Property from "./components/property/Property.vue";
+import HeaderMenu from "./components/header-menu/HeaderMenu.vue";
+import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "./components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
 </script>
 
 <template>
 	<div class="editor">
-		<Toolbar class="toolbar" />
-		<Property class="property" />
+		<HeaderMenu class="header-menu" />
+		<Sidebar class="sidebar" />
 		<Renderer class="renderer" />
 		<Setter class="setter" />
 	</div>
@@ -20,17 +20,17 @@ import Setter from "./components/setter/Setter.vue";
 	display: grid;
 	background-color: #232323;
 	grid-template-areas:
-		"toolbar toolbar toolbar"
-		"property renderer setter";
+		"header-menu header-menu header-menu"
+		"sidebar renderer setter";
 	grid-template-rows: 70px auto;
 	grid-template-columns: 300px auto 400px;
-	.toolbar {
-		grid-area: toolbar;
+	.header-menu {
+		grid-area: header-menu;
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 2;
 	}
-	.property {
-		grid-area: property;
+	.sidebar {
+		grid-area: sidebar;
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 1;
 	}

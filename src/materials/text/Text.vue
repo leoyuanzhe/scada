@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import type { Component } from "@/types/Component";
+import type { TextProps } from "./Text";
 
 interface Props {
-	component: Component;
+	component: Component<TextProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
 	<span class="text" :style="{ color: props.component.props.color }">
-		<slot></slot>
+		{{ props.component.props.text }}
 	</span>
 </template>
 

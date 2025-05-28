@@ -1,9 +1,8 @@
 import { reactive } from "vue";
 import { useClient } from "@/stores/useClient";
-import { useProperty } from "@/stores/useProperty";
+import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import type { Component } from "@/types/Component";
-import type { SelectorDirection } from "../types/Selector";
 
 // 框选器
 const selector = reactive({
@@ -17,11 +16,11 @@ const alignLine = reactive({
 	v: null as number | null,
 	h: null as number | null,
 });
-const propertyDragstart = (e: DragEvent, propertyId: string) => {
-	const propertyStore = useProperty();
-	const item = propertyStore.properties.find((v) => v.id === propertyId);
+const propertyDragstart = (e: DragEvent, assetId: string) => {
+	const assetStore = useAsset();
+	const item = assetStore.assets.find((v) => v.id === assetId);
 	if (item) {
-		e.dataTransfer?.setData("propertyId", item.id);
+		e.dataTransfer?.setData("assetId", item.id);
 	}
 };
 const rendererWheel = (e: WheelEvent) => {
@@ -67,7 +66,7 @@ const rendererMousedown = (e: MouseEvent) => {
 		selector.top = 0;
 		selector.width = 0;
 		selector.height = 0;
-		schemaStore.components.forEach((v) => v.active && (v.active = false));
+		schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
 		schemaStore.targetComponentId = "";
 		document.body.addEventListener("mousemove", mousemove);
 		document.body.addEventListener("mouseup", mouseup);
@@ -91,11 +90,10 @@ const rendererMousedown = (e: MouseEvent) => {
 			selector.top = top;
 			selector.width = width;
 			selector.height = height;
-			computedSelector();
 		}
 		function mouseup(e: MouseEvent) {
 			if (!e.shiftKey) {
-				schemaStore.components.forEach((v) => v.active && (v.active = false));
+				schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
 			}
 			// 正框选（从左往右框选）
 			if (startX < e.clientX) {
@@ -119,10 +117,6 @@ const rendererMousedown = (e: MouseEvent) => {
 					}
 				});
 			}
-			selector.left = 0;
-			selector.top = 0;
-			selector.width = 0;
-			selector.height = 0;
 			computedSelector();
 			document.body.removeEventListener("mousemove", mousemove);
 			document.body.removeEventListener("mouseup", mouseup);
@@ -230,27 +224,28 @@ const rendererMousedown = (e: MouseEvent) => {
 	}
 };
 const canvasDrap = (e: DragEvent) => {
-	const propertyStore = useProperty();
+	const assetStore = useAsset();
 	const schemaStore = useSchema();
-	const propertyId = e.dataTransfer?.getData("propertyId");
-	const property = propertyStore.properties.find((v) => v.id === propertyId);
-	if (property) {
-		e.dataTransfer?.setData("propertyId", property.id);
+	const assetId = e.dataTransfer?.getData("assetId");
+	const asset = assetStore.assets.find((v) => v.id === assetId);
+	if (asset) {
+		e.dataTransfer?.setData("assetId", asset.id);
 		const component: Component = {
 			id: Date.now().toString(),
-			name: property.material.name,
-			title: property.material.title,
+			name: asset.material.name,
+			title: asset.material.title,
 			active: true,
-			nestable: property.material.nestable,
-			locked: property.material.locked,
-			hidden: property.material.hidden,
-			snap: property.material.snap,
-			left: e.offsetX - property.material.width / 2,
-			top: e.offsetY - property.material.height / 2,
-			width: property.material.width,
-			height: property.material.height,
-			props: property.material.props,
-			children: property.material.children,
+			nestable: asset.material.nestable,
+			resizable: asset.material.resizable,
+			locked: asset.material.locked,
+			hidden: asset.material.hidden,
+			snap: asset.material.snap,
+			left: e.offsetX - asset.material.width / 2,
+			top: e.offsetY - asset.material.height / 2,
+			width: asset.material.width,
+			height: asset.material.height,
+			props: asset.material.props,
+			children: asset.material.children,
 		};
 		schemaStore.components.push(component);
 		computedSelector();
@@ -259,13 +254,13 @@ const canvasDrap = (e: DragEvent) => {
 const componentMousedown = (e: MouseEvent, component: Component) => {
 	const schemaStore = useSchema();
 	if (!e.shiftKey) {
-		if (!component.active) schemaStore.components.forEach((v) => v.active && (v.active = false));
+		if (!component.active) schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
 	}
 	component.active = true;
 	schemaStore.targetComponentId = component.id;
 	computedSelector();
 };
-const selectorMousedown = (direction: SelectorDirection) => {
+const selectorMousedown = (direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const schemaStore = useSchema();
 	document.body.addEventListener("mousemove", mousemove);
 	document.body.addEventListener("mouseup", mouseup);
@@ -334,30 +329,32 @@ const selectorMousedown = (direction: SelectorDirection) => {
 		document.body.removeEventListener("mouseup", mouseup);
 	}
 };
+
 const computedSelector = () => {
 	const schemaStore = useSchema();
-	if (schemaStore.activeComponents.length > 0) {
-		selector.left = getActualLeft(schemaStore.activeComponents[0].left);
-		selector.top = getActualTop(schemaStore.activeComponents[0].top);
-		selector.width = getScaledOffset(schemaStore.activeComponents[0].width);
-		selector.height = getScaledOffset(schemaStore.activeComponents[0].height);
+	if (schemaStore.activeComponents.length) {
+		let left = Infinity;
+		let top = Infinity;
+		let right = -Infinity;
+		let bottom = -Infinity;
+		schemaStore.activeComponents.forEach((component) => {
+			left = Math.min(left, getActualLeft(component.left));
+			top = Math.min(top, getActualTop(component.top));
+			right = Math.max(right, getActualLeft(component.left + component.width));
+			bottom = Math.max(bottom, getActualTop(component.top + component.height));
+		});
+		const width = right - left;
+		const height = bottom - top;
+		selector.left = left;
+		selector.top = top;
+		selector.width = width;
+		selector.height = height;
+	} else {
+		selector.left = 0;
+		selector.top = 0;
+		selector.width = 0;
+		selector.height = 0;
 	}
-	schemaStore.activeComponents.forEach((component) => {
-		const left = getActualLeft(component.left);
-		const top = getActualTop(component.top);
-		const width = getScaledOffset(component.width);
-		const height = getScaledOffset(component.height);
-		if (left < selector.left) {
-			selector.width += selector.left - left;
-			selector.left = left;
-		}
-		if (top < selector.top) {
-			selector.height += selector.top - top;
-			selector.top = top;
-		}
-		selector.width = Math.max(selector.width, left + width - selector.left);
-		selector.height = Math.max(selector.height, top + height - selector.top);
-	});
 };
 // 获取离当前offset最接近的网格线位置
 function getNearestGridLinePosition(position: number) {

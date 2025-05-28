@@ -4,6 +4,7 @@ export interface Component<Props = any> {
 	title: string;
 	active: boolean;
 	nestable: boolean;
+	resizable: boolean;
 	locked: boolean;
 	hidden: boolean;
 	snap: { v: number[]; h: number[] };

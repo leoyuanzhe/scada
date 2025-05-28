@@ -1,11 +1,11 @@
 <script setup lang="ts"></script>
 
 <template>
-	<div class="toolbar"></div>
+	<div class="header-menu"></div>
 </template>
 
 <style scoped lang="scss">
-.toolbar {
+.header-menu {
 	background-color: #333;
 }
 </style>
