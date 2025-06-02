@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import HeaderMenu from "./components/header-menu/HeaderMenu.vue";
+import MenuBar from "./components/menu-bar/MenuBar.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "./components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
@@ -7,7 +7,7 @@ import Setter from "./components/setter/Setter.vue";
 
 <template>
 	<div class="editor">
-		<HeaderMenu class="header-menu" />
+		<MenuBar class="menu-bar" />
 		<Sidebar class="sidebar" />
 		<Renderer class="renderer" />
 		<Setter class="setter" />
@@ -20,12 +20,12 @@ import Setter from "./components/setter/Setter.vue";
 	display: grid;
 	background-color: #232323;
 	grid-template-areas:
-		"header-menu header-menu header-menu"
+		"menu-bar menu-bar menu-bar"
 		"sidebar renderer setter";
-	grid-template-rows: 70px auto;
+	grid-template-rows: 40px auto;
 	grid-template-columns: 300px auto 400px;
-	.header-menu {
-		grid-area: header-menu;
+	.menu-bar {
+		grid-area: menu-bar;
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 2;
 	}

@@ -87,6 +87,9 @@ button {
 	padding: 0;
 	border: none;
 	background-color: transparent;
+	&:disabled {
+		cursor: not-allowed;
+	}
 }
 figure {
 	margin: 0;

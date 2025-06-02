@@ -7,7 +7,7 @@ const schemaStore = useSchema();
 
 <template>
 	<div class="layer">
-		<ComponentDetails v-for="v in schemaStore.components" :key="v.id" :component="v" />
+		<ComponentDetails v-for="v in schemaStore.components" :key="v.id" draggable="true" :component="v" />
 	</div>
 </template>
 
