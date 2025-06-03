@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {});
 
 <template>
 	<details class="component-details">
-		<summary :class="{ empty: !props.component.children.length }" @mousedown.stop="dragger.componentMousedown($event, props.component)">{{ props.component.title }}</summary>
+		<summary :class="{ empty: !props.component.components.length }" @mousedown.stop="dragger.componentMousedown($event, props.component)">{{ props.component.title }}</summary>
 		<slot></slot>
 	</details>
 </template>

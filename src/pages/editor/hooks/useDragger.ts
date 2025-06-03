@@ -3,6 +3,7 @@ import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import type { Component } from "@/types/Component";
+import { deepClone } from "@/utils/conversion";
 
 // 框选器
 const selector = reactive({
@@ -227,7 +228,7 @@ const canvasDrap = (e: DragEvent) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
-	const asset = assetStore.assets.find((v) => v.id === assetId);
+	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
 		e.dataTransfer?.setData("assetId", asset.id);
 		const component: Component = {
@@ -245,7 +246,7 @@ const canvasDrap = (e: DragEvent) => {
 			width: asset.material.width,
 			height: asset.material.height,
 			props: asset.material.props,
-			children: asset.material.children,
+			components: asset.material.components,
 		};
 		schemaStore.components.push(component);
 		computedSelector();

@@ -13,5 +13,5 @@ export interface Component<Props = any> {
 	width: number;
 	height: number;
 	props: Props;
-	children: Component[];
+	components: Component[];
 }

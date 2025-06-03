@@ -23,7 +23,7 @@ export const Text = (): Material<TextProps> => ({
 		text: "这是一段文本",
 		color: "#ffffff",
 	},
-	children: [],
+	components: [],
 	render: (component) => {
 		return <TextComponent component={component} />;
 	},

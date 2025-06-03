@@ -17,7 +17,7 @@ export const Container = (): Material<ContainerProps> => ({
 	width: 300,
 	height: 300,
 	props: {},
-	children: [],
+	components: [],
 	render: (component) => {
 		return <ContainerComponent component={component} />;
 	},

@@ -23,8 +23,8 @@ const joinGroup = () => {
 					<li><button @click="schemaStore.removeComponent(schemaStore.targetComponentId), dragger.computedSelector()">删除</button></li>
 					<hr />
 					<li><button @click="joinGroup()">加入分组</button></li>
-					<li><button :disabled="!Boolean(schemaStore.findParentComponent(schemaStore.targetComponentId))" @click="schemaStore.moveOutParent(schemaStore.targetComponentId)">移出父级</button></li>
-					<li><button :disabled="!Boolean(schemaStore.targetComponent.children.length)" @click="schemaStore.flatChindren(schemaStore.targetComponentId)">展开子组件</button></li>
+					<li><button :disabled="!Boolean(schemaStore.findParentComponent(schemaStore.targetComponentId))" @click="schemaStore.moveOut(schemaStore.targetComponentId)">移出分组</button></li>
+					<li><button :disabled="!Boolean(schemaStore.targetComponent.components.length)" @click="schemaStore.flatChindren(schemaStore.targetComponentId)">展开子组件</button></li>
 				</menu>
 			</li>
 		</menu>

@@ -25,7 +25,7 @@ function init() {
 	t2.id = (Date.now() + 1).toString();
 	t2.left = 100;
 	t2.top = 50;
-	testComponent.children = [t1, t2];
+	testComponent.components = [t1, t2];
 	assetStore.assets.push({
 		id: "test",
 		title: "测试",
@@ -50,7 +50,7 @@ function init() {
 			text: "这是一段文本",
 			color: "#ffffff",
 		},
-		children: [],
+		components: [],
 	});
 }
 </script>

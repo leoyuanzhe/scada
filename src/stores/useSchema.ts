@@ -1,5 +1,6 @@
-import type { Component } from "@/types/Component";
 import { defineStore } from "pinia";
+import type { Component } from "@/types/Component";
+import type { Schema } from "@/types/Schema";
 
 export const useSchema = defineStore("schema", {
 	state() {
@@ -11,7 +12,7 @@ export const useSchema = defineStore("schema", {
 			},
 			targetComponentId: "",
 			components: [] as Component[],
-		};
+		} as Schema;
 	},
 	getters: {
 		targetComponent(): Component | null {
@@ -40,30 +41,41 @@ export const useSchema = defineStore("schema", {
 		flatComponents(): Component[] {
 			return this.components.flatMap((v) => flat(v));
 			function flat(component: Component): Component[] {
-				return [component, ...component.children.flatMap(flat)];
+				return [component, ...component.components.flatMap(flat)];
 			}
 		},
 	},
 	actions: {
 		// 找到组件的父元素
 		findParentComponent(componentId: string) {
-			const findInComponents = (components: Component[], parent: Component | null = null): Component | null => {
+			const findInComponents = (components: Component[], parent: Schema | Component): Schema | Component | null => {
 				for (const component of components) {
 					if (component.id === componentId) return parent;
-					if (component.children && component.children.length > 0) {
-						const result = findInComponents(component.children, component);
+					if (component.components && component.components.length > 0) {
+						const result = findInComponents(component.components, component);
 						if (result) return result;
 					}
 				}
 				return null;
 			};
-			return findInComponents(this.components);
+			return findInComponents(this.components, this);
 		},
 		// 删除组件
 		removeComponent(componentId: string) {
 			const parent = this.findParentComponent(componentId);
-			if (parent) parent.children = parent.children.filter((item) => item.id !== componentId);
-			else this.components = this.components.filter((item) => item.id !== componentId);
+			if (parent) parent.components = parent.components.filter((item) => item.id !== componentId);
+		},
+		// 移出分组
+		moveOut(componentId: string) {
+			const parent = this.findParentComponent(componentId);
+			if (parent) {
+				const index = parent.components.findIndex((item) => item.id === componentId);
+				if (index !== -1) {
+					parent.components[index].left = (parent.left || 0) + parent.components[index].left;
+					parent.components[index].top = (parent.top || 0) + parent.components[index].top;
+					this.components.push(...parent.components.splice(index, 1));
+				}
+			}
 		},
 	},
 });
