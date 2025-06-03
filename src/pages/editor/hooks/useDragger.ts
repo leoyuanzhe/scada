@@ -233,7 +233,7 @@ const canvasDrap = (e: DragEvent) => {
 		e.dataTransfer?.setData("assetId", asset.id);
 		const component: Component = {
 			id: Date.now().toString(),
-			name: asset.material.name,
+			key: asset.material.key,
 			title: asset.material.title,
 			active: true,
 			nestable: asset.material.nestable,

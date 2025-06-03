@@ -4,7 +4,7 @@ import ContainerComponent from "./Container.vue";
 export interface ContainerProps {}
 export const Container = (): Material<ContainerProps> => ({
 	id: "container",
-	name: "container",
+	key: "container",
 	title: "容器",
 	active: false,
 	nestable: true,

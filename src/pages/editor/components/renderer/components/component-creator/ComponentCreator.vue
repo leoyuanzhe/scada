@@ -9,7 +9,7 @@ interface Props {
 const materialStore = useMaterial();
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
-const RenderComponent = () => materialStore.materials.find((v) => v.name == props.component.name)?.render(props.component);
+const RenderComponent = () => materialStore.materials.find((v) => v.key == props.component.key)?.render(props.component);
 </script>
 
 <template>

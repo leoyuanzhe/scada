@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "../../hooks/useDragger";
+import { computed } from "vue";
 
 const schemaStore = useSchema();
 const dragger = useDragger();
+const moveOutDisabled = computed(() => {
+	const parent = schemaStore.findParentComponent(schemaStore.targetComponentId);
+	return !(parent && "key" in parent && parent.key === "container");
+});
 const joinGroup = () => {
 	schemaStore.joinGroup(schemaStore.targetComponentId);
 };
@@ -23,7 +28,7 @@ const joinGroup = () => {
 					<li><button @click="schemaStore.removeComponent(schemaStore.targetComponentId), dragger.computedSelector()">删除</button></li>
 					<hr />
 					<li><button @click="joinGroup()">加入分组</button></li>
-					<li><button :disabled="!Boolean(schemaStore.findParentComponent(schemaStore.targetComponentId))" @click="schemaStore.moveOut(schemaStore.targetComponentId)">移出分组</button></li>
+					<li><button :disabled="moveOutDisabled" @click="schemaStore.moveOut(schemaStore.targetComponentId)">移出分组</button></li>
 					<li><button :disabled="!Boolean(schemaStore.targetComponent.components.length)" @click="schemaStore.flatChindren(schemaStore.targetComponentId)">展开子组件</button></li>
 				</menu>
 			</li>

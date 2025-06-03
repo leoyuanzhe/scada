@@ -34,7 +34,7 @@ function init() {
 	});
 	schemaStore.components.push({
 		id: Date.now().toString(),
-		name: "text",
+		key: "text",
 		title: "文本",
 		active: false,
 		nestable: false,

@@ -7,7 +7,7 @@ export interface TextProps {
 }
 export const Text = (): Material<TextProps> => ({
 	id: "text",
-	name: "text",
+	key: "text",
 	title: "文本",
 	active: false,
 	nestable: false,

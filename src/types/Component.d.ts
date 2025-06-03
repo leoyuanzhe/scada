@@ -1,6 +1,6 @@
 export interface Component<Props = any> {
 	id: string;
-	name: string;
+	key: "text" | "container";
 	title: string;
 	active: boolean;
 	nestable: boolean;
