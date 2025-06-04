@@ -1,11 +1,11 @@
 import type { Component } from "./Component";
 
 export interface Schema {
-	canvas: {
+	key: "schema";
+	props: {
 		width: number;
 		height: number;
 		backgroundColor: string;
 	};
-	targetComponentId: string;
 	components: Component[];
 }

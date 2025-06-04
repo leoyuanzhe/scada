@@ -17,13 +17,13 @@ const dragger = useDragger();
 const oRenderer = useTemplateRef("oRenderer");
 
 onMounted(() => {
-	watch([() => schemaStore.canvas.width, () => schemaStore.canvas.height], () => computedCanvas(), { immediate: true });
+	watch([() => schemaStore.props.width, () => schemaStore.props.height], () => computedCanvas(), { immediate: true });
 });
 function computedCanvas() {
 	if (oRenderer.value) {
 		clientStore.canvas.left = 30;
 		clientStore.canvas.top = 30;
-		clientStore.canvas.scale = Math.max(Math.min((oRenderer.value.offsetWidth - 40) / schemaStore.canvas.width, 5), 0.1);
+		clientStore.canvas.scale = Math.max(Math.min((oRenderer.value.offsetWidth - 40) / schemaStore.props.width, 5), 0.1);
 	}
 }
 </script>
@@ -44,9 +44,9 @@ function computedCanvas() {
 			:style="{
 				left: clientStore.canvas.left + 'px',
 				top: clientStore.canvas.top + 'px',
-				width: schemaStore.canvas.width + 'px',
-				height: schemaStore.canvas.height + 'px',
-				backgroundColor: schemaStore.canvas.backgroundColor,
+				width: schemaStore.props.width + 'px',
+				height: schemaStore.props.height + 'px',
+				backgroundColor: schemaStore.props.backgroundColor,
 				transform: 'scale(' + clientStore.canvas.scale + ')',
 			}"
 			@dragover.prevent

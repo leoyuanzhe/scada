@@ -2,15 +2,17 @@
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "../../hooks/useDragger";
 import { computed } from "vue";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 const schemaStore = useSchema();
+const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const moveOutDisabled = computed(() => {
-	const parent = schemaStore.findParentComponent(schemaStore.targetComponentId);
-	return !(parent && "key" in parent && parent.key === "container");
+	const parent = schemaStore.findParentComponent(targetComponent.componentId.value);
+	return !(parent && !schemaStore.isSchema(parent));
 });
 const joinGroup = () => {
-	schemaStore.joinGroup(schemaStore.targetComponentId);
+	schemaStore.joinGroup(targetComponent.componentId.value);
 };
 </script>
 
@@ -18,18 +20,18 @@ const joinGroup = () => {
 	<div class="menu-bar">
 		<div class="logo">L</div>
 		<menu>
-			<li v-if="schemaStore.targetComponent">
+			<li v-if="targetComponent.component.value">
 				<button>编辑</button>
 				<menu>
-					<li><button :disabled="schemaStore.targetComponent.locked" @click="schemaStore.targetComponent.locked = true">锁定</button></li>
-					<li><button :disabled="!schemaStore.targetComponent.locked" @click="schemaStore.targetComponent.locked = false">解锁</button></li>
-					<li><button :disabled="!schemaStore.targetComponent.hidden" @click="schemaStore.targetComponent.hidden = false">显示</button></li>
-					<li><button :disabled="schemaStore.targetComponent.hidden" @click="schemaStore.targetComponent.hidden = true">隐藏</button></li>
-					<li><button @click="schemaStore.removeComponent(schemaStore.targetComponentId), dragger.computedSelector()">删除</button></li>
+					<li><button :disabled="targetComponent.component.value.locked" @click="targetComponent.component.value.locked = true">锁定</button></li>
+					<li><button :disabled="!targetComponent.component.value.locked" @click="targetComponent.component.value.locked = false">解锁</button></li>
+					<li><button :disabled="!targetComponent.component.value.hidden" @click="targetComponent.component.value.hidden = false">显示</button></li>
+					<li><button :disabled="targetComponent.component.value.hidden" @click="targetComponent.component.value.hidden = true">隐藏</button></li>
+					<li><button @click="schemaStore.removeComponent(targetComponent.componentId.value), dragger.computedSelector()">删除</button></li>
 					<hr />
 					<li><button @click="joinGroup()">加入分组</button></li>
-					<li><button :disabled="moveOutDisabled" @click="schemaStore.moveOut(schemaStore.targetComponentId)">移出分组</button></li>
-					<li><button :disabled="!Boolean(schemaStore.targetComponent.components.length)" @click="schemaStore.flatChindren(schemaStore.targetComponentId)">展开子组件</button></li>
+					<li><button :disabled="moveOutDisabled" @click="schemaStore.moveOut(targetComponent.componentId.value)">移出分组</button></li>
+					<li><button :disabled="!Boolean(targetComponent.component.value.components.length)" @click="schemaStore.flatChindren(targetComponent.componentId)">展开子组件</button></li>
 				</menu>
 			</li>
 		</menu>

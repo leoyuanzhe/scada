@@ -4,6 +4,7 @@ import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import type { Component } from "@/types/Component";
 import { deepClone } from "@/utils/conversion";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 // 框选器
 const selector = reactive({
@@ -39,6 +40,7 @@ const rendererWheel = (e: WheelEvent) => {
 const rendererMousedown = (e: MouseEvent) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
+	const targetComponent = useTargetComponent();
 	const oRenderer = document.querySelector<HTMLDivElement>(".renderer");
 	const offsetX = e.pageX - oRenderer!.offsetLeft; // 选择器的offsetX
 	const offsetY = e.pageY - oRenderer!.offsetTop;
@@ -68,7 +70,7 @@ const rendererMousedown = (e: MouseEvent) => {
 		selector.width = 0;
 		selector.height = 0;
 		schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
-		schemaStore.targetComponentId = "";
+		targetComponent.componentId.value = "";
 		document.body.addEventListener("mousemove", mousemove);
 		document.body.addEventListener("mouseup", mouseup);
 		function mousemove(e: MouseEvent) {
@@ -131,14 +133,14 @@ const rendererMousedown = (e: MouseEvent) => {
 		const snapLines = {
 			v: [
 				getActualLeft(0),
-				getActualLeft(schemaStore.canvas.width / 2),
-				getActualLeft(schemaStore.canvas.width),
+				getActualLeft(schemaStore.props.width / 2),
+				getActualLeft(schemaStore.props.width),
 				...schemaStore.unActiveComponents.flatMap((v) => [getActualLeft(v.left), getActualLeft(v.left + v.width / 2), getActualLeft(v.left + v.width)]),
 			],
 			h: [
 				getActualTop(0),
-				getActualTop(schemaStore.canvas.height / 2),
-				getActualTop(schemaStore.canvas.height),
+				getActualTop(schemaStore.props.height / 2),
+				getActualTop(schemaStore.props.height),
 				...schemaStore.unActiveComponents.flatMap((v) => [getActualTop(v.top), getActualTop(v.top + v.height / 2), getActualTop(v.top + v.height)]),
 			],
 		}; // 吸附线
@@ -254,71 +256,72 @@ const canvasDrap = (e: DragEvent) => {
 };
 const componentMousedown = (e: MouseEvent, component: Component) => {
 	const schemaStore = useSchema();
+	const targetComponent = useTargetComponent();
 	if (!e.shiftKey) {
 		if (!component.active) schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
 	}
 	component.active = true;
-	schemaStore.targetComponentId = component.id;
+	targetComponent.componentId.value = component.id;
 	computedSelector();
 };
 const selectorMousedown = (direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
-	const schemaStore = useSchema();
+	const targetComponent = useTargetComponent();
 	document.body.addEventListener("mousemove", mousemove);
 	document.body.addEventListener("mouseup", mouseup);
 	function mousemove(e: MouseEvent) {
-		if (schemaStore.targetComponent) {
+		if (targetComponent.component.value) {
 			const movementX = getUnscaledOffset(e.movementX);
 			const movementY = getUnscaledOffset(e.movementY);
 			switch (direction) {
 				case "t":
-					if (schemaStore.targetComponent.height + -movementY > 0) {
-						schemaStore.targetComponent.top += movementY;
-						schemaStore.targetComponent.height += -movementY;
+					if (targetComponent.component.value.height + -movementY > 0) {
+						targetComponent.component.value.top += movementY;
+						targetComponent.component.value.height += -movementY;
 					}
 					break;
 
 				case "tr":
-					if (schemaStore.targetComponent.height + -movementY > 0 && schemaStore.targetComponent.width + movementX > 0) {
-						schemaStore.targetComponent.top += movementY;
-						schemaStore.targetComponent.width += movementX;
-						schemaStore.targetComponent.height += -movementY;
+					if (targetComponent.component.value.height + -movementY > 0 && targetComponent.component.value.width + movementX > 0) {
+						targetComponent.component.value.top += movementY;
+						targetComponent.component.value.width += movementX;
+						targetComponent.component.value.height += -movementY;
 					}
 					break;
 				case "r":
-					if (schemaStore.targetComponent.width + movementX > 0) {
-						schemaStore.targetComponent.width += movementX;
+					if (targetComponent.component.value.width + movementX > 0) {
+						targetComponent.component.value.width += movementX;
 					}
 					break;
 				case "rb":
-					if (schemaStore.targetComponent.height + movementY > 0 && schemaStore.targetComponent.width + movementX > 0) {
-						schemaStore.targetComponent.width += movementX;
-						schemaStore.targetComponent.height += movementY;
+					if (targetComponent.component.value.height + movementY > 0 && targetComponent.component.value.width + movementX > 0) {
+						targetComponent.component.value.width += movementX;
+						targetComponent.component.value.height += movementY;
 					}
 					break;
 				case "b":
-					if (schemaStore.targetComponent.height + movementY > 0) {
-						schemaStore.targetComponent.height += movementY;
+					if (targetComponent.component.value.height + movementY > 0) {
+						targetComponent.component.value.height += movementY;
 					}
 					break;
 				case "lb":
-					if (schemaStore.targetComponent.height + movementY > 0 && schemaStore.targetComponent.width + -movementX > 0) {
-						schemaStore.targetComponent.left += movementX;
-						schemaStore.targetComponent.width += -movementX;
-						schemaStore.targetComponent.height += movementY;
+					if (targetComponent.component.value.height + movementY > 0 && targetComponent.component.value.width + -movementX > 0) {
+						targetComponent.component.value.left += movementX;
+						targetComponent.component.value.width += -movementX;
+						targetComponent.component.value.height += movementY;
 					}
 					break;
 				case "l":
-					if (schemaStore.targetComponent.width + -movementX > 0) {
-						schemaStore.targetComponent.left += movementX;
-						schemaStore.targetComponent.width += -movementX;
+					if (targetComponent.component.value.width + -movementX > 0) {
+						targetComponent.component.value.left += movementX;
+						targetComponent.component.value.width += -movementX;
 					}
 					break;
 				case "lt":
-					if (schemaStore.targetComponent.height + -movementY > 0 && schemaStore.targetComponent.width + -movementX > 0) {
-						schemaStore.targetComponent.left += movementX;
-						schemaStore.targetComponent.top += movementY;
-						schemaStore.targetComponent.width += -movementX;
-						schemaStore.targetComponent.height += -movementY;
+					if (targetComponent.component.value.height + -movementY > 0 && targetComponent.component.value.width + -movementX > 0) {
+						targetComponent.component.value.left += movementX;
+						targetComponent.component.value.top += movementY;
+						targetComponent.component.value.width += -movementX;
+						targetComponent.component.value.height += -movementY;
 					}
 					break;
 			}
