@@ -16,10 +16,10 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 	<div
 		:class="{ component: true, active: props.component.active, target: props.component.id === targetComponent.componentId.value }"
 		:style="{
-			left: props.component.left + 'px',
-			top: props.component.top + 'px',
-			width: props.component.width + 'px',
-			height: props.component.height + 'px',
+			left: props.component.props.left + 'px',
+			top: props.component.props.top + 'px',
+			width: props.component.props.width + 'px',
+			height: props.component.props.height + 'px',
 		}"
 	>
 		<Component :is="RenderComponent" />

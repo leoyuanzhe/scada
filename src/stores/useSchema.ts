@@ -33,7 +33,7 @@ export const useSchema = defineStore("schema", {
 	},
 	actions: {
 		// 找到组件的父元素
-		findParentComponent(componentId: string) {
+		findParent(componentId: string) {
 			const findInComponents = (components: Component[], parent: Schema | Component): Schema | Component | null => {
 				for (const component of components) {
 					if (component.id === componentId) return parent;
@@ -52,17 +52,24 @@ export const useSchema = defineStore("schema", {
 		},
 		// 删除组件
 		removeComponent(componentId: string) {
-			const parent = this.findParentComponent(componentId);
-			if (parent) parent.components = parent.components.filter((item) => item.id !== componentId);
-		},
-		// 移出分组
-		moveOut(componentId: string) {
-			const parent = this.findParentComponent(componentId);
+			const parent = this.findParent(componentId);
 			if (parent) {
 				const index = parent.components.findIndex((item) => item.id === componentId);
 				if (index !== -1) {
-					parent.components[index].left = (parent.props.left || 0) + parent.components[index].left;
-					parent.components[index].top = (parent.props.top || 0) + parent.components[index].top;
+					parent.components.splice(index, 1);
+				}
+			}
+		},
+		// 移出分组
+		moveOut(componentId: string) {
+			const parent = this.findParent(componentId);
+			if (parent) {
+				const index = parent.components.findIndex((item) => item.id === componentId);
+				if (index !== -1) {
+					if (parent.components[index].moveable) {
+						parent.components[index].props.left = parent.props.left + parent.components[index].props.left;
+						parent.components[index].props.top = parent.props.top + parent.components[index].props.top;
+					}
 					this.components.push(...parent.components.splice(index, 1));
 				}
 			}

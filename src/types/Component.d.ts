@@ -3,15 +3,13 @@ export interface Component<Props = any> {
 	key: "text" | "container";
 	title: string;
 	active: boolean;
+	moveable: boolean;
+	resizeable: boolean;
 	nestable: boolean;
 	resizable: boolean;
 	locked: boolean;
 	hidden: boolean;
 	snap: { v: number[]; h: number[] };
-	left: number;
-	top: number;
-	width: number;
-	height: number;
 	props: Props;
 	components: Component[];
 }

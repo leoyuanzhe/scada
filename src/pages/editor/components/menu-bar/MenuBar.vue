@@ -8,7 +8,7 @@ const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const moveOutDisabled = computed(() => {
-	const parent = schemaStore.findParentComponent(targetComponent.componentId.value);
+	const parent = schemaStore.findParent(targetComponent.componentId.value);
 	return !(parent && !schemaStore.isSchema(parent));
 });
 const joinGroup = () => {
@@ -29,7 +29,14 @@ const joinGroup = () => {
 					<li><button :disabled="targetComponent.component.value.hidden" @click="targetComponent.component.value.hidden = true">隐藏</button></li>
 					<li><button @click="schemaStore.removeComponent(targetComponent.componentId.value), dragger.computedSelector()">删除</button></li>
 					<hr />
-					<li><button @click="joinGroup()">加入分组</button></li>
+					<li>
+						<button @click="joinGroup()">加入分组</button>
+						<menu>
+							<li>
+								<button v-for="v in schemaStore.flatComponents.filter((v) => v.nestable)" :key="v.id">{{ v.title }}</button>
+							</li>
+						</menu>
+					</li>
 					<li><button :disabled="moveOutDisabled" @click="schemaStore.moveOut(targetComponent.componentId.value)">移出分组</button></li>
 					<li><button :disabled="!Boolean(targetComponent.component.value.components.length)" @click="schemaStore.flatChindren(targetComponent.componentId)">展开子组件</button></li>
 				</menu>

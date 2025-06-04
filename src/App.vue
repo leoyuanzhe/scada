@@ -15,7 +15,6 @@ function init() {
 	clientStore.init();
 	materialStore.init();
 	assetStore.init();
-
 	const testComponent = Container();
 	const t1 = Text();
 	const t2 = Text();
