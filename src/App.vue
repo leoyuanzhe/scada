@@ -21,11 +21,15 @@ function init() {
 	c2.id = Date.now().toString() + "2";
 	const t1 = Text();
 	const t2 = Text();
+	const t3 = Text();
 	t1.id = Date.now().toString() + "3";
 	t2.id = Date.now().toString() + "4";
+	t3.id = Date.now().toString() + "5";
 	t2.props.left = 100;
 	t2.props.top = 50;
-	c1.components = [t2];
+	t3.props.left = 200;
+	t3.props.top = 100;
+	c1.components = [t2, t3];
 	c2.components = [t1, c1];
 	assetStore.assets.push({
 		id: "test",

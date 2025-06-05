@@ -57,6 +57,23 @@ export const useSchema = defineStore("schema", {
 		isSchema(component: Schema | Component | null) {
 			return component?.key === "schema";
 		},
+		// 获取组件相对于根元素的偏移
+		getOffsetFromSchema(componentId: string) {
+			const component = this.findComponent(componentId);
+			let left = component?.props.left ?? 0;
+			let top = component?.props.top ?? 0;
+			const parent = this.findParent(componentId);
+			if (parent) {
+				const index = parent.components.findIndex((v) => v.id === componentId);
+				if (index !== -1) {
+					if (!this.isSchema(parent) && parent.moveable) {
+						left += parent.props.left;
+						top += parent.props.top;
+					}
+				}
+			}
+			return { left, top };
+		},
 		// 删除组件
 		removeComponent(componentId: string) {
 			const parent = this.findParent(componentId);
@@ -69,6 +86,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 加入分组
 		joinGroup(componentId: string, parentId: string) {
+			this.moveOut(componentId);
 			const parent = this.findParent(componentId);
 			if (parent) {
 				const index = parent.components.findIndex((v) => v.id === componentId);
