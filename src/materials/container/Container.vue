@@ -11,30 +11,31 @@ const props = withDefaults(defineProps<Props>(), {});
 watch(
 	() => props.component.components,
 	() => {
-		if (props.component.components.length === 1) {
-			const childLeft = props.component.components[0].left;
-			const childTop = props.component.components[0].top;
-			props.component.components[0].left = 0;
-			props.component.components[0].top = 0;
-			props.component.left = props.component.left + childLeft;
-			props.component.top = props.component.top + childTop;
-			props.component.width = props.component.components[0].width;
-			props.component.height = props.component.components[0].height;
-		} else if (props.component.components.length) {
+		const moveableComponents = props.component.components.filter((v) => v.moveable);
+		if (moveableComponents.length === 1) {
+			const childLeft = moveableComponents[0].props.left;
+			const childTop = moveableComponents[0].props.top;
+			moveableComponents[0].props.left = 0;
+			moveableComponents[0].props.top = 0;
+			props.component.props.left = props.component.props.left + childLeft;
+			props.component.props.top = props.component.props.top + childTop;
+			props.component.props.width = moveableComponents[0].props.width;
+			props.component.props.height = moveableComponents[0].props.height;
+		} else if (moveableComponents.length) {
 			let left = Infinity;
 			let top = Infinity;
 			let right = -Infinity;
 			let bottom = -Infinity;
-			props.component.components.forEach((component) => {
-				left = Math.min(left, component.left);
-				top = Math.min(top, component.top);
-				right = Math.max(right, component.left + component.width);
-				bottom = Math.max(bottom, component.top + component.height);
+			moveableComponents.forEach((component) => {
+				left = Math.min(left, component.props.left);
+				top = Math.min(top, component.props.top);
+				right = Math.max(right, component.props.left + component.props.width);
+				bottom = Math.max(bottom, component.props.top + component.props.height);
 			});
 			const width = right - left;
 			const height = bottom - top;
-			props.component.width = width;
-			props.component.height = height;
+			props.component.props.width = width;
+			props.component.props.height = height;
 		}
 	},
 	{ immediate: true, deep: true }

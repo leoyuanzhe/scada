@@ -15,20 +15,23 @@ export const useSchema = defineStore("schema", {
 		} as Schema;
 	},
 	getters: {
-		activeComponents(): Component[] {
-			return this.components.filter((v) => v.active);
+		moveableComponents(): Component[] {
+			return this.components.filter((v) => v.moveable);
 		},
-		unActiveComponents(): Component[] {
-			return this.components.filter((v) => !v.locked && !v.active);
+		activeMoveableComponents(): Component[] {
+			return this.components.filter((v) => v.active && v.moveable);
 		},
-		activeFlatComponents(): Component[] {
-			return this.flatComponents.filter((v) => v.active);
+		unactiveMoveableComponents(): Component[] {
+			return this.components.filter((v) => !v.active && v.moveable);
 		},
 		flatComponents(): Component[] {
 			return this.components.flatMap((v) => flat(v));
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
+		},
+		activeFlatComponents(): Component[] {
+			return this.flatComponents.filter((v) => v.active);
 		},
 	},
 	actions: {

@@ -1,7 +1,7 @@
-import type { Material } from "@/types/Material";
+import type { Material, MoveableProps } from "@/types/Material";
 import TextComponent from "./Text.vue";
 
-export interface TextProps {
+export interface TextProps extends MoveableProps {
 	text: string;
 	color: string;
 }
@@ -10,17 +10,18 @@ export const Text = (): Material<TextProps> => ({
 	key: "text",
 	title: "文本",
 	active: false,
-	nestable: false,
+	moveable: true,
 	resizable: true,
+	nestable: false,
 	locked: false,
 	hidden: false,
 	snap: { v: [], h: [] },
-	left: 0,
-	top: 0,
-	width: 100,
-	height: 50,
 	props: {
-		text: "这是一段文本",
+		left: 0,
+		top: 0,
+		width: 100,
+		height: 50,
+		text: "文本",
 		color: "#ffffff",
 	},
 	components: [],

@@ -14,6 +14,7 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 
 <template>
 	<div
+		v-if="component.moveable"
 		:class="{ component: true, active: props.component.active, target: props.component.id === targetComponent.componentId.value }"
 		:style="{
 			left: props.component.props.left + 'px',
@@ -24,6 +25,7 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 	>
 		<Component :is="RenderComponent" />
 	</div>
+	<Component v-else :is="RenderComponent" />
 </template>
 
 <style lang="scss" scoped>
