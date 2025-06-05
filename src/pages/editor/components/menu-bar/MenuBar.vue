@@ -1,47 +1,55 @@
 <script setup lang="ts">
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "../../hooks/useDragger";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
+const oMenuBarEdit = useTemplateRef("oMenuBarEdit");
 const moveOutDisabled = computed(() => {
-	const parent = schemaStore.findParent(targetComponent.componentId.value);
-	return !(parent && !schemaStore.isSchema(parent));
+	return schemaStore.activeFlatComponents.every((component) => {
+		const parent = schemaStore.findParent(component.id);
+		return parent && schemaStore.isSchema(parent);
+	});
 });
-const joinGroup = () => {
-	schemaStore.joinGroup(targetComponent.componentId.value);
-};
 </script>
 
 <template>
 	<div class="menu-bar">
 		<div class="logo">L</div>
-		<menu>
-			<li v-if="targetComponent.component.value">
-				<button>编辑</button>
-				<menu>
-					<li><button :disabled="targetComponent.component.value.locked" @click="targetComponent.component.value.locked = true">锁定</button></li>
-					<li><button :disabled="!targetComponent.component.value.locked" @click="targetComponent.component.value.locked = false">解锁</button></li>
-					<li><button :disabled="!targetComponent.component.value.hidden" @click="targetComponent.component.value.hidden = false">显示</button></li>
-					<li><button :disabled="targetComponent.component.value.hidden" @click="targetComponent.component.value.hidden = true">隐藏</button></li>
-					<li><button @click="schemaStore.removeComponent(targetComponent.componentId.value), dragger.computedSelector()">删除</button></li>
-					<hr />
-					<li>
-						<button @click="joinGroup()">加入分组</button>
-						<menu>
-							<li>
-								<button v-for="v in schemaStore.flatComponents.filter((v) => v.nestable)" :key="v.id">{{ v.title }}</button>
-							</li>
-						</menu>
-					</li>
-					<li><button :disabled="moveOutDisabled" @click="schemaStore.moveOut(targetComponent.componentId.value)">移出分组</button></li>
-					<li><button :disabled="!Boolean(targetComponent.component.value.components.length)" @click="schemaStore.flatChindren(targetComponent.componentId)">展开子组件</button></li>
-				</menu>
+		<menu class="menu">
+			<li ref="oMenuBarEdit" v-if="schemaStore.activeFlatComponents.length">
+				<button popovertarget="menu-bar-edit">编辑</button>
 			</li>
 		</menu>
+		<Teleport to="body">
+			<menu
+				v-if="schemaStore.activeFlatComponents.length"
+				id="menu-bar-edit"
+				class="menu-popover"
+				popover="auto"
+				:style="{ left: oMenuBarEdit?.getBoundingClientRect().left + 'px', top: (oMenuBarEdit?.getBoundingClientRect().top ?? 0) + 40 + 'px' }"
+			>
+				<li><button :disabled="schemaStore.activeFlatComponents.every((v) => v.locked)" @click="schemaStore.activeFlatComponents.forEach((v) => (v.locked = true))">锁定</button></li>
+				<li><button :disabled="schemaStore.activeFlatComponents.every((v) => !v.locked)" @click="schemaStore.activeFlatComponents.forEach((v) => (v.locked = false))">解锁</button></li>
+				<li><button :disabled="schemaStore.activeFlatComponents.every((v) => !v.hidden)" @click="schemaStore.activeFlatComponents.forEach((v) => (v.hidden = false))">显示</button></li>
+				<li><button :disabled="schemaStore.activeFlatComponents.every((v) => v.hidden)" @click="schemaStore.activeFlatComponents.forEach((v) => (v.hidden = true))">隐藏</button></li>
+				<li><button class="danger" @click="schemaStore.activeFlatComponents.forEach((v) => schemaStore.removeComponent(v.id)), dragger.computedSelector()">删除</button></li>
+				<hr />
+				<li>
+					<button>加入分组</button>
+					<menu>
+						<li>
+							<button v-for="v in schemaStore.flatComponents.filter((v) => v.nestable)" :key="v.id" @click="schemaStore.joinGroup(targetComponent.componentId.value, v.id)">{{ v.title }}</button>
+						</li>
+					</menu>
+				</li>
+				<li><button :disabled="moveOutDisabled" @click="schemaStore.activeFlatComponents.forEach((v) => schemaStore.moveOut(v.id))">移出分组</button></li>
+				<li><button :disabled="schemaStore.activeFlatComponents.every((v) => !v.components.length)" @click="schemaStore.activeFlatComponents.forEach((v) => schemaStore.flatChindrenToSchema(v.id))">展开子组件到根组件</button></li>
+			</menu>
+		</Teleport>
 	</div>
 </template>
 
@@ -62,7 +70,7 @@ const joinGroup = () => {
 		background-color: #000;
 		border-radius: 50%;
 	}
-	> menu {
+	.menu {
 		flex: 1;
 		height: 100%;
 		display: flex;
@@ -75,46 +83,60 @@ const joinGroup = () => {
 				line-height: 40px;
 				transition: background-color 0.2s;
 			}
-			> menu {
-				position: absolute;
-				left: 0;
-				top: 100%;
-				width: 200px;
-				display: none;
-				flex-direction: column;
-				background-color: #333;
-				border-radius: 4px;
-				overflow: hidden;
-				box-shadow: 0 0 3px 1px #666;
-				li {
-					button {
-						padding: 0 14px;
-						width: 100%;
-						font-size: 12px;
-						line-height: 30px;
-						text-align: left;
-						transition: background-color 0.2s;
-					}
-					&:hover {
-						button:not(:disabled) {
-							background-color: #232323;
-						}
-					}
-				}
-				hr {
-					width: 100%;
-					border-color: #666;
-				}
-			}
+
 			&:hover {
 				> button {
 					background-color: #232323;
 				}
-				> menu {
-					display: flex;
-				}
 			}
 		}
+	}
+}
+.menu-popover {
+	position: fixed;
+	width: 200px;
+	flex-direction: column;
+	background-color: #333;
+	border-radius: 4px;
+	box-shadow: 0 0 3px 1px #666;
+	z-index: 9;
+	li {
+		position: relative;
+		button {
+			padding: 0 14px;
+			width: 100%;
+			font-size: 12px;
+			line-height: 30px;
+			text-align: left;
+			transition: background-color 0.2s;
+			&.danger {
+				color: var(--danger-color);
+			}
+		}
+		menu {
+			position: absolute;
+			left: 100%;
+			top: 0;
+			width: 200px;
+			display: none;
+			flex-direction: column;
+			background-color: #333;
+			border-radius: 4px;
+			box-shadow: 0 0 3px 1px #666;
+			z-index: 9;
+		}
+		&:hover {
+			button:not(:disabled) {
+				background-color: #232323;
+			}
+			menu {
+				display: flex;
+			}
+		}
+	}
+	hr {
+		width: 100%;
+		border-color: #666;
 	}
 }
 </style>

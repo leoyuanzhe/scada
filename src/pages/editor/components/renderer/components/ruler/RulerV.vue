@@ -56,6 +56,5 @@ function drawRuler() {
 	width: 20px;
 	height: calc(100% - 20px);
 	background-color: #444;
-	z-index: 9;
 }
 </style>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useTargetComponent } from "@/hooks/useTargetComponent";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useMaterial } from "@/stores/useMaterial";
 import type { Component } from "@/types/Component";
 
@@ -8,6 +9,7 @@ interface Props {
 }
 const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
+const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
 const RenderComponent = () => materialStore.materials.find((v) => v.key == props.component.key)?.render(props.component);
 </script>
@@ -22,10 +24,11 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 			width: props.component.props.width + 'px',
 			height: props.component.props.height + 'px',
 		}"
+		@mousedown="dragger.componentMousedown($event, component)"
 	>
 		<Component :is="RenderComponent" />
 	</div>
-	<Component v-else :is="RenderComponent" />
+	<Component v-else :is="RenderComponent" @mousedown="dragger.componentMousedown($event, component)" />
 </template>
 
 <style lang="scss" scoped>
@@ -44,7 +47,7 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 		box-shadow: 0 0 1px 1px #ff0000cc;
 	}
 	&.target {
-		box-shadow: 0 0 3px 3px #ff0000;
+		box-shadow: 0 0 3px 1px #ff0000;
 	}
 }
 </style>

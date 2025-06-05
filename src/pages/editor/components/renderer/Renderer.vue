@@ -52,7 +52,7 @@ function computedCanvas() {
 			@dragover.prevent
 			@drop="dragger.canvasDrap($event)"
 		>
-			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" @mousedown="dragger.componentMousedown($event, v)" />
+			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" />
 		</div>
 		<GridLines />
 		<RulerH />

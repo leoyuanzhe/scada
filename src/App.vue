@@ -15,21 +15,23 @@ function init() {
 	clientStore.init();
 	materialStore.init();
 	assetStore.init();
-	const testComponent = Container();
+	const c1 = Container();
+	const c2 = Container();
+	c1.id = Date.now().toString() + "1";
+	c2.id = Date.now().toString() + "2";
 	const t1 = Text();
 	const t2 = Text();
-	testComponent.props.width = 200;
-	testComponent.props.height = 100;
-	t1.id = Date.now().toString() + "222";
-	t2.id = (Date.now() + 1).toString();
+	t1.id = Date.now().toString() + "3";
+	t2.id = Date.now().toString() + "4";
 	t2.props.left = 100;
 	t2.props.top = 50;
-	testComponent.components = [t1, t2];
+	c1.components = [t2];
+	c2.components = [t1, c1];
 	assetStore.assets.push({
 		id: "test",
 		title: "测试",
 		cover: "",
-		material: testComponent,
+		material: c2,
 	});
 	schemaStore.components.push({
 		id: Date.now().toString(),

@@ -35,6 +35,10 @@ export const useSchema = defineStore("schema", {
 		},
 	},
 	actions: {
+		// 找到组件
+		findComponent(componentId: string) {
+			return this.flatComponents.find((v) => v.id === componentId) || null;
+		},
 		// 找到组件的父元素
 		findParent(componentId: string) {
 			const findInComponents = (components: Component[], parent: Schema | Component): Schema | Component | null => {
@@ -63,17 +67,79 @@ export const useSchema = defineStore("schema", {
 				}
 			}
 		},
+		// 加入分组
+		joinGroup(componentId: string, parentId: string) {
+			const parent = this.findParent(componentId);
+			if (parent) {
+				const index = parent.components.findIndex((v) => v.id === componentId);
+				if (index !== -1) {
+					const newParent = this.findComponent(parentId);
+					if (newParent?.nestable) {
+						newParent.components.push(parent.components.splice(index, 1)[0]);
+					}
+				}
+			}
+		},
 		// 移出分组
 		moveOut(componentId: string) {
 			const parent = this.findParent(componentId);
 			if (parent) {
-				const index = parent.components.findIndex((item) => item.id === componentId);
+				const index = parent.components.findIndex((v) => v.id === componentId);
 				if (index !== -1) {
 					if (parent.components[index].moveable) {
-						parent.components[index].props.left = parent.props.left + parent.components[index].props.left;
-						parent.components[index].props.top = parent.props.top + parent.components[index].props.top;
-					}
-					this.components.push(...parent.components.splice(index, 1));
+						let left = (parent.props.left ?? 0) + parent.components[index].props.left;
+						let top = (parent.props.top ?? 0) + parent.components[index].props.top;
+						const fn = (componentId: string) => {
+							const parent = this.findParent(componentId);
+							if (parent) {
+								const index = parent.components.findIndex((v) => v.id === componentId);
+								if (index !== -1) {
+									if (!this.isSchema(parent) && parent.moveable) {
+										left += parent.props.left;
+										top += parent.props.top;
+									}
+								}
+							}
+						};
+						if (!this.isSchema(parent)) fn((parent as Component).id);
+						const component = parent.components.splice(index, 1)[0];
+						component.props.left = left;
+						component.props.top = top;
+						this.components.push(component);
+					} else this.components.push(parent.components.splice(index, 1)[0]);
+				}
+			}
+		},
+		// 展开子组件到根组件
+		flatChindrenToSchema(componentId: string) {
+			const component = this.findComponent(componentId);
+			if (component) {
+				const parent = this.findParent(componentId);
+				if (parent) {
+					let left = component.props.left ?? 0;
+					let top = component.props.top ?? 0;
+					const fn = (componentId: string) => {
+						const parent = this.findParent(componentId);
+						if (parent) {
+							const index = parent.components.findIndex((v) => v.id === componentId);
+							if (index !== -1) {
+								if (!this.isSchema(parent) && parent.moveable) {
+									left += parent.props.left;
+									top += parent.props.top;
+								}
+							}
+						}
+					};
+					fn(componentId);
+					this.components.push(
+						...component.components.splice(0).map((v) => {
+							if (v.moveable) {
+								v.props.left += left;
+								v.props.top += top;
+							}
+							return v;
+						})
+					);
 				}
 			}
 		},
