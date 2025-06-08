@@ -19,6 +19,8 @@ function init() {
 	const c2 = Container();
 	c1.id = Date.now().toString() + "1";
 	c2.id = Date.now().toString() + "2";
+	c1.title = "小盒子";
+	c2.title = "大盒子";
 	const t1 = Text();
 	const t2 = Text();
 	const t3 = Text();
@@ -29,6 +31,9 @@ function init() {
 	t2.props.top = 50;
 	t3.props.left = 200;
 	t3.props.top = 100;
+	c1.props.left = 100;
+	c1.props.top = 50;
+	c2.props.height = 150;
 	c1.components = [t2, t3];
 	c2.components = [t1, c1];
 	assetStore.assets.push({

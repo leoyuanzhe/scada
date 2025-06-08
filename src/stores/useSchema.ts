@@ -58,20 +58,24 @@ export const useSchema = defineStore("schema", {
 			return component?.key === "schema";
 		},
 		// 获取组件相对于根元素的偏移
-		getOffsetFromSchema(componentId: string) {
+		getOffsetFromSchema(componentId: string): { left: number; top: number } {
 			const component = this.findComponent(componentId);
 			let left = component?.props.left ?? 0;
 			let top = component?.props.top ?? 0;
-			const parent = this.findParent(componentId);
-			if (parent) {
-				const index = parent.components.findIndex((v) => v.id === componentId);
-				if (index !== -1) {
-					if (!this.isSchema(parent) && parent.moveable) {
-						left += parent.props.left;
-						top += parent.props.top;
+			const fn = (componentId: string) => {
+				const parent = this.findParent(componentId);
+				if (parent) {
+					const index = parent.components.findIndex((v) => v.id === componentId);
+					if (index !== -1) {
+						if (!this.isSchema(parent) && parent.moveable) {
+							left += parent.props.left;
+							top += parent.props.top;
+							fn(parent.id);
+						}
 					}
 				}
-			}
+			};
+			fn(componentId);
 			return { left, top };
 		},
 		// 删除组件
@@ -86,14 +90,46 @@ export const useSchema = defineStore("schema", {
 		},
 		// 加入分组
 		joinGroup(componentId: string, parentId: string) {
-			this.moveOut(componentId);
-			const parent = this.findParent(componentId);
-			if (parent) {
-				const index = parent.components.findIndex((v) => v.id === componentId);
-				if (index !== -1) {
+			if (componentId !== parentId) {
+				const parent = this.findParent(componentId);
+				const index = parent?.components.findIndex((item) => item.id === componentId);
+				if (parent && index !== -1) {
 					const newParent = this.findComponent(parentId);
-					if (newParent?.nestable) {
-						newParent.components.push(parent.components.splice(index, 1)[0]);
+					if (newParent?.nestable && newParent.moveable) {
+						const child = parent.components[index!];
+						const newParentParent = this.findParent(parentId);
+						if (newParentParent && !this.isSchema(newParentParent)) {
+							// 新父组件仍然有父组件
+							this.moveOut(child.id);
+							this.moveOut(newParent.id);
+							this.joinGroup(child.id, parentId);
+							this.joinGroup(newParent.id, newParentParent.id);
+						} else {
+							if (child.props.left <= newParent.props.left) {
+								newParent.components.forEach((component) => {
+									if (component.moveable) {
+										component.props.left += newParent.props.left - child.props.left;
+									}
+								});
+								newParent.props.left = child.props.left;
+								child.props.left = 0;
+							} else {
+								child.props.left = child.props.left - newParent.props.left;
+							}
+							if (child.props.top <= newParent.props.top) {
+								newParent.components.forEach((component) => {
+									if (component.moveable) {
+										component.props.top += newParent.props.top - child.props.top;
+									}
+								});
+								newParent.props.top = child.props.top;
+								child.props.top = 0;
+							} else {
+								child.props.top = child.props.top - newParent.props.top;
+							}
+							parent.components.splice(index!, 1);
+							newParent.components.push(child);
+						}
 					}
 				}
 			}
@@ -105,21 +141,7 @@ export const useSchema = defineStore("schema", {
 				const index = parent.components.findIndex((v) => v.id === componentId);
 				if (index !== -1) {
 					if (parent.components[index].moveable) {
-						let left = (parent.props.left ?? 0) + parent.components[index].props.left;
-						let top = (parent.props.top ?? 0) + parent.components[index].props.top;
-						const fn = (componentId: string) => {
-							const parent = this.findParent(componentId);
-							if (parent) {
-								const index = parent.components.findIndex((v) => v.id === componentId);
-								if (index !== -1) {
-									if (!this.isSchema(parent) && parent.moveable) {
-										left += parent.props.left;
-										top += parent.props.top;
-									}
-								}
-							}
-						};
-						if (!this.isSchema(parent)) fn((parent as Component).id);
+						const { left, top } = this.getOffsetFromSchema(componentId);
 						const component = parent.components.splice(index, 1)[0];
 						component.props.left = left;
 						component.props.top = top;
@@ -134,21 +156,7 @@ export const useSchema = defineStore("schema", {
 			if (component) {
 				const parent = this.findParent(componentId);
 				if (parent) {
-					let left = component.props.left ?? 0;
-					let top = component.props.top ?? 0;
-					const fn = (componentId: string) => {
-						const parent = this.findParent(componentId);
-						if (parent) {
-							const index = parent.components.findIndex((v) => v.id === componentId);
-							if (index !== -1) {
-								if (!this.isSchema(parent) && parent.moveable) {
-									left += parent.props.left;
-									top += parent.props.top;
-								}
-							}
-						}
-					};
-					fn(componentId);
+					const { left, top } = this.getOffsetFromSchema(componentId);
 					this.components.push(
 						...component.components.splice(0).map((v) => {
 							if (v.moveable) {

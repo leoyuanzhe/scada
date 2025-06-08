@@ -32,6 +32,18 @@ watch(
 				right = Math.max(right, component.props.left + component.props.width);
 				bottom = Math.max(bottom, component.props.top + component.props.height);
 			});
+			moveableComponents.forEach((component) => {
+				if (component.props.left === left) {
+					component.props.left = 0;
+				} else {
+					component.props.left = component.props.left - left;
+				}
+				if (component.props.top === top) {
+					component.props.top = 0;
+				} else {
+					component.props.top = component.props.top - top;
+				}
+			});
 			const width = right - left;
 			const height = bottom - top;
 			props.component.props.width = width;
