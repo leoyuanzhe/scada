@@ -13,7 +13,9 @@ const props = withDefaults(defineProps<Props>(), {});
 
 <template>
 	<details :class="{ 'component-details': true, active: props.component.active, target: props.component.id === targetComponent.componentId.value }" draggable="true">
-		<summary :class="{ empty: !props.component.components.length }" @mousedown.stop="dragger.componentMousedown($event, props.component)">{{ props.component.title }}</summary>
+		<summary :class="{ empty: !props.component.components.length }" contenteditable @mousedown.stop="dragger.componentMousedown($event, props.component)" @input="props.component.title = ($event.target as HTMLElement).innerText">
+			{{ props.component.title }}
+		</summary>
 		<slot></slot>
 	</details>
 </template>

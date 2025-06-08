@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import { computed } from "vue";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useSchema } from "@/stores/useSchema";
-import { computed } from "vue";
 
 const schemaStore = useSchema();
+const targetComponent = useTargetComponent();
 const dragger = useDragger();
-const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1 && schemaStore.targetComponent?.resizable);
+const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1 && targetComponent.component.value?.resizable);
 </script>
 
 <template>
