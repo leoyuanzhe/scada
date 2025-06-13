@@ -11,6 +11,9 @@ export const useSchema = defineStore("schema", {
 				height: 1080,
 				backgroundColor: "#000000",
 			},
+			state: {
+				a: 1,
+			},
 			components: [] as Component[],
 		} as Schema;
 	},

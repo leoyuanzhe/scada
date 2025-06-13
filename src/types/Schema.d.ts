@@ -7,5 +7,6 @@ export interface Schema {
 		height: number;
 		backgroundColor: string;
 	};
+	state: Record<string, any>;
 	components: Component[];
 }

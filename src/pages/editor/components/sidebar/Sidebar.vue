@@ -2,8 +2,9 @@
 import { ref } from "vue";
 import Asset from "./components/asset/Asset.vue";
 import Layer from "./components/layer/Layer.vue";
+import State from "./components/state/State.vue";
 
-const current = ref<"asset" | "layer">("asset");
+const current = ref<"asset" | "layer" | "state">("asset");
 </script>
 
 <template>
@@ -11,10 +12,12 @@ const current = ref<"asset" | "layer">("asset");
 		<menu>
 			<button :class="{ active: current === 'asset' }" @click="current = 'asset'">资产</button>
 			<button :class="{ active: current === 'layer' }" @click="current = 'layer'">图层</button>
+			<button :class="{ active: current === 'state' }" @click="current = 'state'">状态</button>
 		</menu>
 		<div class="container">
 			<Asset v-if="current === 'asset'" />
 			<Layer v-if="current === 'layer'" />
+			<State v-if="current === 'state'" />
 		</div>
 	</div>
 </template>
