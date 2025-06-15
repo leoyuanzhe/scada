@@ -11,6 +11,16 @@ const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const props = computed<Props>(() => targetComponent.component.value?.props || {});
+const ffff = () => {
+	console.log(schemaStore.components);
+	const str = "state.a + 'hhh'";
+	const fn = new Function("state", "return " + str) as (state: ReturnType<typeof useSchema>["state"]) => number;
+	console.log(fn(schemaStore.state));
+	schemaStore.components[0].props.text = computed(() => fn(schemaStore.state));
+	console.log(schemaStore.components[0].props.text.toString());
+
+	console.log(schemaStore.$state, JSON.stringify(schemaStore.$state));
+};
 </script>
 
 <template>
@@ -37,7 +47,7 @@ const props = computed<Props>(() => targetComponent.component.value?.props || {}
 		</fieldset>
 	</form>
 	<form v-if="targetComponent.component.value" @submit.prevent>
-		<h1>{{ targetComponent.component.value.title }}</h1>
+		<h1 @click="ffff()">{{ targetComponent.component.value.title }}</h1>
 		<fieldset>
 			<legend>属性</legend>
 			<template v-for="(v, k) in props" :key="k">
