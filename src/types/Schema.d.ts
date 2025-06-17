@@ -2,9 +2,11 @@ import type { Component } from "./Component";
 
 export interface Schema {
 	key: "schema";
-	props: {
+	layout: {
 		width: number;
 		height: number;
+	};
+	props: {
 		backgroundColor: string;
 	};
 	state: Record<string, any>;

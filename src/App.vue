@@ -27,13 +27,13 @@ function init() {
 	t1.id = Date.now().toString() + "3";
 	t2.id = Date.now().toString() + "4";
 	t3.id = Date.now().toString() + "5";
-	t2.props.left = 100;
-	t2.props.top = 50;
-	t3.props.left = 200;
-	t3.props.top = 100;
-	c1.props.left = 100;
-	c1.props.top = 50;
-	c2.props.height = 150;
+	t2.layout!.left = 100;
+	t2.layout!.top = 50;
+	t3.layout!.left = 200;
+	t3.layout!.top = 100;
+	c1.layout!.left = 100;
+	c1.layout!.top = 50;
+	c2.layout!.height = 150;
 	c1.components = [t2, t3];
 	c2.components = [t1, c1];
 	assetStore.assets.push({
@@ -43,24 +43,27 @@ function init() {
 		material: c2,
 	});
 	schemaStore.components.push({
+		version: "0.0.1",
 		id: Date.now().toString(),
 		key: "text",
 		title: "文本",
 		active: false,
-		moveable: true,
-		resizable: true,
 		nestable: false,
 		locked: false,
 		hidden: false,
-		snap: { v: [], h: [] },
-		props: {
+		layout: {
+			resizable: true,
+			snap: { v: [], h: [] },
 			left: 15,
 			top: 15,
 			width: 100,
 			height: 50,
+		},
+		props: {
 			text: "这是一段文本",
 			color: "#ffffff",
 		},
+		expressions: {},
 		components: [],
 	});
 }

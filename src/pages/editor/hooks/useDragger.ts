@@ -101,20 +101,20 @@ const rendererMousedown = (e: MouseEvent) => {
 			// 正框选（从左往右框选）
 			if (startX < e.clientX) {
 				schemaStore.moveableComponents.forEach((component) => {
-					const left = getActualLeft(component.props.left);
-					const top = getActualTop(component.props.top);
-					const width = getScaledOffset(component.props.width);
-					const height = getScaledOffset(component.props.height);
+					const left = getActualLeft(component.layout.left);
+					const top = getActualTop(component.layout.top);
+					const width = getScaledOffset(component.layout.width);
+					const height = getScaledOffset(component.layout.height);
 					if (left >= selector.left && left + width <= selector.left + selector.width && top >= selector.top && top + height <= selector.top + selector.height) {
 						component.active = true;
 					}
 				});
 			} else {
 				schemaStore.moveableComponents.forEach((component) => {
-					const left = getActualLeft(component.props.left);
-					const top = getActualTop(component.props.top);
-					const width = getScaledOffset(component.props.width);
-					const height = getScaledOffset(component.props.height);
+					const left = getActualLeft(component.layout.left);
+					const top = getActualTop(component.layout.top);
+					const width = getScaledOffset(component.layout.width);
+					const height = getScaledOffset(component.layout.height);
 					if (left < selector.left + selector.width && left + width > selector.left && top < selector.top + selector.height && top + height > selector.top) {
 						component.active = true;
 					}
@@ -133,18 +133,18 @@ const rendererMousedown = (e: MouseEvent) => {
 		const snapLines = {
 			v: [
 				getActualLeft(0),
-				getActualLeft(schemaStore.props.width / 2),
-				getActualLeft(schemaStore.props.width),
-				...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualLeft(v.props.left), getActualLeft(v.props.left + v.props.width / 2), getActualLeft(v.props.left + v.props.width)]),
+				getActualLeft(schemaStore.layout.width / 2),
+				getActualLeft(schemaStore.layout.width),
+				...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualLeft(v.layout.left), getActualLeft(v.layout.left + v.layout.width / 2), getActualLeft(v.layout.left + v.layout.width)]),
 			],
 			h: [
 				getActualTop(0),
-				getActualTop(schemaStore.props.height / 2),
-				getActualTop(schemaStore.props.height),
-				...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualTop(v.props.top), getActualTop(v.props.top + v.props.height / 2), getActualTop(v.props.top + v.props.height)]),
+				getActualTop(schemaStore.layout.height / 2),
+				getActualTop(schemaStore.layout.height),
+				...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualTop(v.layout.top), getActualTop(v.layout.top + v.layout.height / 2), getActualTop(v.layout.top + v.layout.height)]),
 			],
 		}; // 吸附线
-		const startActiveComponentsPosition = schemaStore.activeMoveableComponents.map((v) => ({ left: getActualLeft(v.props.left), top: getActualTop(v.props.top) })); // 激活组件拖拽开始时的坐标
+		const startActiveComponentsPosition = schemaStore.activeMoveableComponents.map((v) => ({ left: getActualLeft(v.layout.left), top: getActualTop(v.layout.top) })); // 激活组件拖拽开始时的坐标
 		document.body.addEventListener("mousemove", mousemove);
 		document.body.addEventListener("mouseup", mouseup);
 		function mousemove(e: MouseEvent) {
@@ -156,21 +156,21 @@ const rendererMousedown = (e: MouseEvent) => {
 			if (leftV !== void 0) {
 				const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 				});
 				alignLine.v = left;
 			} else if (middleV !== void 0) {
 				const middle = getLogicalLeft(middleV);
 				const left = middle - getUnscaledOffset(selector.width / 2);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 				});
 				alignLine.v = middle;
 			} else if (rightV !== void 0) {
 				const right = getLogicalLeft(rightV);
 				const left = right - getUnscaledOffset(selector.width);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 				});
 				alignLine.v = right;
 			} else {
@@ -178,7 +178,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				const snappedLogicalLeft = getNearestGridLinePosition(logicalDragLeft); // 获取最接近的网格线位置（逻辑坐标）
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					const originalLeft = getLogicalLeft(startActiveComponentsPosition[index].left);
-					component.props.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
+					component.layout.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
 				});
 				alignLine.v = null;
 			}
@@ -190,21 +190,21 @@ const rendererMousedown = (e: MouseEvent) => {
 			if (topH !== void 0) {
 				const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 				});
 				alignLine.h = top;
 			} else if (middleH !== void 0) {
 				const middle = getLogicalTop(middleH);
 				const top = middle - getUnscaledOffset(selector.height / 2);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 				});
 				alignLine.h = middle;
 			} else if (bottomH !== void 0) {
 				const right = getLogicalTop(bottomH);
 				const top = right - getUnscaledOffset(selector.height);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
-					component.props.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 				});
 				alignLine.h = right;
 			} else {
@@ -212,7 +212,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				const snappedLogicalTop = getNearestGridLinePosition(logicalDragTop);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
-					component.props.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
+					component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
 				});
 				alignLine.h = null;
 			}
@@ -234,22 +234,22 @@ const canvasDrap = (e: DragEvent) => {
 	if (asset) {
 		e.dataTransfer?.setData("assetId", asset.id);
 		const component: Component = {
+			version: asset.material.version,
 			id: Date.now().toString(),
 			key: asset.material.key,
 			title: asset.material.title,
 			active: true,
-			moveable: asset.material.moveable,
-			resizable: asset.material.resizable,
 			nestable: asset.material.nestable,
 			locked: asset.material.locked,
 			hidden: asset.material.hidden,
-			snap: asset.material.snap,
+			layout: deepClone(asset.material.layout),
 			props: asset.material.props,
+			expressions: asset.material.expressions,
 			components: asset.material.components,
 		};
-		if (component.moveable) {
-			component.props.left = e.offsetX - (component.props.width ?? 0) / 2;
-			component.props.top = e.offsetY - (component.props.height ?? 0) / 2;
+		if (component.layout) {
+			component.layout.left = e.offsetX - (component.layout.width ?? 0) / 2;
+			component.layout.top = e.offsetY - (component.layout.height ?? 0) / 2;
 		}
 		schemaStore.components.push(component);
 		computedSelector();
@@ -267,7 +267,7 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 };
 const selectorMousedown = (direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const targetComponent = useTargetComponent();
-	if (targetComponent.component.value?.moveable) {
+	if (targetComponent.component.value?.layout) {
 		document.body.addEventListener("mousemove", mousemove);
 		document.body.addEventListener("mouseup", mouseup);
 		function mousemove(e: MouseEvent) {
@@ -276,54 +276,54 @@ const selectorMousedown = (direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l"
 				const movementY = getUnscaledOffset(e.movementY);
 				switch (direction) {
 					case "t":
-						if (targetComponent.component.value.props.height + -movementY > 0) {
-							targetComponent.component.value.props.top += movementY;
-							targetComponent.component.value.props.height += -movementY;
+						if (targetComponent.component.value.layout!.height + -movementY > 0) {
+							targetComponent.component.value.layout!.top += movementY;
+							targetComponent.component.value.layout!.height += -movementY;
 						}
 						break;
 
 					case "tr":
-						if (targetComponent.component.value.props.height + -movementY > 0 && targetComponent.component.value.props.width + movementX > 0) {
-							targetComponent.component.value.props.top += movementY;
-							targetComponent.component.value.props.width += movementX;
-							targetComponent.component.value.props.height += -movementY;
+						if (targetComponent.component.value.layout!.height + -movementY > 0 && targetComponent.component.value.layout!.width + movementX > 0) {
+							targetComponent.component.value.layout!.top += movementY;
+							targetComponent.component.value.layout!.width += movementX;
+							targetComponent.component.value.layout!.height += -movementY;
 						}
 						break;
 					case "r":
-						if (targetComponent.component.value.props.width + movementX > 0) {
-							targetComponent.component.value.props.width += movementX;
+						if (targetComponent.component.value.layout!.width + movementX > 0) {
+							targetComponent.component.value.layout!.width += movementX;
 						}
 						break;
 					case "rb":
-						if (targetComponent.component.value.props.height + movementY > 0 && targetComponent.component.value.props.width + movementX > 0) {
-							targetComponent.component.value.props.width += movementX;
-							targetComponent.component.value.props.height += movementY;
+						if (targetComponent.component.value.layout!.height + movementY > 0 && targetComponent.component.value.layout!.width + movementX > 0) {
+							targetComponent.component.value.layout!.width += movementX;
+							targetComponent.component.value.layout!.height += movementY;
 						}
 						break;
 					case "b":
-						if (targetComponent.component.value.props.height + movementY > 0) {
-							targetComponent.component.value.props.height += movementY;
+						if (targetComponent.component.value.layout!.height + movementY > 0) {
+							targetComponent.component.value.layout!.height += movementY;
 						}
 						break;
 					case "lb":
-						if (targetComponent.component.value.props.height + movementY > 0 && targetComponent.component.value.props.width + -movementX > 0) {
-							targetComponent.component.value.props.left += movementX;
-							targetComponent.component.value.props.width += -movementX;
-							targetComponent.component.value.props.height += movementY;
+						if (targetComponent.component.value.layout!.height + movementY > 0 && targetComponent.component.value.layout!.width + -movementX > 0) {
+							targetComponent.component.value.layout!.left += movementX;
+							targetComponent.component.value.layout!.width += -movementX;
+							targetComponent.component.value.layout!.height += movementY;
 						}
 						break;
 					case "l":
-						if (targetComponent.component.value.props.width + -movementX > 0) {
-							targetComponent.component.value.props.left += movementX;
-							targetComponent.component.value.props.width += -movementX;
+						if (targetComponent.component.value.layout!.width + -movementX > 0) {
+							targetComponent.component.value.layout!.left += movementX;
+							targetComponent.component.value.layout!.width += -movementX;
 						}
 						break;
 					case "lt":
-						if (targetComponent.component.value.props.height + -movementY > 0 && targetComponent.component.value.props.width + -movementX > 0) {
-							targetComponent.component.value.props.left += movementX;
-							targetComponent.component.value.props.top += movementY;
-							targetComponent.component.value.props.width += -movementX;
-							targetComponent.component.value.props.height += -movementY;
+						if (targetComponent.component.value.layout!.height + -movementY > 0 && targetComponent.component.value.layout!.width + -movementX > 0) {
+							targetComponent.component.value.layout!.left += movementX;
+							targetComponent.component.value.layout!.top += movementY;
+							targetComponent.component.value.layout!.width += -movementX;
+							targetComponent.component.value.layout!.height += -movementY;
 						}
 						break;
 				}
@@ -345,10 +345,10 @@ const computedSelector = () => {
 		let right = -Infinity;
 		let bottom = -Infinity;
 		schemaStore.activeMoveableComponents.forEach((component) => {
-			left = Math.min(left, getActualLeft(component.props.left));
-			top = Math.min(top, getActualTop(component.props.top));
-			right = Math.max(right, getActualLeft(component.props.left + component.props.width));
-			bottom = Math.max(bottom, getActualTop(component.props.top + component.props.height));
+			left = Math.min(left, getActualLeft(component.layout.left));
+			top = Math.min(top, getActualTop(component.layout.top));
+			right = Math.max(right, getActualLeft(component.layout.left + component.layout.width));
+			bottom = Math.max(bottom, getActualTop(component.layout.top + component.layout.height));
 		});
 		const width = right - left;
 		const height = bottom - top;

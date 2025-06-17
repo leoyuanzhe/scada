@@ -1,14 +1,16 @@
 import { defineStore } from "pinia";
-import type { Component } from "@/types/Component";
+import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 
 export const useSchema = defineStore("schema", {
 	state() {
 		return {
 			key: "schema",
-			props: {
+			layout: {
 				width: 1920,
 				height: 1080,
+			},
+			props: {
 				backgroundColor: "#000000",
 			},
 			state: {
@@ -18,14 +20,14 @@ export const useSchema = defineStore("schema", {
 		} as Schema;
 	},
 	getters: {
-		moveableComponents(): Component[] {
-			return this.components.filter((v) => v.moveable);
+		moveableComponents(): ComponentWithLayout[] {
+			return this.components.filter((v) => v.layout) as ComponentWithLayout[];
 		},
-		activeMoveableComponents(): Component[] {
-			return this.components.filter((v) => v.active && v.moveable);
+		activeMoveableComponents(): ComponentWithLayout[] {
+			return this.components.filter((v) => v.active && v.layout) as ComponentWithLayout[];
 		},
-		unactiveMoveableComponents(): Component[] {
-			return this.components.filter((v) => !v.active && v.moveable);
+		unactiveMoveableComponents(): ComponentWithLayout[] {
+			return this.components.filter((v) => !v.active && v.layout) as ComponentWithLayout[];
 		},
 		flatComponents(): Component[] {
 			return this.components.flatMap((v) => flat(v));
@@ -63,16 +65,16 @@ export const useSchema = defineStore("schema", {
 		// 获取组件相对于根元素的偏移
 		getOffsetFromSchema(componentId: string): { left: number; top: number } {
 			const component = this.findComponent(componentId);
-			let left = component?.props.left ?? 0;
-			let top = component?.props.top ?? 0;
+			let left = component?.layout?.left ?? 0;
+			let top = component?.layout?.top ?? 0;
 			const fn = (componentId: string) => {
 				const parent = this.findParent(componentId);
 				if (parent) {
 					const index = parent.components.findIndex((v) => v.id === componentId);
 					if (index !== -1) {
-						if (!this.isSchema(parent) && parent.moveable) {
-							left += parent.props.left;
-							top += parent.props.top;
+						if (!this.isSchema(parent) && parent.layout) {
+							left += parent.layout.left;
+							top += parent.layout.top;
 							fn(parent.id);
 						}
 					}
@@ -98,7 +100,7 @@ export const useSchema = defineStore("schema", {
 				const index = parent?.components.findIndex((item) => item.id === componentId);
 				if (parent && index !== -1) {
 					const newParent = this.findComponent(parentId);
-					if (newParent?.nestable && newParent.moveable) {
+					if (newParent?.nestable && newParent.layout) {
 						const child = parent.components[index!];
 						const newParentParent = this.findParent(parentId);
 						if (newParentParent && !this.isSchema(newParentParent)) {
@@ -107,28 +109,28 @@ export const useSchema = defineStore("schema", {
 							this.moveOut(newParent.id);
 							this.joinGroup(child.id, parentId);
 							this.joinGroup(newParent.id, newParentParent.id);
-						} else {
-							if (child.props.left <= newParent.props.left) {
+						} else if (child.layout && newParent.layout) {
+							if (child.layout.left <= newParent.layout.left) {
 								newParent.components.forEach((component) => {
-									if (component.moveable) {
-										component.props.left += newParent.props.left - child.props.left;
+									if (component.layout) {
+										component.layout.left += newParent.layout!.left - child.layout!.left;
 									}
 								});
-								newParent.props.left = child.props.left;
-								child.props.left = 0;
+								newParent.layout.left = child.layout.left;
+								child.layout.left = 0;
 							} else {
-								child.props.left = child.props.left - newParent.props.left;
+								child.layout.left = child.layout.left - newParent.layout.left;
 							}
-							if (child.props.top <= newParent.props.top) {
+							if (child.layout.top <= newParent.layout.top) {
 								newParent.components.forEach((component) => {
-									if (component.moveable) {
-										component.props.top += newParent.props.top - child.props.top;
+									if (component.layout) {
+										component.layout.top += newParent.layout!.top - child.layout!.top;
 									}
 								});
-								newParent.props.top = child.props.top;
-								child.props.top = 0;
+								newParent.layout.top = child.layout.top;
+								child.layout.top = 0;
 							} else {
-								child.props.top = child.props.top - newParent.props.top;
+								child.layout.top = child.layout.top - newParent.layout.top;
 							}
 							parent.components.splice(index!, 1);
 							newParent.components.push(child);
@@ -143,11 +145,13 @@ export const useSchema = defineStore("schema", {
 			if (parent) {
 				const index = parent.components.findIndex((v) => v.id === componentId);
 				if (index !== -1) {
-					if (parent.components[index].moveable) {
+					if (parent.components[index].layout) {
 						const { left, top } = this.getOffsetFromSchema(componentId);
 						const component = parent.components.splice(index, 1)[0];
-						component.props.left = left;
-						component.props.top = top;
+						if (component.layout) {
+							component.layout.left = left;
+							component.layout.top = top;
+						}
 						this.components.push(component);
 					} else this.components.push(parent.components.splice(index, 1)[0]);
 				}
@@ -162,9 +166,9 @@ export const useSchema = defineStore("schema", {
 					const { left, top } = this.getOffsetFromSchema(componentId);
 					this.components.push(
 						...component.components.splice(0).map((v) => {
-							if (v.moveable) {
-								v.props.left += left;
-								v.props.top += top;
+							if (v.layout) {
+								v.layout.left += left;
+								v.layout.top += top;
 							}
 							return v;
 						})
