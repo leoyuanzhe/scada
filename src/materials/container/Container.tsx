@@ -1,24 +1,26 @@
-import type { Material, MoveableProps } from "@/types/Material";
+import type { MaterialWithLayout } from "@/types/Material";
 import ContainerComponent from "./Container.vue";
 
-export interface ContainerProps extends MoveableProps {}
-export const Container = (): Material<ContainerProps> => ({
+export interface ContainerProps {}
+export const Container = (): MaterialWithLayout<ContainerProps> => ({
+	version: "0.0.1",
 	id: "container",
 	key: "container",
 	title: "容器",
 	active: false,
-	moveable: true,
-	resizable: false,
 	nestable: true,
 	locked: false,
 	hidden: false,
-	snap: { v: [], h: [] },
-	props: {
+	layout: {
+		resizable: false,
+		snap: { v: [], h: [] },
 		left: 0,
 		top: 0,
 		width: 300,
 		height: 300,
 	},
+	props: {},
+	expressions: {},
 	components: [],
 	render: (component) => {
 		return <ContainerComponent component={component} />;

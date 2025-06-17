@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Component } from "@/types/Component";
+import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps } from "./Text";
 
 interface Props {
-	component: Component<TextProps>;
+	component: ComponentWithLayout<TextProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
 </script>
