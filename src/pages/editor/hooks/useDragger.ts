@@ -153,20 +153,20 @@ const rendererMousedown = (e: MouseEvent) => {
 			const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < clientStore.snap.distance); // 组件的左边定位到的垂直吸附线
 			const middleV = snapLines.v.find((v) => Math.abs(v - dragLeft - selector.width / 2) < clientStore.snap.distance);
 			const rightV = snapLines.v.find((v) => Math.abs(v - dragLeft - selector.width) < clientStore.snap.distance);
-			if (leftV !== void 0) {
+			if (leftV !== undefined) {
 				const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 				});
 				alignLine.v = left;
-			} else if (middleV !== void 0) {
+			} else if (middleV !== undefined) {
 				const middle = getLogicalLeft(middleV);
 				const left = middle - getUnscaledOffset(selector.width / 2);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 				});
 				alignLine.v = middle;
-			} else if (rightV !== void 0) {
+			} else if (rightV !== undefined) {
 				const right = getLogicalLeft(rightV);
 				const left = right - getUnscaledOffset(selector.width);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
@@ -187,20 +187,20 @@ const rendererMousedown = (e: MouseEvent) => {
 			const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < clientStore.snap.distance); // 组件的左边定位到的垂直吸附线
 			const middleH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height / 2) < clientStore.snap.distance);
 			const bottomH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height) < clientStore.snap.distance);
-			if (topH !== void 0) {
+			if (topH !== undefined) {
 				const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 				});
 				alignLine.h = top;
-			} else if (middleH !== void 0) {
+			} else if (middleH !== undefined) {
 				const middle = getLogicalTop(middleH);
 				const top = middle - getUnscaledOffset(selector.height / 2);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
 					component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 				});
 				alignLine.h = middle;
-			} else if (bottomH !== void 0) {
+			} else if (bottomH !== undefined) {
 				const right = getLogicalTop(bottomH);
 				const top = right - getUnscaledOffset(selector.height);
 				schemaStore.activeMoveableComponents.forEach((component, index) => {
@@ -336,7 +336,7 @@ const selectorMousedown = (direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l"
 		}
 	}
 };
-
+// 计算选择器坐标、宽高
 const computedSelector = () => {
 	const schemaStore = useSchema();
 	if (schemaStore.activeMoveableComponents.length) {

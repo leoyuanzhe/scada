@@ -1,0 +1,33 @@
+.form-item {
+	display: flex;
+	column-gap: 10px;
+	label {
+		flex-shrink: 0;
+		min-width: 80px;
+		font-size: 14px;
+		line-height: 30px;
+	}
+	input[type="text"],
+	input[type="number"],
+	input[type="select"],
+	input[type="color"] {
+		flex: 1;
+		padding: 0 6px;
+		background-color: #111;
+		line-height: 30px;
+		border-radius: 4px;
+		transition: box-shadow 0.2s;
+		&:focus-within {
+			box-shadow: 0 0 3px 1px var(--primary-color);
+		}
+	}
+	button {
+		flex-shrink: 0;
+		padding: 0 10px;
+		font-size: 14px;
+		line-height: 30px;
+		.icon {
+			color: #ccc;
+		}
+	}
+}
