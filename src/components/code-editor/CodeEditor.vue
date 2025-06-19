@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, useTemplateRef, watch } from "vue";
-import MyDialog from "@/components/my-dialog.vue/MyDialog.vue";
+import Button from "@/components/button/Button.vue";
+import Dialog from "@/components/dialog/Dialog.vue";
 
 interface Props {
 	value: string;
@@ -29,15 +30,35 @@ defineExpose({
 </script>
 
 <template>
-	<MyDialog ref="oDialog" @close="onClose($event)">
-		<form @submit.prevent>
+	<Dialog ref="oDialog" @close="onClose($event)">
+		<form class="code-editor" @submit.prevent>
 			<textarea v-model="value"></textarea>
 			<aside>
-				<button @click="close()">清除</button>
-				<button @click="close(value)">完成</button>
+				<Button @click="close()">清除并关闭</Button>
+				<Button variant="primary" @click="close(value)">完成</Button>
 			</aside>
 		</form>
-	</MyDialog>
+	</Dialog>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.code-editor {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	background-color: #232323;
+	row-gap: 20px;
+	textarea {
+		padding: 10px;
+		width: 400px;
+		height: 300px;
+		resize: none;
+		background-color: #000;
+		border-radius: 10px;
+	}
+	aside {
+		display: flex;
+		column-gap: 10px;
+	}
+}
+</style>

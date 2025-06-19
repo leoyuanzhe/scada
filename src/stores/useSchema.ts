@@ -20,21 +20,26 @@ export const useSchema = defineStore("schema", {
 		} as Schema;
 	},
 	getters: {
+		// 有布局属性的在根节点下的组件
 		moveableComponents(): ComponentWithLayout[] {
 			return this.components.filter((v) => v.layout) as ComponentWithLayout[];
 		},
+		// 激活的有布局属性的组件
 		activeMoveableComponents(): ComponentWithLayout[] {
 			return this.components.filter((v) => v.active && v.layout) as ComponentWithLayout[];
 		},
+		// 未激活的有布局属性的组件
 		unactiveMoveableComponents(): ComponentWithLayout[] {
 			return this.components.filter((v) => !v.active && v.layout) as ComponentWithLayout[];
 		},
+		// 所有组件
 		flatComponents(): Component[] {
 			return this.components.flatMap((v) => flat(v));
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
 		},
+		// 激活的所有组件
 		activeFlatComponents(): Component[] {
 			return this.flatComponents.filter((v) => v.active);
 		},

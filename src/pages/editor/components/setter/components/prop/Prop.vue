@@ -1,21 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import TextConfig from "./material-configs/text-config/TextConfig.vue";
 import type { ComponentWithLayout } from "@/types/Component";
+import TextConfig from "./material-configs/text-config/TextConfig.vue";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
-const ffff = () => {
-	const str = "state.a + 'hhh'";
-	const fn = new Function("state", "return " + str) as (state: ReturnType<typeof useSchema>["state"]) => number;
-	schemaStore.components[0].props.text = computed(() => fn(schemaStore.state));
-};
 </script>
 
 <template>
@@ -42,7 +36,7 @@ const ffff = () => {
 		</fieldset>
 	</form>
 	<form v-if="targetComponent.component.value" @submit.prevent>
-		<h1 @click="ffff()">{{ targetComponent.component.value.title }}</h1>
+		<h1>{{ targetComponent.component.value.title }}</h1>
 		<fieldset>
 			<legend>布局</legend>
 			<template v-if="targetComponent.component.value.layout">

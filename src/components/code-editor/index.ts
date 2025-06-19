@@ -6,6 +6,7 @@ export default (value?: string): Promise<string | undefined> => {
 		const vNode = h(CodeEditor, {
 			value: value || "",
 			onClose: (e) => {
+				render(null, document.body);
 				resolve(e);
 			},
 		});
