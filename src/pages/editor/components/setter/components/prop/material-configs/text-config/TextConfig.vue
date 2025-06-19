@@ -24,6 +24,9 @@ const openCodeEditor = async (key: keyof TextProps) => {
 			<article class="form-item">
 				<label for="setter-color">颜色</label>
 				<input id="setter-color" type="color" :value="props.component.props.color" @input="props.component.props.color = ($event.target as HTMLInputElement).value" />
+				<button @click="openCodeEditor('color')">
+					<svg :class="{ icon: true, active: props.component.expressions.color !== undefined }"><use href="#code-fork" /></svg>
+				</button>
 			</article>
 		</fieldset>
 	</details>

@@ -1,3 +1,6 @@
+export interface Action {
+	handler: string;
+}
 export interface Component<Props = any> {
 	version: string;
 	id: string;
@@ -16,6 +19,7 @@ export interface Component<Props = any> {
 		height: number;
 	};
 	props: Props;
+	emits: Record<string, Action[]>;
 	expressions: Partial<Record<keyof Props, string>>;
 	components: Component[];
 }

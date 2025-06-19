@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef, watch } from "vue";
+import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
@@ -17,15 +17,9 @@ const dragger = useDragger();
 const oRenderer = useTemplateRef("oRenderer");
 
 onMounted(() => {
-	watch([() => schemaStore.layout.width, () => schemaStore.layout.height], () => computedCanvas(), { immediate: true });
+	clientStore.oRenderer = oRenderer.value;
+	// watch([() => schemaStore.layout.width, () => schemaStore.layout.height], () => clientStore.computedCanvasLayout(), { immediate: true });
 });
-function computedCanvas() {
-	if (oRenderer.value) {
-		clientStore.canvas.left = 30;
-		clientStore.canvas.top = 30;
-		clientStore.canvas.scale = Math.max(Math.min((oRenderer.value.offsetWidth - 40) / schemaStore.layout.width, 5), 0.1);
-	}
-}
 </script>
 
 <template>

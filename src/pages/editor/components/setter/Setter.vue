@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import Prop from "./components/prop/Prop.vue";
+import Emit from "./components/emit/Emit.vue";
 
 const current = ref<"prop" | "emit">("prop");
 </script>
@@ -12,7 +13,8 @@ const current = ref<"prop" | "emit">("prop");
 			<button :class="{ active: current === 'emit' }" @click="current = 'emit'">事件</button>
 		</menu>
 		<div class="container">
-			<Prop />
+			<Prop v-if="current === 'prop'" />
+			<Emit v-if="current === 'emit'" />
 		</div>
 	</div>
 </template>

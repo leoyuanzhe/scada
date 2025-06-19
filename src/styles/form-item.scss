@@ -28,6 +28,9 @@
 		line-height: 30px;
 		.icon {
 			color: #ccc;
+			&.active {
+				color: var(--primary-color);
+			}
 		}
 	}
 }

@@ -8,41 +8,34 @@ interface Emits {
 withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
 let returnValue: string | undefined = "";
-const oMyDialog = useTemplateRef("oMyDialog");
+const oDialog = useTemplateRef("oDialog");
 onMounted(() => {
-	oMyDialog.value!.onclose = () => {
+	oDialog.value!.onclose = () => {
 		emits("close", returnValue);
 	};
 });
 defineExpose({
-	showModal: () => oMyDialog.value?.showModal(),
+	showModal: () => oDialog.value?.showModal(),
 	close: (e?: string) => {
 		returnValue = e;
-		oMyDialog.value?.close(e);
+		oDialog.value?.close(e);
 	},
 });
 </script>
 
 <template>
-	<Teleport to="body">
-		<dialog ref="oMyDialog" class="my-dialog">
-			<slot></slot>
-		</dialog>
-	</Teleport>
+	<dialog ref="oDialog" class="yz-dialog">
+		<slot></slot>
+	</dialog>
 </template>
 
 <style lang="scss" scoped>
-.my-dialog {
-	// position: fixed;
-	// top: 0;
-	// left: 0;
-	// margin: 0;
-	// padding: 0;
-	// max-width: none;
-	// max-height: none;
-	// width: 100vw;
-	// height: 100vh;
+.yz-dialog {
+	padding: 0;
 	border: none;
-	// overflow-y: auto;
+	&::backdrop {
+		background-color: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(5px);
+	}
 }
 </style>
