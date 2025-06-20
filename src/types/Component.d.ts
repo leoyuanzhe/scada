@@ -19,8 +19,10 @@ export interface Component<Props = any> {
 		height: number;
 	};
 	props: Props;
+	state: Record<string, any>;
 	emits: Record<string, Action[]>;
-	expressions: Partial<Record<keyof Props, string>>;
+	propsExpression: Partial<Record<keyof Props, string>>;
+	stateExpression: Partial<Record<keyof Component["state"], string>>;
 	components: Component[];
 }
 export interface ComponentWithLayout<Props = any> extends Omit<Component<Props>, "layout"> {

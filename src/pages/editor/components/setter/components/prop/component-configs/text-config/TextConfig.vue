@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import type { TextProps } from "@/materials/text/Text";
 import type { ComponentWithLayout } from "@/types/Component";
-import CodeEditor from "@/components/code-editor";
+import { openCodeEditor } from "@/helpers/component";
 
 const props = withDefaults(defineProps<{ component: ComponentWithLayout<TextProps> }>(), {});
-const openCodeEditor = async (key: keyof TextProps) => {
-	const value = await CodeEditor(props.component.expressions[key]);
-	value !== undefined ? (props.component.expressions[key] = value) : delete props.component.expressions[key];
-};
 </script>
 
 <template>
@@ -17,15 +13,15 @@ const openCodeEditor = async (key: keyof TextProps) => {
 			<article class="form-item">
 				<label for="setter-text">文本</label>
 				<input id="setter-text" type="text" :value="props.component.props.text" @input="props.component.props.text = ($event.target as HTMLInputElement).value" />
-				<button @click="openCodeEditor('text')">
-					<svg :class="{ icon: true, active: props.component.expressions.text !== undefined }"><use href="#code-fork" /></svg>
+				<button @click="openCodeEditor(props.component, 'text')">
+					<svg :class="{ icon: true, active: props.component.propsExpression.text !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>
 			<article class="form-item">
 				<label for="setter-color">颜色</label>
 				<input id="setter-color" type="color" :value="props.component.props.color" @input="props.component.props.color = ($event.target as HTMLInputElement).value" />
 				<button @click="openCodeEditor('color')">
-					<svg :class="{ icon: true, active: props.component.expressions.color !== undefined }"><use href="#code-fork" /></svg>
+					<svg :class="{ icon: true, active: props.component.propsExpression.color !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>
 		</fieldset>

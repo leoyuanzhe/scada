@@ -16,6 +16,8 @@ export const useSchema = defineStore("schema", {
 			state: {
 				a: 1,
 			},
+			propsExpression: {},
+			stateExpression: {},
 			components: [] as Component[],
 		} as Schema;
 	},
