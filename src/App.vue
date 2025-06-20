@@ -63,7 +63,10 @@ function init() {
 			text: "这是一段文本",
 			color: "#ffffff",
 		},
-		expressions: {},
+		state: {},
+		emits: {},
+		propsExpression: {},
+		stateExpression: {},
 		components: [],
 	});
 }

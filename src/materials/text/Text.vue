@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps } from "./Text";
-import { getComputedProps } from "@/helpers/material";
+import { getComputedProps } from "@/helpers/component";
 
 interface Props {
 	component: ComponentWithLayout<TextProps>;

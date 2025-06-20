@@ -244,7 +244,10 @@ const canvasDrap = (e: DragEvent) => {
 			hidden: asset.material.hidden,
 			layout: deepClone(asset.material.layout),
 			props: asset.material.props,
-			expressions: asset.material.expressions,
+			state: asset.material.state,
+			emits: asset.material.emits,
+			propsExpression: asset.material.propsExpression,
+			stateExpression: asset.material.stateExpression,
 			components: asset.material.components,
 		};
 		if (component.layout) {

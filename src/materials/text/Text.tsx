@@ -26,7 +26,10 @@ export const Text = (): MaterialWithLayout<TextProps> => ({
 		text: "文本",
 		color: "#ffffff",
 	},
-	expressions: {},
+	state: {},
+	emits: {},
+	propsExpression: {},
+	stateExpression: {},
 	components: [],
 	render: (component) => {
 		return <TextComponent component={component} />;

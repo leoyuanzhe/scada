@@ -20,7 +20,10 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 		height: 300,
 	},
 	props: {},
-	expressions: {},
+	state: {},
+	emits: {},
+	propsExpression: {},
+	stateExpression: {},
 	components: [],
 	render: (component) => {
 		return <ContainerComponent component={component} />;

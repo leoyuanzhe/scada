@@ -4,7 +4,7 @@ import { useSchema } from "@/stores/useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import type { ComponentWithLayout } from "@/types/Component";
-import TextConfig from "./material-configs/text-config/TextConfig.vue";
+import TextConfig from "./component-configs/text-config/TextConfig.vue";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
