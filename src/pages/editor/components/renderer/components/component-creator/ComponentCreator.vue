@@ -1,12 +1,14 @@
 <script lang="ts" setup>
+import type { Component } from "@/types/Component";
+import { useClient } from "@/stores/useClient";
+import { useMaterial } from "@/stores/useMaterial";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { useMaterial } from "@/stores/useMaterial";
-import type { Component } from "@/types/Component";
 
 interface Props {
 	component: Component;
 }
+const clientStore = useClient();
 const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
@@ -17,7 +19,12 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 <template>
 	<div
 		v-if="props.component.layout"
-		:class="{ component: true, active: props.component.active, target: props.component.id === targetComponent.componentId.value }"
+		:class="{
+			component: true,
+			active: props.component.active,
+			target: props.component.id === targetComponent.componentId.value,
+			dragging: clientStore.draggingAsset,
+		}"
 		:style="{
 			left: props.component.layout.left + 'px',
 			top: props.component.layout.top + 'px',
@@ -48,6 +55,9 @@ const RenderComponent = () => materialStore.materials.find((v) => v.key == props
 	}
 	&.target {
 		box-shadow: 0 0 3px 1px #ff0000;
+	}
+	&.dragging {
+		pointer-events: none;
 	}
 }
 </style>

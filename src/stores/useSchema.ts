@@ -2,6 +2,10 @@ import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 
+interface SchemaProps {
+	backgroundColor: string;
+}
+
 export const useSchema = defineStore("schema", {
 	state() {
 		return {
@@ -19,7 +23,7 @@ export const useSchema = defineStore("schema", {
 			propsExpression: {},
 			stateExpression: {},
 			components: [] as Component[],
-		} as Schema;
+		} as Schema<SchemaProps>;
 	},
 	getters: {
 		// 有布局属性的在根节点下的组件

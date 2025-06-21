@@ -44,7 +44,7 @@ onMounted(() => {
 				transform: 'scale(' + clientStore.canvas.scale + ')',
 			}"
 			@dragover.prevent
-			@drop="dragger.canvasDrap($event)"
+			@drop="dragger.canvasDrop($event)"
 		>
 			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" />
 		</div>
