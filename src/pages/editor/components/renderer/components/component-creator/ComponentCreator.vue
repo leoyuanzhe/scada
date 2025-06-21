@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Material } from "@/types/Material";
 import type { Component } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
@@ -13,7 +14,7 @@ const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
-const RenderComponent = () => materialStore.materials.find((v) => v.key == props.component.key)?.render(props.component);
+const RenderComponent = () => (materialStore.materials.find((v) => v.key == props.component.key) as ReturnType<Material["render"]>)?.render(props.component);
 </script>
 
 <template>

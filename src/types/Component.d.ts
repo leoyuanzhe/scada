@@ -4,7 +4,7 @@ export interface Action {
 export interface Component<Props = any> {
 	version: string;
 	id: string;
-	key: "text" | "container";
+	key: string;
 	title: string;
 	active: boolean;
 	nestable: boolean;
