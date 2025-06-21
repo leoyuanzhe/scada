@@ -18,10 +18,12 @@ const alignLine = reactive({
 	v: null as number | null,
 	h: null as number | null,
 });
-const propertyDragstart = (e: DragEvent, assetId: string) => {
+const assetDragstart = (e: DragEvent, assetId: string) => {
+	const clientStore = useClient();
 	const assetStore = useAsset();
 	const item = assetStore.assets.find((v) => v.id === assetId);
 	if (item) {
+		clientStore.draggingAsset = true;
 		e.dataTransfer?.setData("assetId", item.id);
 	}
 };
@@ -226,7 +228,8 @@ const rendererMousedown = (e: MouseEvent) => {
 		}
 	}
 };
-const canvasDrap = (e: DragEvent) => {
+const canvasDrop = (e: DragEvent) => {
+	const clientStore = useClient();
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
@@ -250,6 +253,7 @@ const canvasDrap = (e: DragEvent) => {
 			stateExpression: asset.material.stateExpression,
 			components: asset.material.components,
 		};
+		clientStore.draggingAsset = false;
 		if (component.layout) {
 			component.layout.left = e.offsetX - (component.layout.width ?? 0) / 2;
 			component.layout.top = e.offsetY - (component.layout.height ?? 0) / 2;
@@ -407,10 +411,10 @@ function getUnscaledOffset(number: number) {
 export const useDragger = () => ({
 	selector,
 	alignLine,
-	propertyDragstart,
+	assetDragstart,
 	rendererWheel,
 	rendererMousedown,
-	canvasDrap,
+	canvasDrop,
 	componentMousedown,
 	selectorMousedown,
 	computedSelector,

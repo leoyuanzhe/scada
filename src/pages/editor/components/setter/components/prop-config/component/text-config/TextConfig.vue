@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { TextProps } from "@/materials/text/Text";
-import type { ComponentWithLayout } from "@/types/Component";
+import type { Component } from "@/types/Component";
 import { openCodeEditor } from "@/helpers/component";
 
-const props = withDefaults(defineProps<{ component: ComponentWithLayout<TextProps> }>(), {});
+const props = withDefaults(defineProps<{ component: Component<TextProps> }>(), {});
 </script>
 
 <template>
@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{ component: ComponentWithLayout<TextProp
 			<article class="form-item">
 				<label for="setter-color">颜色</label>
 				<input id="setter-color" type="color" :value="props.component.props.color" @input="props.component.props.color = ($event.target as HTMLInputElement).value" />
-				<button @click="openCodeEditor('color')">
+				<button @click="openCodeEditor(props.component, 'color')">
 					<svg :class="{ icon: true, active: props.component.propsExpression.color !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>
@@ -29,6 +29,6 @@ const props = withDefaults(defineProps<{ component: ComponentWithLayout<TextProp
 </template>
 
 <style lang="scss" scoped>
+@use "@/styles/form" as *;
 @use "../../styles/config" as *;
-@use "@/styles/form-item" as *;
 </style>

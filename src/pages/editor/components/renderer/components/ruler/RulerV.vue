@@ -3,18 +3,18 @@ import { onMounted, ref, watch } from "vue";
 import { useClient } from "@/stores/useClient";
 
 const clientStore = useClient();
-const oCanvas = ref<HTMLCanvasElement | null>(null);
+const oRuler = ref<HTMLCanvasElement | null>(null);
 watch([() => clientStore.canvas.scale, () => clientStore.canvas.top], () => drawRuler());
 onMounted(() => drawRuler());
 function drawRuler() {
 	const rulerStart = clientStore.canvas.top - 20;
-	if (oCanvas.value) {
-		oCanvas.value.width = oCanvas.value.offsetWidth;
-		oCanvas.value.height = oCanvas.value.offsetHeight;
-		const ctx = oCanvas.value.getContext("2d");
+	if (oRuler.value) {
+		oRuler.value.width = oRuler.value.offsetWidth;
+		oRuler.value.height = oRuler.value.offsetHeight;
+		const ctx = oRuler.value.getContext("2d");
 		if (ctx) {
-			ctx.clearRect(0, 0, oCanvas.value.width, oCanvas.value.height);
-			for (let i = rulerStart; i <= oCanvas.value.height; i += 50) {
+			ctx.clearRect(0, 0, oRuler.value.width, oRuler.value.height);
+			for (let i = rulerStart; i <= oRuler.value.height; i += 50) {
 				ctx.save();
 				ctx.beginPath();
 				ctx.lineWidth = 0.5;
@@ -29,7 +29,7 @@ function drawRuler() {
 				ctx.fillText(value.toString(), i + 5, -2);
 				ctx.restore();
 			}
-			for (let i = rulerStart; i <= oCanvas.value.height; i += 50 / 5) {
+			for (let i = rulerStart; i <= oRuler.value.height; i += 50 / 5) {
 				if ((i - rulerStart) % 50 !== 0) {
 					ctx.beginPath();
 					ctx.lineWidth = 0.5;
@@ -45,7 +45,7 @@ function drawRuler() {
 </script>
 
 <template>
-	<canvas ref="oCanvas" class="ruler-v"></canvas>
+	<canvas ref="oRuler" class="ruler-v"></canvas>
 </template>
 
 <style lang="scss" scoped>
