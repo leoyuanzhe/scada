@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { Material } from "@/types/Material";
 import type { Component } from "@/types/Component";
-import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
@@ -9,7 +8,6 @@ import { useDragger } from "@/pages/editor/hooks/useDragger";
 interface Props {
 	component: Component;
 }
-const clientStore = useClient();
 const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
@@ -24,7 +22,6 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 			component: true,
 			active: props.component.active,
 			target: props.component.id === targetComponent.componentId.value,
-			dragging: clientStore.draggingAsset,
 		}"
 		:style="{
 			left: props.component.layout.left + 'px',
@@ -33,6 +30,7 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 			height: props.component.layout.height + 'px',
 		}"
 		@mousedown="dragger.componentMousedown($event, component)"
+		@drop.stop="dragger.componentDrop($event, component)"
 	>
 		<Component :is="RenderComponent" />
 	</div>
@@ -56,9 +54,6 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 	}
 	&.target {
 		box-shadow: 0 0 3px 1px #ff0000;
-	}
-	&.dragging {
-		pointer-events: none;
 	}
 }
 </style>

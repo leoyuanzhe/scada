@@ -3,6 +3,7 @@ import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import type { Component } from "@/types/Component";
+import type { Asset } from "@/types/Asset";
 import { deepClone } from "@/utils/conversion";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 
@@ -19,11 +20,9 @@ const alignLine = reactive({
 	h: null as number | null,
 });
 const assetDragstart = (e: DragEvent, assetId: string) => {
-	const clientStore = useClient();
 	const assetStore = useAsset();
 	const item = assetStore.assets.find((v) => v.id === assetId);
 	if (item) {
-		clientStore.draggingAsset = true;
 		e.dataTransfer?.setData("assetId", item.id);
 	}
 };
@@ -229,39 +228,54 @@ const rendererMousedown = (e: MouseEvent) => {
 	}
 };
 const canvasDrop = (e: DragEvent) => {
-	const clientStore = useClient();
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
-		e.dataTransfer?.setData("assetId", asset.id);
-		const component: Component = {
-			version: asset.material.version,
-			id: Date.now().toString(),
-			key: asset.material.key,
-			title: asset.material.title,
-			active: true,
-			nestable: asset.material.nestable,
-			locked: asset.material.locked,
-			hidden: asset.material.hidden,
-			layout: deepClone(asset.material.layout),
-			props: asset.material.props,
-			state: asset.material.state,
-			emits: asset.material.emits,
-			propsExpression: asset.material.propsExpression,
-			stateExpression: asset.material.stateExpression,
-			components: asset.material.components,
-		};
-		clientStore.draggingAsset = false;
-		if (component.layout) {
-			component.layout.left = e.offsetX - (component.layout.width ?? 0) / 2;
-			component.layout.top = e.offsetY - (component.layout.height ?? 0) / 2;
+		const newComponent: Component = createComponent(asset);
+		if (newComponent.layout) {
+			newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
+			newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
 		}
-		schemaStore.components.push(component);
+		schemaStore.components.push(newComponent);
 		computedSelector();
 	}
 };
+const componentDrop = (e: DragEvent, component: Component) => {
+	const assetStore = useAsset();
+	const schemaStore = useSchema();
+	const assetId = e.dataTransfer?.getData("assetId");
+	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
+	if (asset) {
+		const newComponent: Component = createComponent(asset);
+		if (newComponent.layout) {
+			newComponent.layout.left = e.offsetX + schemaStore.getOffsetFromSchema(component.id).left - (newComponent.layout.width ?? 0) / 2;
+			newComponent.layout.top = e.offsetY + schemaStore.getOffsetFromSchema(component.id).top - (newComponent.layout.height ?? 0) / 2;
+		}
+		schemaStore.components.push(newComponent);
+		computedSelector();
+	}
+};
+function createComponent(asset: Asset): Component {
+	return {
+		version: asset.material.version,
+		id: Date.now().toString(),
+		key: asset.material.key,
+		title: asset.material.title,
+		active: true,
+		nestable: asset.material.nestable,
+		locked: asset.material.locked,
+		hidden: asset.material.hidden,
+		layout: deepClone(asset.material.layout),
+		props: asset.material.props,
+		state: asset.material.state,
+		emits: asset.material.emits,
+		propsExpression: asset.material.propsExpression,
+		stateExpression: asset.material.stateExpression,
+		components: asset.material.components,
+	};
+}
 const componentMousedown = (e: MouseEvent, component: Component) => {
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
@@ -415,6 +429,7 @@ export const useDragger = () => ({
 	rendererWheel,
 	rendererMousedown,
 	canvasDrop,
+	componentDrop,
 	componentMousedown,
 	selectorMousedown,
 	computedSelector,
