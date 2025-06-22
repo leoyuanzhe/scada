@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import type { Material, MaterialWithLayout } from "@/types/Material";
+import type { Asset } from "@/types/Asset";
 import { Container } from "@/materials/container/Container";
 import { Text } from "@/materials/text/Text";
 
 export const useAsset = defineStore("asset", {
 	state() {
 		return {
-			assets: [] as { id: string; title: string; cover: string; material: Material | MaterialWithLayout }[],
+			assets: [] as Asset[],
 		};
 	},
 	actions: {

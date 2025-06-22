@@ -5,7 +5,6 @@ export const useClient = defineStore("client", {
 	state() {
 		return {
 			oRenderer: null as HTMLDivElement | null,
-			draggingAsset: false,
 			canvas: {
 				left: 30,
 				top: 30,
