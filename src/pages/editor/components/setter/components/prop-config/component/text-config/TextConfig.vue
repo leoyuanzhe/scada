@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TextProps } from "@/materials/text/Text";
 import type { Component } from "@/types/Component";
-import { openCodeEditor } from "@/helpers/component";
+import { openExpressionCodeEditor } from "@/helpers/component";
 
 const props = withDefaults(defineProps<{ component: Component<TextProps> }>(), {});
 </script>
@@ -13,14 +13,14 @@ const props = withDefaults(defineProps<{ component: Component<TextProps> }>(), {
 			<article class="form-item">
 				<label for="setter-text">文本</label>
 				<input id="setter-text" type="text" :value="props.component.props.text" @input="props.component.props.text = ($event.target as HTMLInputElement).value" />
-				<button @click="openCodeEditor(props.component, 'text')">
+				<button @click="openExpressionCodeEditor(props.component.propsExpression, 'text')">
 					<svg :class="{ icon: true, active: props.component.propsExpression.text !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>
 			<article class="form-item">
 				<label for="setter-color">颜色</label>
 				<input id="setter-color" type="color" :value="props.component.props.color" @input="props.component.props.color = ($event.target as HTMLInputElement).value" />
-				<button @click="openCodeEditor(props.component, 'color')">
+				<button @click="openExpressionCodeEditor(props.component.propsExpression, 'color')">
 					<svg :class="{ icon: true, active: props.component.propsExpression.color !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>

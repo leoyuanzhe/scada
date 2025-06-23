@@ -5,6 +5,7 @@ import { useAsset } from "./stores/useAsset";
 import { useSchema } from "./stores/useSchema";
 import { Container } from "./materials/container/Container";
 import { Text } from "./materials/text/Text";
+import ContextMenu from "./components/context-menu/ContextMenu.vue";
 
 const clientStore = useClient();
 const materialStore = useMaterial();
@@ -42,6 +43,9 @@ function init() {
 		cover: "",
 		material: c2,
 	});
+	schemaStore.stateExpression = {
+		a: "1",
+	};
 	schemaStore.components.push({
 		version: "0.0.1",
 		id: Date.now().toString(),
@@ -80,4 +84,5 @@ function init() {
 			</KeepAlive>
 		</Transition>
 	</RouterView>
+	<ContextMenu />
 </template>

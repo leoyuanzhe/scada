@@ -250,8 +250,8 @@ const componentDrop = (e: DragEvent, component: Component) => {
 	if (asset) {
 		const newComponent: Component = createComponent(asset);
 		if (newComponent.layout) {
-			newComponent.layout.left = e.offsetX + schemaStore.getOffsetFromSchema(component.id).left - (newComponent.layout.width ?? 0) / 2;
-			newComponent.layout.top = e.offsetY + schemaStore.getOffsetFromSchema(component.id).top - (newComponent.layout.height ?? 0) / 2;
+			newComponent.layout.left = e.offsetX + schemaStore.getOffsetFromSchema(component).left - (newComponent.layout.width ?? 0) / 2;
+			newComponent.layout.top = e.offsetY + schemaStore.getOffsetFromSchema(component).top - (newComponent.layout.height ?? 0) / 2;
 		}
 		schemaStore.components.push(newComponent);
 		computedSelector();
