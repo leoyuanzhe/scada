@@ -3,37 +3,47 @@ import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import type { Schema } from "@/types/Schema";
-import type { ComponentWithLayout } from "@/types/Component";
+import type { Component, ComponentWithLayout } from "@/types/Component";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
 const dragger = useDragger();
-const props = withDefaults(defineProps<{ component: Schema | ComponentWithLayout }>(), {});
+const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
 </script>
 
 <template>
 	<form class="form" @submit.prevent>
-		<h1>布局</h1>
-		<fieldset>
+		<h1>基本</h1>
+		<fieldset v-if="props.component.layout">
 			<legend>布局</legend>
 			<template v-if="schemaStore.isSchema(props.component)">
 				<article class="form-item">
-					<label for="setter-schema-left">X坐标</label>
-					<input id="setter-schema-left" type="number" :value="clientStore.canvas.left" @input="(clientStore.canvas.left = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
+					<label for="setter-layout-left">X坐标</label>
+					<input id="setter-layout-left" type="number" :value="clientStore.canvas.left" @input="(clientStore.canvas.left = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
 				</article>
 				<article class="form-item">
-					<label for="setter-schema-top">Y坐标</label>
-					<input id="setter-schema-top" type="number" :value="clientStore.canvas.top" @input="(clientStore.canvas.top = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
+					<label for="setter-layout-top">Y坐标</label>
+					<input id="setter-layout-top" type="number" :value="clientStore.canvas.top" @input="(clientStore.canvas.top = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
 				</article>
 			</template>
 			<template v-else>
 				<article class="form-item">
 					<label for="setter-layout-left">X坐标</label>
-					<input id="setter-layout-left" type="number" :value="props.component.layout.left" @input="(props.component.layout.left = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
+					<input
+						id="setter-layout-left"
+						type="number"
+						:value="(props.component as ComponentWithLayout).layout.left"
+						@input="((props.component as ComponentWithLayout).layout.left = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()"
+					/>
 				</article>
 				<article class="form-item">
 					<label for="setter-layout-top">Y坐标</label>
-					<input id="setter-layout-top" type="number" :value="props.component.layout.top" @input="(props.component.layout.top = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()" />
+					<input
+						id="setter-layout-top"
+						type="number"
+						:value="(props.component as ComponentWithLayout).layout.top"
+						@input="((props.component as ComponentWithLayout).layout.top = Math.round(Number(($event.target as HTMLInputElement).value))), dragger.computedSelector()"
+					/>
 				</article>
 			</template>
 			<article class="form-item">

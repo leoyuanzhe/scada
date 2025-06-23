@@ -1,10 +1,13 @@
 export interface Action {
 	handler: string;
 }
+
+export type ComponentKey = "text" | "container";
+
 export interface Component<Props = any> {
 	version: string;
 	id: string;
-	key: string;
+	key: ComponentKey;
 	title: string;
 	active: boolean;
 	nestable: boolean;

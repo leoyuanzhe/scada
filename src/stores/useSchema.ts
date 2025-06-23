@@ -17,9 +17,7 @@ export const useSchema = defineStore("schema", {
 			props: {
 				backgroundColor: "#000000",
 			},
-			state: {
-				a: 1,
-			},
+			state: {},
 			propsExpression: {},
 			stateExpression: {},
 			components: [] as Component[],
@@ -74,33 +72,50 @@ export const useSchema = defineStore("schema", {
 			return component?.key === "schema";
 		},
 		// 获取组件相对于根元素的偏移
-		getOffsetFromSchema(componentId: string): { left: number; top: number } {
-			const component = this.findComponent(componentId);
+		getOffsetFromSchema(component: Component): { left: number; top: number } {
 			let left = component?.layout?.left ?? 0;
 			let top = component?.layout?.top ?? 0;
-			const fn = (componentId: string) => {
-				const parent = this.findParent(componentId);
+			const fn = (component: Component) => {
+				const parent = this.findParent(component.id);
 				if (parent) {
-					const index = parent.components.findIndex((v) => v.id === componentId);
+					const index = parent.components.findIndex((v) => v.id === component.id);
 					if (index !== -1) {
 						if (!this.isSchema(parent) && parent.layout) {
 							left += parent.layout.left;
 							top += parent.layout.top;
-							fn(parent.id);
+							fn(parent);
 						}
 					}
 				}
 			};
-			fn(componentId);
+			fn(component);
 			return { left, top };
 		},
 		// 删除组件
 		removeComponent(componentId: string) {
 			const parent = this.findParent(componentId);
 			if (parent) {
-				const index = parent.components.findIndex((item) => item.id === componentId);
+				const index = parent.components.findIndex((v) => v.id === componentId);
 				if (index !== -1) {
-					parent.components.splice(index, 1);
+					if (parent.components[index].layout) {
+						const { left, top } = this.getOffsetFromSchema(parent.components[index]);
+						const component = parent.components.splice(index, 1)[0];
+						if (!this.isSchema(parent) && parent.layout) {
+							let newLeft = parent.components.length > 0 ? Infinity : 0;
+							let newTop = parent.components.length > 0 ? Infinity : 0;
+							parent.components.forEach((v) => {
+								newLeft = Math.min(newLeft, v.layout?.left ?? 0);
+								newTop = Math.min(newTop, v.layout?.top ?? 0);
+							});
+							parent.layout.left += newLeft;
+							parent.layout.top += newTop;
+						}
+						if (component.layout) {
+							component.layout.left = left;
+							component.layout.top = top;
+						}
+						return component;
+					} else return parent.components.splice(index, 1)[0];
 				}
 			}
 		},
@@ -143,8 +158,7 @@ export const useSchema = defineStore("schema", {
 							} else {
 								child.layout.top = child.layout.top - newParent.layout.top;
 							}
-							parent.components.splice(index!, 1);
-							newParent.components.push(child);
+							newParent.components.push(this.removeComponent(child.id)!);
 						}
 					}
 				}
@@ -154,18 +168,8 @@ export const useSchema = defineStore("schema", {
 		moveOut(componentId: string) {
 			const parent = this.findParent(componentId);
 			if (parent) {
-				const index = parent.components.findIndex((v) => v.id === componentId);
-				if (index !== -1) {
-					if (parent.components[index].layout) {
-						const { left, top } = this.getOffsetFromSchema(componentId);
-						const component = parent.components.splice(index, 1)[0];
-						if (component.layout) {
-							component.layout.left = left;
-							component.layout.top = top;
-						}
-						this.components.push(component);
-					} else this.components.push(parent.components.splice(index, 1)[0]);
-				}
+				const child = this.findComponent(componentId);
+				if (child) parent.components.push(child);
 			}
 		},
 		// 展开子组件到根组件
@@ -174,7 +178,7 @@ export const useSchema = defineStore("schema", {
 			if (component) {
 				const parent = this.findParent(componentId);
 				if (parent) {
-					const { left, top } = this.getOffsetFromSchema(componentId);
+					const { left, top } = this.getOffsetFromSchema(component);
 					this.components.push(
 						...component.components.splice(0).map((v) => {
 							if (v.layout) {
@@ -184,6 +188,7 @@ export const useSchema = defineStore("schema", {
 							return v;
 						})
 					);
+					this.removeComponent(componentId);
 				}
 			}
 		},

@@ -1,8 +1,8 @@
 import { computed, type ComputedRef } from "vue";
 import { useSchema } from "@/stores/useSchema";
+import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import CodeEditor from "@/components/code-editor";
-import type { Schema } from "@/types/Schema";
 
 type ComputedProps<T> = {
 	[K in keyof T]: ComputedRef<T[K]>;
@@ -25,7 +25,9 @@ export const getComputedProps = <T>(component: Schema<T> | Component<T>) => {
 	}
 	return props as ComputedProps<T>;
 };
-export const openCodeEditor = async <T>(component: Component<T> | Schema<T>, key: keyof T) => {
-	const value = await CodeEditor(component.propsExpression[key]);
-	value !== undefined ? (component.propsExpression[key] = value) : delete component.propsExpression[key];
+export const openExpressionCodeEditor = async <T extends Partial<Record<string, string>>>(object: T, key: keyof T) => {
+	const value = await CodeEditor(object[key]);
+	if (key in object) {
+		value !== undefined ? (object[key] = value as T[keyof T]) : delete object[key];
+	}
 };
