@@ -22,10 +22,10 @@ export interface Component<Props = any> {
 		height: number;
 	};
 	props: Props;
-	state: Record<string, any>;
+	state: Record<keyof Component["stateExpression"], any>;
 	emits: Record<string, Action[]>;
 	propsExpression: Partial<Record<keyof Props, string>>;
-	stateExpression: Partial<Record<keyof Component["state"], string>>;
+	stateExpression: Record<string, string>;
 	components: Component[];
 }
 export interface ComponentWithLayout<Props = any> extends Omit<Component<Props>, "layout"> {

@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
+import { initComponent } from "@/helpers/component";
 
 interface SchemaProps {
 	backgroundColor: string;
@@ -28,6 +29,10 @@ export const useSchema = defineStore("schema", {
 		moveableComponents(): ComponentWithLayout[] {
 			return this.components.filter((v) => v.layout) as ComponentWithLayout[];
 		},
+		// 所有可移动的在根节点下的未隐藏的未锁定的组件
+		moveableVisibleUnlockedComponents(): ComponentWithLayout[] {
+			return this.moveableComponents.filter((v) => !v.hidden && !v.locked);
+		},
 		// 激活的有布局属性的组件
 		activeMoveableComponents(): ComponentWithLayout[] {
 			return this.components.filter((v) => v.active && v.layout) as ComponentWithLayout[];
@@ -49,6 +54,10 @@ export const useSchema = defineStore("schema", {
 		},
 	},
 	actions: {
+		// 初始化
+		init() {
+			initComponent(this.$state);
+		},
 		// 找到组件
 		findComponent(componentId: string) {
 			return this.flatComponents.find((v) => v.id === componentId) || null;

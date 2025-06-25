@@ -9,7 +9,7 @@ const props = withDefaults(defineProps<Props>(), {});
 
 <template>
 	<li v-if="props.menuItem.type !== 'divider' || props.menuItem.type === undefined" class="context-menu-item">
-		<button :disabled="props.menuItem.disabled" @click="props.menuItem.onClick?.()">{{ props.menuItem.label }}</button>
+		<button :class="{ [props.menuItem.type || '']: true }" :disabled="props.menuItem.disabled" @click="props.menuItem.onClick?.()">{{ props.menuItem.label }}</button>
 		<menu v-if="props.menuItem.list?.length">
 			<slot></slot>
 		</menu>

@@ -2,7 +2,7 @@
 import { watch } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { ContainerProps } from "./Container";
-import ComponentCreator from "@/pages/editor/components/renderer/components/component-creator/ComponentCreator.vue";
+import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 interface Props {
 	component: ComponentWithLayout<ContainerProps>;

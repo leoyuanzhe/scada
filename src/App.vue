@@ -12,6 +12,11 @@ const materialStore = useMaterial();
 const assetStore = useAsset();
 const schemaStore = useSchema();
 init();
+schemaStore.stateExpression = {
+	a: "1",
+};
+schemaStore.init();
+schemaStore.stateExpression.a = "2";
 function init() {
 	clientStore.init();
 	materialStore.init();
@@ -43,9 +48,6 @@ function init() {
 		cover: "",
 		material: c2,
 	});
-	schemaStore.stateExpression = {
-		a: "1",
-	};
 	schemaStore.components.push({
 		version: "0.0.1",
 		id: Date.now().toString(),
@@ -69,8 +71,12 @@ function init() {
 		},
 		state: {},
 		emits: {},
-		propsExpression: {},
-		stateExpression: {},
+		propsExpression: {
+			text: "state.b + $state.a",
+		},
+		stateExpression: {
+			b: "2",
+		},
 		components: [],
 	});
 }

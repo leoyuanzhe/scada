@@ -101,7 +101,7 @@ const rendererMousedown = (e: MouseEvent) => {
 			}
 			// 正框选（从左往右框选）
 			if (startX < e.clientX) {
-				schemaStore.moveableComponents.forEach((component) => {
+				schemaStore.moveableVisibleUnlockedComponents.forEach((component) => {
 					const left = getActualLeft(component.layout.left);
 					const top = getActualTop(component.layout.top);
 					const width = getScaledOffset(component.layout.width);
@@ -111,7 +111,7 @@ const rendererMousedown = (e: MouseEvent) => {
 					}
 				});
 			} else {
-				schemaStore.moveableComponents.forEach((component) => {
+				schemaStore.moveableVisibleUnlockedComponents.forEach((component) => {
 					const left = getActualLeft(component.layout.left);
 					const top = getActualTop(component.layout.top);
 					const width = getScaledOffset(component.layout.width);

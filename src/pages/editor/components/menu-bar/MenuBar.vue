@@ -23,7 +23,14 @@ const openEditMenu = (e: MouseEvent) => {
 			{
 				label: "锁定",
 				disabled: schemaStore.activeFlatComponents.every((v) => v.locked),
-				onClick: () => schemaStore.activeFlatComponents.forEach((v) => (v.locked = true)),
+				onClick: () => {
+					schemaStore.activeFlatComponents.forEach((v) => {
+						v.locked = true;
+						v.active = false;
+					});
+					targetComponent.componentId.value = "";
+					dragger.computedSelector();
+				},
 			},
 			{
 				label: "解锁",
@@ -38,7 +45,14 @@ const openEditMenu = (e: MouseEvent) => {
 			{
 				label: "隐藏",
 				disabled: schemaStore.activeFlatComponents.every((v) => v.hidden),
-				onClick: () => schemaStore.activeFlatComponents.forEach((v) => (v.hidden = true)),
+				onClick: () => {
+					schemaStore.activeFlatComponents.forEach((v) => {
+						v.hidden = true;
+						v.active = false;
+					});
+					targetComponent.componentId.value = "";
+					dragger.computedSelector();
+				},
 			},
 			{
 				type: "danger",
@@ -119,53 +133,6 @@ function computedContextMenuPosition(e: MouseEvent) {
 				background-color: #232323;
 			}
 		}
-	}
-}
-.menu-popover {
-	position: fixed;
-	width: 200px;
-	flex-direction: column;
-	background-color: #333;
-	border-radius: 4px;
-	box-shadow: 0 0 3px 1px #666;
-	z-index: 9;
-	li {
-		position: relative;
-		button {
-			padding: 0 14px;
-			width: 100%;
-			font-size: 12px;
-			line-height: 30px;
-			text-align: left;
-			transition: background-color 0.2s;
-			&.danger {
-				color: var(--danger-color);
-			}
-		}
-		menu {
-			position: absolute;
-			left: 100%;
-			top: 0;
-			width: 200px;
-			display: none;
-			flex-direction: column;
-			background-color: #333;
-			border-radius: 4px;
-			box-shadow: 0 0 3px 1px #666;
-			z-index: 9;
-		}
-		&:hover {
-			button:not(:disabled) {
-				background-color: #232323;
-			}
-			menu {
-				display: flex;
-			}
-		}
-	}
-	hr {
-		width: 100%;
-		border-color: #666;
 	}
 }
 </style>

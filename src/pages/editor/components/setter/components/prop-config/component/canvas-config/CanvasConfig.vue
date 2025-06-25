@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSchema } from "@/stores/useSchema";
-import { openExpressionCodeEditor } from "@/helpers/component";
+import { editObjectValue } from "@/helpers/component";
 
 const schemaStore = useSchema();
 </script>
@@ -12,7 +12,7 @@ const schemaStore = useSchema();
 			<article class="form-item">
 				<label for="setter-text">背景颜色</label>
 				<input id="setter-text" type="text" :value="schemaStore.props.backgroundColor" @input="schemaStore.props.backgroundColor = ($event.target as HTMLInputElement).value" />
-				<button @click="openExpressionCodeEditor(schemaStore.$state.propsExpression, 'backgroundColor')">
+				<button class="input-button" type="button" @click="editObjectValue(schemaStore.$state.propsExpression, 'backgroundColor')">
 					<svg :class="{ icon: true, active: schemaStore.propsExpression.backgroundColor !== undefined }"><use href="#code-fork" /></svg>
 				</button>
 			</article>

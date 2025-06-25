@@ -17,7 +17,8 @@ watch(
 	() => props.value,
 	(v) => {
 		value.value = v;
-	}
+	},
+	{ immediate: true }
 );
 const close = (returnValue?: string) => oDialog.value?.close(returnValue);
 const onClose = (e?: string) => {

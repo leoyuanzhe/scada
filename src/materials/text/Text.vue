@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps } from "./Text";
-import { getComputedProps } from "@/helpers/component";
+import { initComponent } from "@/helpers/component";
 
 interface Props {
 	component: ComponentWithLayout<TextProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
-const propsV2 = computed(() => getComputedProps(props.component));
+initComponent(props.component);
 </script>
 
 <template>
-	<span class="text" :style="{ color: propsV2.color.value }">
-		{{ propsV2.text.value }}
+	<span class="text" :style="{ color: props.component.props.color }">
+		{{ props.component.props.text }}
 	</span>
 </template>
 

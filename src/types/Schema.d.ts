@@ -7,8 +7,8 @@ export interface Schema<Props = any> {
 		height: number;
 	};
 	props: Props;
-	state: Record<string, any>;
+	state: Record<keyof Schema["stateExpression"], any>;
 	propsExpression: Partial<Record<keyof Props, string>>;
-	stateExpression: Partial<Record<keyof Schema["state"], string>>;
+	stateExpression: Record<string, string>;
 	components: Component[];
 }
