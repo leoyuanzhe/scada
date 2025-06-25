@@ -27,7 +27,16 @@ export const Text = (): MaterialWithLayout<TextProps> => ({
 		color: "#ffffff",
 	},
 	state: {},
-	emits: {},
+	actions: [],
+	emits: {
+		created: [],
+		click: [],
+		dblclick: [],
+	},
+	lifecycle: {
+		mounted: [],
+		beforeUnmount: [],
+	},
 	propsExpression: {},
 	stateExpression: {},
 	components: [],

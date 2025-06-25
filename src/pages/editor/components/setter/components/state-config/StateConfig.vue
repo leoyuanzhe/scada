@@ -25,7 +25,7 @@ const addState = () => {
 					<svg class="icon"><use href="#key" /></svg>
 				</button>
 				<button type="button" @click="editObjectValue(props.component.stateExpression, k)">
-					<svg class="icon"><use href="#code-fork" /></svg>
+					<svg class="icon"><use href="#link" /></svg>
 				</button>
 				<button type="button" @click="delete props.component.stateExpression[k]">
 					<svg class="icon danger"><use href="#trash" /></svg>
