@@ -15,7 +15,6 @@ const clientStore = useClient();
 const schemaStore = useSchema();
 const dragger = useDragger();
 const oRenderer = useTemplateRef("oRenderer");
-
 onMounted(() => {
 	clientStore.oRenderer = oRenderer.value;
 	// watch([() => schemaStore.layout.width, () => schemaStore.layout.height], () => clientStore.computedCanvasLayout(), { immediate: true });

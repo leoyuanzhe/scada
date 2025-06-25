@@ -1,16 +1,15 @@
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
-import type { Schema } from "@/types/Schema";
+import type { Schema, SchemaProps } from "@/types/Schema";
 import { initComponent } from "@/helpers/component";
-
-interface SchemaProps {
-	backgroundColor: string;
-}
 
 export const useSchema = defineStore("schema", {
 	state() {
 		return {
+			version: "1.0.0",
+			id: "schema",
 			key: "schema",
+			title: "大屏",
 			layout: {
 				width: 1920,
 				height: 1080,
@@ -19,9 +18,18 @@ export const useSchema = defineStore("schema", {
 				backgroundColor: "#000000",
 			},
 			state: {},
+			actions: [],
+			emits: {
+				click: [],
+				dblclick: [],
+			},
+			lifecycle: {
+				mounted: [],
+				beforeUnmount: [],
+			},
+			components: [] as Component[],
 			propsExpression: {},
 			stateExpression: {},
-			components: [] as Component[],
 		} as Schema<SchemaProps>;
 	},
 	getters: {

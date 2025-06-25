@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { useTargetComponent } from "@/hooks/useTargetComponent";
+import type { Schema } from "@/types/Schema";
+import type { Component } from "@/types/Component";
 
-const targetComponent = useTargetComponent();
+const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
+const addAction = () => {
+	props.component.actions.push({ name: "", type: "none", params: {}, handler: "" });
+};
 </script>
 
 <template>
 	<form class="form" @submit.prevent>
-		<h1>画布</h1>
+		<h1>事件</h1>
 		<fieldset>
-			<legend>布局</legend>
+			<legend>动作</legend>
 		</fieldset>
-	</form>
-	<form v-if="targetComponent.component.value" @submit.prevent>
-		<h1>{{ targetComponent.component.value.title }}</h1>
-		<fieldset>
-			<legend>布局</legend>
-		</fieldset>
+		<article class="form-item">
+			<button class="success" type="button" @click="addAction()">添加动作</button>
+		</article>
 	</form>
 </template>
 

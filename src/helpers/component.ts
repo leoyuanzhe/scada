@@ -1,28 +1,38 @@
+import { watchEffect } from "vue";
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
-import { watchEffect } from "vue";
 
 // 代码编辑器编辑对象的属性
-export const editObjectValue = async <T extends Partial<Record<string, string>>>(object: T, key: keyof T) => {
-	const value = await CodeEditor(object[key]);
-	value !== undefined ? (object[key] = value as T[keyof T]) : delete object[key];
+export const editObjectValue = <T extends Partial<Record<string, string>>>(object: T, key: keyof T): Promise<null> => {
+	return new Promise((resolve) => {
+		CodeEditor(object[key])
+			.then((value) => {
+				object[key] = value as T[keyof T];
+				resolve(null);
+			})
+			.catch(() => {});
+	});
 };
 // 代码编辑器编辑对象的键
-export const editObjectKey = async <T extends Partial<Record<string, string>>>(object: T, key: keyof T) => {
-	const newKey = await CodeEditor(key.toString());
-	if (key in object && newKey !== undefined) {
-		const value = object[key];
-		delete object[key];
-		object[newKey as keyof T] = value;
-	}
+export const editObjectKey = <T extends Partial<Record<string, string>>>(object: T, key: keyof T): Promise<null> => {
+	return new Promise((resolve) => {
+		CodeEditor(key.toString())
+			.then((newKey) => {
+				const value = object[key];
+				delete object[key];
+				object[newKey as keyof T] = value;
+				resolve(null);
+			})
+			.catch(() => {});
+	});
 };
 // 获取表达式结果
 export const getExpressionResult = (expression: string | undefined, component: Schema | Component) => {
 	const schemaStore = useSchema();
 	try {
-		return { result: new Function("$state", "state", "return " + expression)(schemaStore.state, component.state) };
+		return { result: new Function("$state", "state", "parent", "return " + expression)(schemaStore.state, component.state, schemaStore.findParent(component.id)) };
 	} catch (error: any) {
 		console.error(error);
 		return { error };
@@ -37,7 +47,7 @@ export const initComponent = (component: Schema | Component) => {
 			else component.state[key] = null;
 		}
 		for (let key in component.propsExpression) {
-			const { result, error } = getExpressionResult(component.propsExpression[key], component);
+			const { result, error } = getExpressionResult(component.propsExpression[key as keyof typeof component.propsExpression], component);
 			if (!error) component.props[key] = result;
 		}
 	});

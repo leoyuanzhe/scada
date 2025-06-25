@@ -7,7 +7,8 @@ interface Props {
 	value: string;
 }
 interface Emits {
-	(e: "close", returnValue?: string): void;
+	(e: "cancel"): void;
+	(e: "confirm", returnValue: string): void;
 }
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
@@ -22,7 +23,8 @@ watch(
 );
 const close = (returnValue?: string) => oDialog.value?.close(returnValue);
 const onClose = (e?: string) => {
-	emits("close", e);
+	if (e !== undefined) emits("confirm", e);
+	else emits("cancel");
 };
 defineExpose({
 	showModal: () => oDialog.value?.showModal(),
@@ -35,7 +37,7 @@ defineExpose({
 		<form class="code-editor" @submit.prevent>
 			<textarea v-model="value"></textarea>
 			<aside>
-				<Button @click="close()">清除并关闭</Button>
+				<Button @click="close()">取消</Button>
 				<Button variant="primary" @click="close(value)">完成</Button>
 			</aside>
 		</form>
