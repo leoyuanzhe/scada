@@ -4,10 +4,12 @@ import type { Component } from "@/types/Component";
 import { useMaterial } from "@/stores/useMaterial";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useClient } from "@/stores/useClient";
 
 interface Props {
 	component: Component;
 }
+const clientStore = useClient();
 const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
@@ -22,7 +24,9 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 			component: true,
 			active: props.component.active,
 			target: props.component.id === targetComponent.componentId.value,
+			locked: !clientStore.isPreview && props.component.locked,
 		}"
+		v-show="!props.component.hidden"
 		:style="{
 			left: props.component.layout.left + 'px',
 			top: props.component.layout.top + 'px',
@@ -54,6 +58,9 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 	}
 	&.target {
 		box-shadow: 0 0 3px 1px #ff0000;
+	}
+	&.locked {
+		pointer-events: none;
 	}
 }
 </style>

@@ -8,8 +8,8 @@ import RulerH from "./components/ruler/RulerH.vue";
 import RulerV from "./components/ruler/RulerV.vue";
 import AlignLineV from "./components/align-line/AlignLineV.vue";
 import AlignLineH from "./components/align-line/AlignLineH.vue";
-import ComponentCreator from "./components/component-creator/ComponentCreator.vue";
 import Selector from "./components/selector/Selector.vue";
+import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
