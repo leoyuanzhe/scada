@@ -1,4 +1,4 @@
-.form {
+form.form {
 	display: flex;
 	flex-direction: column;
 	row-gap: 10px;
@@ -23,7 +23,27 @@
 		}
 	}
 }
-.form-item {
+details.config {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	background-color: #232323;
+	border-radius: 10px;
+	summary {
+		cursor: pointer;
+	}
+	fieldset {
+		display: flex;
+		flex-direction: column;
+		row-gap: 10px;
+	}
+	&[open] {
+		summary {
+			margin-bottom: 10px;
+		}
+	}
+}
+article.form-item {
 	display: flex;
 	column-gap: 10px;
 	label {
@@ -31,6 +51,19 @@
 		min-width: 80px;
 		font-size: 14px;
 		line-height: 30px;
+	}
+	select {
+		width: 0;
+		flex: 1;
+		padding: 0 6px;
+		background-color: #111;
+		line-height: 30px;
+		border-radius: 4px;
+		transition: box-shadow 0.2s;
+		cursor: pointer;
+		&:focus-within {
+			box-shadow: 0 0 3px 1px var(--primary-color);
+		}
 	}
 	input {
 		width: 0;
