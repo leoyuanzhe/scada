@@ -18,5 +18,5 @@ const props = withDefaults(defineProps<Props>(), {});
 </template>
 
 <style lang="scss" scoped>
-@use "../../styles/config" as *;
+@use "@/styles/form" as *;
 </style>

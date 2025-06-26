@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 interface Props {
+	type?: "button" | "submit";
 	variant?: "" | "info" | "primary" | "success" | "warning" | "danger";
 }
 const props = withDefaults(defineProps<Props>(), {
+	type: "button",
 	variant: "",
 });
 </script>
 
 <template>
-	<button :class="{ 'yz-button': true, [props.variant]: true }" type="button">
+	<button :class="{ 'yz-button': true, [props.variant]: true }" :type="props.type">
 		<slot></slot>
 	</button>
 </template>

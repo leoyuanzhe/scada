@@ -258,22 +258,25 @@ const componentDrop = (e: DragEvent, component: Component) => {
 	}
 };
 function createComponent(asset: Asset): Component {
+	const cloneAsset = deepClone(asset);
 	return {
-		version: asset.material.version,
+		version: cloneAsset.material.version,
 		id: Date.now().toString(),
-		key: asset.material.key,
-		title: asset.material.title,
+		key: cloneAsset.material.key,
+		title: cloneAsset.material.title,
 		active: true,
-		nestable: asset.material.nestable,
-		locked: asset.material.locked,
-		hidden: asset.material.hidden,
-		layout: deepClone(asset.material.layout),
-		props: asset.material.props,
-		state: asset.material.state,
-		emits: asset.material.emits,
-		propsExpression: asset.material.propsExpression,
-		stateExpression: asset.material.stateExpression,
-		components: asset.material.components,
+		nestable: cloneAsset.material.nestable,
+		locked: cloneAsset.material.locked,
+		hidden: cloneAsset.material.hidden,
+		layout: cloneAsset.material.layout,
+		props: cloneAsset.material.props,
+		state: cloneAsset.material.state,
+		actions: cloneAsset.material.actions,
+		emits: cloneAsset.material.emits,
+		lifecycle: cloneAsset.material.lifecycle,
+		components: cloneAsset.material.components,
+		propsExpression: cloneAsset.material.propsExpression,
+		stateExpression: cloneAsset.material.stateExpression,
 	};
 }
 const componentMousedown = (e: MouseEvent, component: Component) => {

@@ -7,7 +7,7 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 const addState = () => {
 	fn(0);
 	function fn(depth: number) {
-		const key = "state" + (Object.keys(props.component.state).length + 1 + depth);
+		const key = "state" + (Object.keys(props.component.stateExpression).length + 1 + depth);
 		if (!(key in props.component.stateExpression)) props.component.stateExpression[key] = "";
 		else fn(depth + 1);
 	}
