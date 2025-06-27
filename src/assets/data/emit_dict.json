@@ -1,0 +1,6 @@
+{
+	"mounted": "挂载后",
+	"beforeUnmount": "卸载前",
+	"click": "单击",
+	"dblclick": "双击"
+}

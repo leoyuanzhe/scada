@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
-import { editObjectKey, editObjectValue } from "@/helpers/component";
+import { editObjectValue } from "@/helpers/component";
 
 const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
 const addState = () => {
@@ -10,6 +10,21 @@ const addState = () => {
 		const key = "state" + (Object.keys(props.component.stateExpression).length + 1 + depth);
 		if (!(key in props.component.stateExpression)) props.component.stateExpression[key] = "";
 		else fn(depth + 1);
+	}
+};
+const editKey = (key: string) => {
+	const oldKeys = Object.keys(props.component.stateExpression).filter((k) => k !== key);
+	const newKey = prompt("请输入新的键", key);
+	if (newKey !== null) {
+		try {
+			if (oldKeys.some((k) => k === newKey)) throw new Error("键已存在");
+			const value = props.component.stateExpression[key];
+			delete props.component.stateExpression[key];
+			props.component.stateExpression[newKey] = value;
+		} catch (error: any) {
+			alert(error.message);
+			editKey(key);
+		}
 	}
 };
 </script>
@@ -21,7 +36,7 @@ const addState = () => {
 			<article v-for="k in Object.keys(props.component.stateExpression)" :key="k" class="form-item">
 				<label :for="'setter-state-' + k">{{ k }}</label>
 				<input :id="'setter-state-' + k" readonly :value="props.component.stateExpression[k]" />
-				<button type="button" @click="editObjectKey(props.component.stateExpression, k)">
+				<button type="button" @click="editKey(k)">
 					<svg class="icon"><use href="#key" /></svg>
 				</button>
 				<button type="button" @click="editObjectValue(props.component.stateExpression, k)">

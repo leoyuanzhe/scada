@@ -25,9 +25,10 @@ onMounted(() => {
 	<div
 		ref="oRenderer"
 		id="renderer"
-		class="renderer"
-		:style="{
-			cursor: clientStore.spaceKey ? 'move' : 'default',
+		:class="{
+			renderer: true,
+			moving: clientStore.keyboard.spaceKey,
+			action: clientStore.action.enable,
 		}"
 		@wheel="dragger.rendererWheel($event)"
 		@mousedown="dragger.rendererMousedown($event)"
@@ -64,6 +65,12 @@ onMounted(() => {
 	.canvas {
 		position: absolute;
 		transform-origin: 0 0;
+	}
+	&.moving {
+		cursor: grab;
+	}
+	&.action {
+		user-select: auto;
 	}
 }
 </style>

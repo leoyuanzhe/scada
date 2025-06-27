@@ -4,25 +4,15 @@ import type { Component } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
 
+type StringKeyOf<T> = {
+	[K in keyof T]: T[K] extends string ? K : never;
+}[keyof T];
 // 代码编辑器编辑对象的属性
-export const editObjectValue = <T extends Partial<Record<string, string>>>(object: T, key: keyof T): Promise<null> => {
+export const editObjectValue = <T extends Partial<Record<string, any>>>(object: T, key: StringKeyOf<T>, defaultValue?: string): Promise<null> => {
 	return new Promise((resolve) => {
-		CodeEditor(object[key])
+		CodeEditor(defaultValue ?? object[key])
 			.then((value) => {
-				object[key] = value as T[keyof T];
-				resolve(null);
-			})
-			.catch(() => {});
-	});
-};
-// 代码编辑器编辑对象的键
-export const editObjectKey = <T extends Partial<Record<string, string>>>(object: T, key: keyof T): Promise<null> => {
-	return new Promise((resolve) => {
-		CodeEditor(key.toString())
-			.then((newKey) => {
-				const value = object[key];
-				delete object[key];
-				object[newKey as keyof T] = value;
+				object[key as keyof T] = value as T[keyof T];
 				resolve(null);
 			})
 			.catch(() => {});

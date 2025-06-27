@@ -29,7 +29,6 @@ export const Text = (): MaterialWithLayout<TextProps> => ({
 	state: {},
 	actions: [],
 	emits: {
-		created: [],
 		click: [],
 		dblclick: [],
 	},

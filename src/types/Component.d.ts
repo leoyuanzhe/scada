@@ -22,7 +22,7 @@ export type ChangePropAction = BasicAction & {
 	params: {
 		targetComponentId: string;
 		key: string;
-		newValue: any;
+		newValue: string;
 	};
 };
 // 改变组件状态动作
@@ -34,7 +34,15 @@ export type ChangeStateAction = BasicAction & {
 		newValue: any;
 	};
 };
-export type Action = NoneAction | ChangeVisibleAction | ChangePropAction | ChangeStateAction;
+// 触发其它动作
+export type TriggerOtherAction = BasicAction & {
+	type: "triggerOther";
+	params: {
+		targetComponentId: string;
+		name: string;
+	};
+};
+export type Action = NoneAction | ChangeVisibleAction | ChangePropAction | ChangeStateAction | TriggerOtherAction;
 export type EmitEvent = {
 	executeType: "sequential" | "concurrent";
 	actions: string[];

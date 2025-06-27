@@ -11,14 +11,20 @@ export const useClient = defineStore("client", {
 				top: 30,
 				scale: 1,
 			},
-			snap: {
-				distance: 10,
+			keyboard: {
+				spaceKey: false,
 			},
 			grid: {
-				enableSnap: true,
+				enable: true,
 				span: 10,
 			},
-			spaceKey: false,
+			snap: {
+				enable: true,
+				distance: 10,
+			},
+			action: {
+				enable: false,
+			},
 		};
 	},
 	actions: {
@@ -26,14 +32,14 @@ export const useClient = defineStore("client", {
 			window.addEventListener("keydown", (e) => {
 				switch (e.key) {
 					case " ":
-						this.spaceKey = true;
+						this.keyboard.spaceKey = true;
 						break;
 				}
 			});
 			window.addEventListener("keyup", (e) => {
 				switch (e.key) {
 					case " ":
-						this.spaceKey = false;
+						this.keyboard.spaceKey = false;
 						break;
 				}
 			});
