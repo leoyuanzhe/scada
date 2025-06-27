@@ -14,7 +14,7 @@ function scaleSize(size: number): number {
 
 <template>
 	<div
-		v-if="clientStore.grid.enableSnap"
+		v-if="clientStore.grid.enable"
 		class="grid-lines"
 		:style="{
 			backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,

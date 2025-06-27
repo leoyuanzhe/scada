@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {});
 	<article class="form-item">
 		<label :for="'setter-' + props.propKey">{{ props.label }}</label>
 		<input :id="'setter-' + props.propKey" :type="props.inputType" :value="props.component.props[props.propKey]" @input="props.component.props[props.propKey] = ($event.target as HTMLInputElement).value" />
-		<button class="input-button" type="button" @click="editObjectValue(props.component.propsExpression, props.propKey)">
+		<button class="input-button" type="button" @click="editObjectValue(props.component.propsExpression as Record<string, any>, props.propKey)">
 			<svg :class="{ icon: true, active: props.component.propsExpression[props.propKey] !== undefined }"><use href="#link" /></svg>
 		</button>
 		<button v-if="props.component.propsExpression[props.propKey] !== undefined" class="input-button" type="button" @click="delete props.component.propsExpression[props.propKey]">

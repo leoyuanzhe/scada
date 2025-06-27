@@ -68,7 +68,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 找到组件
 		findComponent(componentId: string) {
-			return this.flatComponents.find((v) => v.id === componentId) || null;
+			return [this.$state, ...this.flatComponents].find((v) => v.id === componentId) || null;
 		},
 		// 找到组件的父元素
 		findParent(componentId: string) {
@@ -143,7 +143,7 @@ export const useSchema = defineStore("schema", {
 				const index = parent?.components.findIndex((item) => item.id === componentId);
 				if (parent && index !== -1) {
 					const newParent = this.findComponent(parentId);
-					if (newParent?.nestable && newParent.layout) {
+					if (!this.isSchema(newParent) && newParent?.nestable && newParent.layout) {
 						const child = parent.components[index!];
 						const newParentParent = this.findParent(parentId);
 						if (newParentParent && !this.isSchema(newParentParent)) {
@@ -186,13 +186,13 @@ export const useSchema = defineStore("schema", {
 			const parent = this.findParent(componentId);
 			if (parent) {
 				const child = this.findComponent(componentId);
-				if (child) parent.components.push(child);
+				if (child && !this.isSchema(child)) parent.components.push(child);
 			}
 		},
 		// 展开子组件到根组件
 		flatChindrenToSchema(componentId: string) {
 			const component = this.findComponent(componentId);
-			if (component) {
+			if (component && !this.isSchema(component)) {
 				const parent = this.findParent(componentId);
 				if (parent) {
 					const { left, top } = this.getOffsetFromSchema(component);

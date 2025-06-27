@@ -48,37 +48,8 @@ function init() {
 		cover: "",
 		material: c2,
 	});
-	schemaStore.components.push({
-		version: "0.0.1",
-		id: Date.now().toString(),
-		key: "text",
-		title: "文本",
-		active: false,
-		nestable: false,
-		locked: false,
-		hidden: false,
-		layout: {
-			resizable: true,
-			snap: { v: [], h: [] },
-			left: 15,
-			top: 15,
-			width: 100,
-			height: 50,
-		},
-		props: {
-			text: "这是一段文本",
-			color: "#ffffff",
-		},
-		state: {},
-		emits: {},
-		propsExpression: {
-			text: "state.b + $state.a",
-		},
-		stateExpression: {
-			b: "2",
-		},
-		components: [],
-	});
+	const text = Text();
+	schemaStore.components.push(text);
 }
 </script>
 

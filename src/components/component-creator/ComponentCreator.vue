@@ -25,6 +25,7 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 			active: props.component.active,
 			target: props.component.id === targetComponent.componentId.value,
 			locked: !clientStore.isPreview && props.component.locked,
+			action: clientStore.action.enable,
 		}"
 		v-show="!props.component.hidden"
 		:style="{
@@ -61,6 +62,11 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 	}
 	&.locked {
 		pointer-events: none;
+	}
+	&.action {
+		&::after {
+			display: none;
+		}
 	}
 }
 </style>

@@ -46,7 +46,7 @@ details.config {
 article.form-item {
 	display: flex;
 	column-gap: 10px;
-	label {
+	> label {
 		flex-shrink: 0;
 		min-width: 80px;
 		font-size: 14px;
@@ -80,6 +80,24 @@ article.form-item {
 			transition: box-shadow 0.2s;
 			&:focus-within {
 				box-shadow: 0 0 3px 1px var(--primary-color);
+			}
+		}
+	}
+	.checkbox-group {
+		flex: 1;
+		display: flex;
+		column-gap: 10px;
+		flex-wrap: wrap;
+		label {
+			line-height: 30px;
+			display: flex;
+			align-items: center;
+			cursor: pointer;
+			input {
+				flex-shrink: 0;
+				width: 20px;
+				height: 20px;
+				cursor: pointer;
 			}
 		}
 	}
