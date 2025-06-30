@@ -47,7 +47,7 @@ export type EmitEvent = {
 	executeType: "sequential" | "concurrent";
 	actions: string[];
 };
-export interface Component<Props = any> {
+export interface Component<Props = any, EmitKey = string> {
 	version: string;
 	id: string;
 	key: ComponentKey;
@@ -67,15 +67,11 @@ export interface Component<Props = any> {
 	props: Props;
 	state: Record<keyof Component["stateExpression"], any>;
 	actions: Action[];
-	emits: Record<string, EmitEvent[]>;
-	lifecycle: {
-		mounted: EmitEvent[];
-		beforeUnmount: EmitEvent[];
-	};
+	emits: Record<EmitKey | "mounted" | "beforeUnmount", EmitEvent>;
 	components: Component[];
 	propsExpression: Partial<Record<keyof Props, string>>;
 	stateExpression: Record<string, string>;
 }
-export interface ComponentWithLayout<Props = any> extends Omit<Component<Props>, "layout"> {
+export interface ComponentWithLayout<Props = any, EmitKey = string> extends Omit<Component<Props, EmitKey>, "layout"> {
 	layout: NonNullable<Component["layout"]>;
 }

@@ -24,13 +24,13 @@ defineExpose({
 </script>
 
 <template>
-	<dialog ref="oDialog" class="yz-dialog">
+	<dialog ref="oDialog" class="my-dialog">
 		<slot></slot>
 	</dialog>
 </template>
 
 <style lang="scss" scoped>
-.yz-dialog {
+.my-dialog {
 	padding: 0;
 	border: none;
 	&::backdrop {

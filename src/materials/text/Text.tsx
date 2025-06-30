@@ -5,7 +5,8 @@ export interface TextProps {
 	text: string;
 	color: string;
 }
-export const Text = (): MaterialWithLayout<TextProps> => ({
+export type TextEmitKey = "click" | "dblclick";
+export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	version: "0.0.1",
 	id: "text",
 	key: "text",
@@ -29,12 +30,10 @@ export const Text = (): MaterialWithLayout<TextProps> => ({
 	state: {},
 	actions: [],
 	emits: {
-		click: [],
-		dblclick: [],
-	},
-	lifecycle: {
-		mounted: [],
-		beforeUnmount: [],
+		mounted: { executeType: "concurrent", actions: [] },
+		beforeUnmount: { executeType: "concurrent", actions: [] },
+		click: { executeType: "concurrent", actions: [] },
+		dblclick: { executeType: "concurrent", actions: [] },
 	},
 	propsExpression: {},
 	stateExpression: {},

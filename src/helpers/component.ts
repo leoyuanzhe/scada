@@ -1,6 +1,6 @@
 import { watchEffect } from "vue";
 import type { Schema } from "@/types/Schema";
-import type { Component } from "@/types/Component";
+import type { Action, Component, EmitEvent } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
 
@@ -41,4 +41,37 @@ export const initComponent = (component: Schema | Component) => {
 			if (!error) component.props[key] = result;
 		}
 	});
+};
+export const triggerEmit = async (emit: EmitEvent, component: Schema | Component, event?: any, payload?: any) => {
+	switch (emit.executeType) {
+		case "concurrent": {
+			await Promise.all(
+				emit.actions.map((actionName) => {
+					const action = component.actions.find((v) => v.name === actionName);
+					if (action) return triggerAction(event, payload, action, component);
+					else return Promise.resolve();
+				})
+			);
+			break;
+		}
+		case "sequential": {
+			for (let i = 0; i < emit.actions.length; i++) {
+				const action = component.actions.find((v) => v.name === emit.actions[i]);
+				if (action) await triggerAction(event, payload, action, component);
+			}
+			break;
+		}
+	}
+};
+export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
+	const schemaStore = useSchema();
+	switch (action.type) {
+		case "none": {
+			try {
+				await new Function("event", "payload", "$state", "state", "parent", action.handler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+			} catch (error: any) {
+				console.error(error);
+			}
+		}
+	}
 };

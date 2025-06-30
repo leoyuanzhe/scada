@@ -2,6 +2,7 @@
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { editObjectValue } from "@/helpers/component";
+import MyButton from "@/components/my-button/MyButton.vue";
 
 const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
 const addState = () => {
@@ -46,9 +47,7 @@ const editKey = (key: string) => {
 					<svg class="icon danger"><use href="#trash" /></svg>
 				</button>
 			</article>
-			<article class="form-item">
-				<button class="success" type="button" @click="addState()">添加</button>
-			</article>
+			<MyButton variant="success" @click="addState()">添加</MyButton>
 		</fieldset>
 	</form>
 </template>
