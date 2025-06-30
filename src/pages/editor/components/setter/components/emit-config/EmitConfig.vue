@@ -2,7 +2,7 @@
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
-import Button from "@/components/button/Button.vue";
+import MyButton from "@/components/my-button/MyButton.vue";
 import emit_dict from "@/assets/data/emit_dict.json";
 import prop_dict from "@/assets/data/prop_dict.json";
 import { editObjectValue } from "@/helpers/component";
@@ -39,8 +39,10 @@ const editName = (name: string) => {
 <template>
 	<form class="form" @submit.prevent>
 		<h1>动作</h1>
-		<details v-for="v in props.component.actions" :key="v.name" class="config" open>
-			<summary>{{ v.name }}</summary>
+		<details v-for="v in props.component.actions" :key="v.name" class="config">
+			<summary>
+				<span>{{ v.name }}</span>
+			</summary>
 			<fieldset>
 				<article class="form-item">
 					<label for="setter-action-name">名称</label>
@@ -139,17 +141,34 @@ const editName = (name: string) => {
 				</template>
 			</fieldset>
 		</details>
-		<Button variant="success" @click="addAction()">添加动作</Button>
+		<MyButton variant="success" @click="addAction()">添加动作</MyButton>
 	</form>
 	<form class="form" @submit.prevent>
 		<h1>事件</h1>
-		<details v-for="k in Object.keys(props.component.lifecycle)" :key="k" class="config" open>
-			<summary>{{ emit_dict[k as keyof typeof emit_dict] || k }}</summary>
-			<fieldset></fieldset>
-		</details>
 		<details v-for="k in Object.keys(props.component.emits)" :key="k" class="config" open>
-			<summary>{{ emit_dict[k as keyof typeof emit_dict] || k }}</summary>
-			<fieldset></fieldset>
+			<summary>{{ emit_dict[k] ?? k }}</summary>
+			<fieldset>
+				<article class="form-item">
+					<label for="setter-emit-execute-type">类型</label>
+					<select id="setter-emit-execute-type" v-model="props.component.emits[k].executeType">
+						<option value="sequential">顺序执行</option>
+						<option value="concurrent">并发执行</option>
+					</select>
+				</article>
+				<article class="form-item">
+					<label for="setter-emit-actions">动作</label>
+					<div id="setter-emit-actions" class="checkbox-group">
+						<label v-for="v in props.component.actions" :key="v.name">
+							<input
+								type="checkbox"
+								:checked="props.component.emits[k].actions.includes(v.name)"
+								@change="props.component.emits[k].actions.includes(v.name) ? props.component.emits[k].actions.splice(props.component.emits[k].actions.indexOf(v.name), 1) : props.component.emits[k].actions.push(v.name)"
+							/>
+							<span>{{ v.name }}</span>
+						</label>
+					</div>
+				</article>
+			</fieldset>
 		</details>
 	</form>
 </template>

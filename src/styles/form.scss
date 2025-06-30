@@ -1,3 +1,4 @@
+@use "./mixins" as *;
 form.form {
 	display: flex;
 	flex-direction: column;
@@ -31,6 +32,21 @@ details.config {
 	border-radius: 10px;
 	summary {
 		cursor: pointer;
+		@include text-ellipsis();
+		&::before {
+			content: "\23F5";
+			margin-right: 10px;
+			font-size: 18px;
+			transition: transform 0.2s;
+			display: inline-block;
+		}
+	}
+	&[open] {
+		summary {
+			&::before {
+				transform: rotate(90deg);
+			}
+		}
 	}
 	fieldset {
 		display: flex;
@@ -50,23 +66,9 @@ article.form-item {
 		flex-shrink: 0;
 		min-width: 80px;
 		font-size: 14px;
-		line-height: 30px;
-	}
-	select {
-		width: 0;
-		flex: 1;
-		padding: 0 6px;
-		background-color: #111;
-		line-height: 30px;
-		border-radius: 4px;
-		transition: box-shadow 0.2s;
-		cursor: pointer;
-		&:focus-within {
-			box-shadow: 0 0 3px 1px var(--primary-color);
-		}
+		line-height: 40px;
 	}
 	input {
-		width: 0;
 		&:not([type]),
 		&[type="text"],
 		&[type="number"],
@@ -74,8 +76,9 @@ article.form-item {
 		&[type="color"] {
 			flex: 1;
 			padding: 0 6px;
+			width: 0;
 			background-color: #111;
-			line-height: 30px;
+			line-height: 40px;
 			border-radius: 4px;
 			transition: box-shadow 0.2s;
 			&:focus-within {
@@ -83,15 +86,39 @@ article.form-item {
 			}
 		}
 	}
+	select {
+		width: 0;
+		flex: 1;
+		padding: 0 6px;
+		background-color: #111;
+		line-height: 40px;
+		border-radius: 4px;
+		transition: box-shadow 0.2s;
+		cursor: pointer;
+		&:focus-within {
+			box-shadow: 0 0 3px 1px var(--primary-color);
+		}
+		&[multiple] {
+			height: 80px;
+		}
+	}
+	input[type="checkbox"] {
+		flex-shrink: 0;
+		margin: auto 0;
+		width: 20px;
+		height: 20px;
+		cursor: pointer;
+	}
 	.checkbox-group {
 		flex: 1;
 		display: flex;
 		column-gap: 10px;
 		flex-wrap: wrap;
 		label {
-			line-height: 30px;
+			line-height: 40px;
 			display: flex;
 			align-items: center;
+			column-gap: 6px;
 			cursor: pointer;
 			input {
 				flex-shrink: 0;
@@ -99,13 +126,17 @@ article.form-item {
 				height: 20px;
 				cursor: pointer;
 			}
+			span {
+				font-size: 14px;
+				@include text-ellipsis();
+			}
 		}
 	}
 	button {
 		flex-shrink: 0;
 		padding: 0 10px;
 		font-size: 14px;
-		line-height: 30px;
+		line-height: 40px;
 		.icon {
 			color: #ccc;
 			&.danger {
@@ -117,23 +148,6 @@ article.form-item {
 		}
 		&:hover {
 			background-color: #111;
-		}
-	}
-}
-button {
-	&.success {
-		flex: 1;
-		flex-shrink: 0;
-		padding: 0 10px;
-		font-size: 14px;
-		line-height: 30px;
-		border-radius: 4px;
-		transition: background-color 0.2s;
-	}
-	&.success {
-		background-color: var(--success-color);
-		&:hover {
-			background-color: var(--darken-success-color);
 		}
 	}
 }

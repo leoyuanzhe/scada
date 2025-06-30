@@ -104,16 +104,12 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 				<legend>操作</legend>
 				<article class="form-item">
 					<label for="setter-action-enable">启用</label>
-					<div class="checkbox-group">
-						<label>
-							<input
-								id="setter-action-enable"
-								type="checkbox"
-								:checked="clientStore.action.enable"
-								@input="(clientStore.action.enable = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
-							/>
-						</label>
-					</div>
+					<input
+						id="setter-action-enable"
+						type="checkbox"
+						:checked="clientStore.action.enable"
+						@input="(clientStore.action.enable = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
+					/>
 				</article>
 			</fieldset>
 		</template>

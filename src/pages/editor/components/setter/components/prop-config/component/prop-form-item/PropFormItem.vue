@@ -6,7 +6,7 @@ import { editObjectValue } from "@/helpers/component";
 interface Props {
 	component: Schema<Record<string, any>> | Component<Record<string, any>>;
 	label: string;
-	propKey: keyof Props["component"]["props"];
+	propKey: string;
 	inputType: "text" | "number" | "color";
 }
 const props = withDefaults(defineProps<Props>(), {});

@@ -10,13 +10,13 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-	<button :class="{ 'yz-button': true, [props.variant]: true }" :type="props.type">
+	<button :class="{ 'my-button': true, [props.variant]: true }" :type="props.type">
 		<slot></slot>
 	</button>
 </template>
 
 <style lang="scss" scoped>
-.yz-button {
+.my-button {
 	box-sizing: border-box;
 	padding: 8px 16px;
 	display: block;
