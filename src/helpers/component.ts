@@ -3,6 +3,7 @@ import type { Schema } from "@/types/Schema";
 import type { Action, Component, EmitEvent } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
+import { useClient } from "@/stores/useClient";
 
 type StringKeyOf<T> = {
 	[K in keyof T]: T[K] extends string ? K : never;
@@ -45,17 +46,20 @@ export const initComponent = (component: Schema | Component) => {
 };
 // 触发动作
 export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
+	const clientStore = useClient();
 	const schemaStore = useSchema();
-	switch (action.type) {
-		case "none": {
-			break;
+	if (clientStore.action.enable) {
+		switch (action.type) {
+			case "none": {
+				break;
+			}
 		}
-	}
-	try {
-		const fn = new Function("event", "payload", "$state", "state", "parent", action.handler);
-		await fn(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
-	} catch (error: any) {
-		console.error(error);
+		try {
+			const fn = new Function("event", "payload", "$state", "state", "parent", action.handler);
+			await fn(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+		} catch (error: any) {
+			console.error(error);
+		}
 	}
 };
 // 触发事件
