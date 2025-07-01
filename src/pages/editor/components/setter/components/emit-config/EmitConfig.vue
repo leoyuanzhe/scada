@@ -39,7 +39,7 @@ const editName = (name: string) => {
 <template>
 	<form class="form" @submit.prevent>
 		<h1>动作</h1>
-		<details v-for="v in props.component.actions" :key="v.name" class="config">
+		<details v-for="(v, i) in props.component.actions" :key="v.name" class="config">
 			<summary>
 				<span>{{ v.name }}</span>
 			</summary>
@@ -54,6 +54,7 @@ const editName = (name: string) => {
 				<article class="form-item">
 					<label for="setter-action-type">类型</label>
 					<select id="setter-action-type" v-model="v.type">
+						<option value="none">无</option>
 						<option value="changeVisible">改变可见性</option>
 						<option value="changeProp">改变属性</option>
 						<option value="changeState">改变状态</option>
@@ -139,13 +140,21 @@ const editName = (name: string) => {
 						</select>
 					</article>
 				</template>
+				<article class="form-item">
+					<label for="setter-action-handler">自定义函数</label>
+					<textarea readonly v-model="v.handler"></textarea>
+					<button class="input-button" @click="editObjectValue(v, 'handler')">
+						<svg class="icon"><use href="#code" /></svg>
+					</button>
+				</article>
+				<MyButton variant="danger" @click="props.component.actions.splice(i, 1)">删除</MyButton>
 			</fieldset>
 		</details>
 		<MyButton variant="success" @click="addAction()">添加动作</MyButton>
 	</form>
 	<form class="form" @submit.prevent>
 		<h1>事件</h1>
-		<details v-for="k in Object.keys(props.component.emits)" :key="k" class="config" open>
+		<details v-for="k in Object.keys(props.component.emits)" :key="k" class="config">
 			<summary>{{ emit_dict[k] ?? k }}</summary>
 			<fieldset>
 				<article class="form-item">

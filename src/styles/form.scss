@@ -61,6 +61,7 @@ details.config {
 }
 article.form-item {
 	display: flex;
+	align-items: flex-start;
 	column-gap: 10px;
 	> label {
 		flex-shrink: 0;
@@ -77,6 +78,7 @@ article.form-item {
 			flex: 1;
 			padding: 0 6px;
 			width: 0;
+			height: 40px;
 			background-color: #111;
 			line-height: 40px;
 			border-radius: 4px;
@@ -90,8 +92,9 @@ article.form-item {
 		width: 0;
 		flex: 1;
 		padding: 0 6px;
-		background-color: #111;
+		height: 40px;
 		line-height: 40px;
+		background-color: #111;
 		border-radius: 4px;
 		transition: box-shadow 0.2s;
 		cursor: pointer;
@@ -130,6 +133,20 @@ article.form-item {
 				font-size: 14px;
 				@include text-ellipsis();
 			}
+		}
+	}
+	textarea {
+		flex: 1;
+		padding: 6px;
+		width: 0;
+		min-height: 136px;
+		background-color: #111;
+		line-height: 34px;
+		border-radius: 4px;
+		resize: vertical;
+		transition: box-shadow 0.2s;
+		&:focus-within {
+			box-shadow: 0 0 3px 1px var(--primary-color);
 		}
 	}
 	button {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { onMounted, onBeforeUnmount } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps, TextEmitKey } from "./Text";
 import { initComponent, triggerEmit } from "@/helpers/component";
@@ -8,6 +9,8 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {});
 initComponent(props.component);
+onMounted(() => triggerEmit(props.component.emits.mounted, props.component));
+onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component));
 </script>
 
 <template>
