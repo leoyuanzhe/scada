@@ -20,12 +20,8 @@ export const useSchema = defineStore("schema", {
 			state: {},
 			actions: [],
 			emits: {
-				click: [],
-				dblclick: [],
-			},
-			lifecycle: {
-				mounted: [],
-				beforeUnmount: [],
+				mounted: { actions: [], executeType: "concurrent" },
+				beforeUnmount: { actions: [], executeType: "concurrent" },
 			},
 			components: [] as Component[],
 			propsExpression: {},
@@ -82,7 +78,7 @@ export const useSchema = defineStore("schema", {
 				}
 				return null;
 			};
-			return findInComponents(this.components, this);
+			return findInComponents(this.components, this.$state);
 		},
 		// 是否是根元素
 		isSchema(component: Schema | Component | null) {

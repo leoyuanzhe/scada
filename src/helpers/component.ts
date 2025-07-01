@@ -28,6 +28,7 @@ export const getExpressionResult = (expression: string | undefined, component: S
 		return { error };
 	}
 };
+// 初始化组件
 export const initComponent = (component: Schema | Component) => {
 	watchEffect(() => {
 		for (let key in component.stateExpression) {
@@ -42,13 +43,29 @@ export const initComponent = (component: Schema | Component) => {
 		}
 	});
 };
+// 触发动作
+export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
+	const schemaStore = useSchema();
+	switch (action.type) {
+		case "none": {
+			break;
+		}
+	}
+	try {
+		const fn = new Function("event", "payload", "$state", "state", "parent", action.handler);
+		await fn(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+	} catch (error: any) {
+		console.error(error);
+	}
+};
+// 触发事件
 export const triggerEmit = async (emit: EmitEvent, component: Schema | Component, event?: any, payload?: any) => {
 	switch (emit.executeType) {
 		case "concurrent": {
 			await Promise.all(
 				emit.actions.map((actionName) => {
 					const action = component.actions.find((v) => v.name === actionName);
-					if (action) return triggerAction(event, payload, action, component);
+					if (action) return triggerAction(action, component, event, payload);
 					else return Promise.resolve();
 				})
 			);
@@ -57,21 +74,9 @@ export const triggerEmit = async (emit: EmitEvent, component: Schema | Component
 		case "sequential": {
 			for (let i = 0; i < emit.actions.length; i++) {
 				const action = component.actions.find((v) => v.name === emit.actions[i]);
-				if (action) await triggerAction(event, payload, action, component);
+				if (action) await triggerAction(action, component, event, payload);
 			}
 			break;
-		}
-	}
-};
-export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
-	const schemaStore = useSchema();
-	switch (action.type) {
-		case "none": {
-			try {
-				await new Function("event", "payload", "$state", "state", "parent", action.handler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
-			} catch (error: any) {
-				console.error(error);
-			}
 		}
 	}
 };

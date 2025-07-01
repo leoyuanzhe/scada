@@ -30,10 +30,10 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	state: {},
 	actions: [],
 	emits: {
-		mounted: { executeType: "concurrent", actions: [] },
-		beforeUnmount: { executeType: "concurrent", actions: [] },
 		click: { executeType: "concurrent", actions: [] },
 		dblclick: { executeType: "concurrent", actions: [] },
+		mounted: { executeType: "concurrent", actions: [] },
+		beforeUnmount: { executeType: "concurrent", actions: [] },
 	},
 	propsExpression: {},
 	stateExpression: {},

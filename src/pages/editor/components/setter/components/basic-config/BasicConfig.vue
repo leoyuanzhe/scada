@@ -74,11 +74,7 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 				<legend>网格</legend>
 				<article class="form-item">
 					<label for="setter-grid-enable">启用</label>
-					<div class="checkbox-group">
-						<label>
-							<input id="setter-grid-enable" type="checkbox" :checked="clientStore.grid.enable" @input="clientStore.grid.enable = Boolean(($event.target as HTMLInputElement).checked)" />
-						</label>
-					</div>
+					<input id="setter-grid-enable" type="checkbox" :checked="clientStore.grid.enable" @input="clientStore.grid.enable = Boolean(($event.target as HTMLInputElement).checked)" />
 				</article>
 				<article class="form-item">
 					<label for="setter-grid-span">间隔</label>
@@ -89,11 +85,7 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 				<legend>吸附</legend>
 				<article class="form-item">
 					<label for="setter-snap-enable">启用</label>
-					<div class="checkbox-group">
-						<label>
-							<input id="setter-snap-enable" type="checkbox" :checked="clientStore.snap.enable" @input="clientStore.snap.enable = Boolean(($event.target as HTMLInputElement).checked)" />
-						</label>
-					</div>
+					<input id="setter-snap-enable" type="checkbox" :checked="clientStore.snap.enable" @input="clientStore.snap.enable = Boolean(($event.target as HTMLInputElement).checked)" />
 				</article>
 				<article class="form-item">
 					<label for="setter-snap-distance">距离</label>
