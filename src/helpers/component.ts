@@ -65,14 +65,18 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 				case "changeProp": {
 					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
 					if (targetComponent) {
-						targetComponent.props[action.params.key] = getExpressionResult(action.params.expression, component, payload);
+						const { result, error } = getExpressionResult(action.params.expression, component, payload);
+						if (!error) targetComponent.propsExpression[action.params.key] = result;
+						else throw new Error(component.title + " " + action.name + " change prop error.");
 					}
 					break;
 				}
 				case "changeState": {
 					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
 					if (targetComponent) {
-						targetComponent.state[action.params.key] = getExpressionResult(action.params.expression, component, payload);
+						const { result, error } = getExpressionResult(action.params.expression, component, payload);
+						if (!error) targetComponent.stateExpression[action.params.key] = result;
+						else throw new Error(component.title + " " + action.name + " change state error.");
 					}
 					break;
 				}

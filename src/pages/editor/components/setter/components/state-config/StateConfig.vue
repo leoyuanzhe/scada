@@ -2,6 +2,7 @@
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { editObjectValue } from "@/helpers/component";
+import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
 
 const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
@@ -32,21 +33,21 @@ const editKey = (key: string) => {
 
 <template>
 	<form class="form" @submit.prevent>
-		<h1>状态</h1>
+		<h1 @click="props.component.state.state1 = '2'">状态</h1>
 		<fieldset>
-			<article v-for="k in Object.keys(props.component.stateExpression)" :key="k" class="form-item">
-				<label :for="'setter-state-' + k">{{ k }}</label>
+			<FormItem
+				v-for="k in Object.keys(props.component.stateExpression)"
+				:key="k"
+				:label="k"
+				:for="'setter-state-' + k"
+				:icons="[
+					{ href: '#key', onClick: () => editKey(k) },
+					{ href: '#code', onClick: () => editObjectValue(props.component.stateExpression, k) },
+					{ href: '#trash', variant: 'danger', onClick: () => delete props.component.stateExpression[k] },
+				]"
+			>
 				<input :id="'setter-state-' + k" readonly :value="props.component.stateExpression[k]" />
-				<button type="button" @click="editKey(k)">
-					<svg class="icon"><use href="#key" /></svg>
-				</button>
-				<button type="button" @click="editObjectValue(props.component.stateExpression, k)">
-					<svg class="icon"><use href="#link" /></svg>
-				</button>
-				<button type="button" @click="delete props.component.stateExpression[k]">
-					<svg class="icon danger"><use href="#trash" /></svg>
-				</button>
-			</article>
+			</FormItem>
 			<MyButton variant="success" @click="addState()">添加</MyButton>
 		</fieldset>
 	</form>

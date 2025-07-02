@@ -48,7 +48,7 @@ export type EmitEvent = {
 	executeType: "sequential" | "concurrent";
 	actionsName: string[];
 };
-export interface Component<Props = any, EmitKey = string> {
+export interface Component<Props = Record<string, string>, EmitKey = string> {
 	version: string;
 	id: string;
 	key: ComponentKey;

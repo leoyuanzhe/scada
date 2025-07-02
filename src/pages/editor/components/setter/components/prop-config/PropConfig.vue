@@ -4,7 +4,7 @@ import type { Component } from "@/types/Component";
 import SchemaConfig from "./component/schema-config/SchemaConfig.vue";
 import TextConfig from "./component/text-config/TextConfig.vue";
 
-const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
+const props = withDefaults(defineProps<{ component: Schema<any> | Component<any> }>(), {});
 </script>
 
 <template>
