@@ -51,6 +51,7 @@ function init() {
 	const text = Text();
 	schemaStore.createComponent(text);
 	const text2 = Text();
+	text2.title = "文本2";
 	text2.layout.left = 50;
 	text2.layout.top = 200;
 	text2.layout.width = 55;

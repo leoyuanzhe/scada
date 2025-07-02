@@ -2,10 +2,11 @@
 import type { Schema } from "@/types/Schema";
 import type { Component, Action } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
+import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
+import { editObjectValue } from "@/helpers/component";
 import emit_dict from "@/assets/data/emit_dict.json";
 import prop_dict from "@/assets/data/prop_dict.json";
-import { editObjectValue } from "@/helpers/component";
 
 interface Props {
 	component: Schema | Component;
@@ -16,7 +17,7 @@ const addAction = () => {
 	fn(0);
 	function fn(depth: number) {
 		const name = "action" + (props.component.actions.length + 1 + depth);
-		if (!props.component.actions.some((v) => v.name == name)) props.component.actions.push({ name, type: "none", params: {}, beforeHandler: "", afterHandler: "" });
+		if (!props.component.actions.some((v) => v.name == name)) props.component.actions.push({ name, type: "none", params: {}, beforeHandler: "return true;", afterHandler: "" });
 		else fn(depth + 1);
 	}
 };
@@ -87,15 +88,10 @@ function checkParams(action: Action) {
 				<span>{{ v.name }}</span>
 			</summary>
 			<fieldset>
-				<article class="form-item">
-					<label for="setter-action-name">名称</label>
+				<FormItem label="名称" for="setter-action-name" :icons="[{ href: '#pen-to-square', onClick: () => editName(v.name) }]">
 					<input id="setter-action-name" readonly :value="v.name" />
-					<button class="input-button" @click="editName(v.name)">
-						<svg class="icon"><use href="#pen-to-square" /></svg>
-					</button>
-				</article>
-				<article class="form-item">
-					<label for="setter-action-type">类型</label>
+				</FormItem>
+				<FormItem label="类型" for="setter-action-type">
 					<select id="setter-action-type" :value="v.type" @input="changeType($event, v)">
 						<option value="none">无</option>
 						<option value="changeVisible">改变可见性</option>
@@ -103,100 +99,76 @@ function checkParams(action: Action) {
 						<option value="changeState">改变状态</option>
 						<option value="triggerOtherAction">触发其它事件</option>
 					</select>
-				</article>
+				</FormItem>
 				<template v-if="v.type === 'changeVisible'">
-					<article class="form-item">
-						<label for="change-visible-target-components-id">选择组件</label>
+					<FormItem label="选择组件" for="change-visible-target-components-id">
 						<select id="change-visible-target-components-id" multiple v-model="v.params.targetComponentsId">
 							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="change-visible-visible">选择可见性</label>
+					</FormItem>
+					<FormItem label="选择可见性" for="change-visible-visible">
 						<select id="change-visible-visible" v-model="v.params.visible">
 							<option value="show">显示</option>
 							<option value="hide">隐藏</option>
 							<option value="toggle">切换</option>
 						</select>
-					</article>
+					</FormItem>
 				</template>
 				<template v-if="v.type === 'changeProp'">
-					<article class="form-item">
-						<label for="change-prop-target-components-id">选择组件</label>
+					<FormItem label="选择组件" for="change-prop-target-components-id">
 						<select id="change-prop-target-components-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
 							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="change-prop-key">选择属性</label>
+					</FormItem>
+					<FormItem label="选择属性" for="change-prop-key">
 						<select id="change-prop-key" v-model="v.params.key">
 							<option v-for="k in Object.keys(schemaStore.findComponent(v.params.targetComponentId)?.props || {})" :key="k" :value="k">
 								{{ prop_dict[schemaStore.findComponent(v.params.targetComponentId)?.key || ""]?.[k] || k }}
 							</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="change-prop-expression">新属性值</label>
+					</FormItem>
+					<FormItem label="新属性值" for="change-prop-expression" :icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]">
 						<input id="change-prop-expression" type="text" readonly :value="v.params.expression" />
-						<button type="button" @click="editObjectValue(v.params, 'expression')">
-							<svg class="icon"><use href="#link" /></svg>
-						</button>
-					</article>
+					</FormItem>
 				</template>
 				<template v-if="v.type === 'changeState'">
-					<article class="form-item">
-						<label for="change-state-target-component-id">选择组件</label>
+					<FormItem label="选择组件" for="change-state-target-component-id">
 						<select id="change-state-target-component-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
 							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="change-state-key">选择键</label>
+					</FormItem>
+					<FormItem label="选择键" for="change-state-key">
 						<select id="change-state-key" v-model="v.params.key">
 							<option v-for="k in Object.keys(schemaStore.findComponent(v.params.targetComponentId)?.stateExpression || {})" :key="k" :value="k">
 								{{ k }}
 							</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="change-state-expression">新值</label>
+					</FormItem>
+					<FormItem label="新值" for="change-state-expression" :icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]">
 						<input id="change-state-expression" type="text" readonly :value="v.params.expression" />
-						<button type="button" @click="editObjectValue(v.params, 'expression')">
-							<svg class="icon"><use href="#link" /></svg>
-						</button>
-					</article>
+					</FormItem>
 				</template>
 				<template v-if="v.type === 'triggerOtherAction'">
-					<article class="form-item">
-						<label for="trigger-other-target-component-id">选择组件</label>
+					<FormItem label="选择组件" for="trigger-other-target-component-id">
 						<select id="trigger-other-target-component-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
 							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
 						</select>
-					</article>
-					<article class="form-item">
-						<label for="trigger-other-name">选择事件</label>
+					</FormItem>
+					<FormItem label="选择事件" for="trigger-other-name">
 						<select id="trigger-other-name" v-model="v.params.name">
 							<option v-for="v2 in schemaStore.findComponent(v.params.targetComponentId)?.actions || []" :key="v2.name" :value="v2.name">{{ v2.name }}</option>
 						</select>
-					</article>
+					</FormItem>
 				</template>
-				<article class="form-item">
-					<label for="setter-action-before-handler">执行动作前</label>
+				<FormItem label="执行动作前" for="setter-action-before-handler" :icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]">
 					<textarea readonly v-model="v.beforeHandler"></textarea>
-					<button class="input-button" @click="editObjectValue(v, 'beforeHandler')">
-						<svg class="icon"><use href="#code" /></svg>
-					</button>
-				</article>
-				<article class="form-item">
-					<label for="setter-action-after-handler">执行动作后</label>
+				</FormItem>
+				<FormItem label="执行动作后" for="setter-action-after-handler" :icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]">
 					<textarea readonly v-model="v.afterHandler"></textarea>
-					<button class="input-button" @click="editObjectValue(v, 'afterHandler')">
-						<svg class="icon"><use href="#code" /></svg>
-					</button>
-				</article>
+				</FormItem>
 				<MyButton variant="danger" @click="props.component.actions.splice(i, 1)">删除</MyButton>
 			</fieldset>
 		</details>
@@ -207,15 +179,13 @@ function checkParams(action: Action) {
 		<details v-for="k in Object.keys(props.component.emits)" :key="k" class="config">
 			<summary>{{ emit_dict[k] ?? k }}</summary>
 			<fieldset>
-				<article class="form-item">
-					<label for="setter-emit-execute-type">类型</label>
+				<FormItem label="类型" for="setter-emit-execute-type">
 					<select id="setter-emit-execute-type" v-model="props.component.emits[k].executeType">
 						<option value="sequential">顺序执行</option>
 						<option value="concurrent">并发执行</option>
 					</select>
-				</article>
-				<article class="form-item">
-					<label for="setter-emit-actions-name">选择动作</label>
+				</FormItem>
+				<FormItem label="选择动作" for="setter-emit-actions-name">
 					<div id="setter-emit-actions-name" class="checkbox-group">
 						<label v-for="v in props.component.actions" :key="v.name">
 							<input
@@ -230,7 +200,7 @@ function checkParams(action: Action) {
 							<span>{{ v.name }}</span>
 						</label>
 					</div>
-				</article>
+				</FormItem>
 			</fieldset>
 		</details>
 	</form>

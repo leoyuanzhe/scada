@@ -36,6 +36,7 @@ const targetComponentV2 = computed<Schema | Component>(() => (targetComponent.co
 .setter {
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 	menu {
 		padding: 10px;
 		display: flex;
@@ -63,6 +64,7 @@ const targetComponentV2 = computed<Schema | Component>(() => (targetComponent.co
 		display: flex;
 		flex-direction: column;
 		row-gap: 10px;
+		overflow: auto;
 	}
 }
 </style>

@@ -59,25 +59,16 @@ details.config {
 		}
 	}
 }
-article.form-item {
-	display: flex;
-	align-items: flex-start;
-	column-gap: 10px;
-	> label {
-		flex-shrink: 0;
-		min-width: 80px;
-		font-size: 14px;
-		line-height: 40px;
-	}
+.form-item {
 	input {
 		&:not([type]),
 		&[type="text"],
 		&[type="number"],
 		&[type="select"],
 		&[type="color"] {
-			flex: 1;
+			box-sizing: border-box;
 			padding: 0 6px;
-			width: 0;
+			width: 100%;
 			height: 40px;
 			background-color: #111;
 			line-height: 40px;
@@ -147,24 +138,6 @@ article.form-item {
 		transition: box-shadow 0.2s;
 		&:focus-within {
 			box-shadow: 0 0 3px 1px var(--primary-color);
-		}
-	}
-	button {
-		flex-shrink: 0;
-		padding: 0 10px;
-		font-size: 14px;
-		line-height: 40px;
-		.icon {
-			color: #ccc;
-			&.danger {
-				color: var(--danger-color);
-			}
-			&.active {
-				color: var(--primary-color);
-			}
-		}
-		&:hover {
-			background-color: #111;
 		}
 	}
 }
