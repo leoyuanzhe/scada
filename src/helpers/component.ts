@@ -1,9 +1,9 @@
 import { watchEffect } from "vue";
 import type { Schema } from "@/types/Schema";
 import type { Action, Component, EmitEvent } from "@/types/Component";
+import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
-import { useClient } from "@/stores/useClient";
 
 type StringKeyOf<T> = {
 	[K in keyof T]: T[K] extends string ? K : never;
@@ -49,14 +49,15 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	if (clientStore.action.enable) {
-		switch (action.type) {
-			case "none": {
-				break;
-			}
-		}
 		try {
-			const fn = new Function("event", "payload", "$state", "state", "parent", action.handler);
-			await fn(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+			const beforeReuslt = await new Function("event", "payload", "$state", "state", "parent", action.beforeHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+			if (!beforeReuslt) throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
+			switch (action.type) {
+				case "changeVisible": {
+					break;
+				}
+			}
+			await new Function("event", "payload", "$state", "state", "parent", action.afterHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
 		} catch (error: any) {
 			console.error(error);
 		}
@@ -67,7 +68,7 @@ export const triggerEmit = async (emit: EmitEvent, component: Schema | Component
 	switch (emit.executeType) {
 		case "concurrent": {
 			await Promise.all(
-				emit.actions.map((actionName) => {
+				emit.actionsName.map((actionName) => {
 					const action = component.actions.find((v) => v.name === actionName);
 					if (action) return triggerAction(action, component, event, payload);
 					else return Promise.resolve();
@@ -76,8 +77,8 @@ export const triggerEmit = async (emit: EmitEvent, component: Schema | Component
 			break;
 		}
 		case "sequential": {
-			for (let i = 0; i < emit.actions.length; i++) {
-				const action = component.actions.find((v) => v.name === emit.actions[i]);
+			for (let i = 0; i < emit.actionsName.length; i++) {
+				const action = component.actions.find((v) => v.name === emit.actionsName[i]);
 				if (action) await triggerAction(action, component, event, payload);
 			}
 			break;
