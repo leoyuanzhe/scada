@@ -20,8 +20,8 @@ export const useSchema = defineStore("schema", {
 			state: {},
 			actions: [],
 			emits: {
-				mounted: { actions: [], executeType: "concurrent" },
-				beforeUnmount: { actions: [], executeType: "concurrent" },
+				mounted: { executeType: "concurrent", actionsName: [] },
+				beforeUnmount: { executeType: "concurrent", actionsName: [] },
 			},
 			components: [] as Component[],
 			propsExpression: {},

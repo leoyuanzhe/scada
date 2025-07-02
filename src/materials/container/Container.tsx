@@ -21,7 +21,11 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	},
 	props: {},
 	state: {},
-	emits: {},
+	actions: [],
+	emits: {
+		mounted: { executeType: "concurrent", actionsName: [] },
+		beforeUnmount: { executeType: "concurrent", actionsName: [] },
+	},
 	propsExpression: {},
 	stateExpression: {},
 	components: [],
