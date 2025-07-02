@@ -23,7 +23,7 @@ export type ChangePropAction = BasicAction & {
 	params: {
 		targetComponentId: string;
 		key: string;
-		newValue: string;
+		expression: string;
 	};
 };
 // 改变组件状态动作
@@ -32,12 +32,12 @@ export type ChangeStateAction = BasicAction & {
 	params: {
 		targetComponentId: string;
 		key: string;
-		newValue: any;
+		expression: any;
 	};
 };
 // 触发其它动作
 export type TriggerOtherAction = BasicAction & {
-	type: "triggerOther";
+	type: "triggerOtherAction";
 	params: {
 		targetComponentId: string;
 		name: string;
