@@ -56,7 +56,7 @@ function checkParams(action: Action) {
 			action.params = {
 				targetComponentId: "",
 				key: "",
-				newValue: "",
+				expression: "",
 			};
 			break;
 		}
@@ -64,11 +64,11 @@ function checkParams(action: Action) {
 			action.params = {
 				targetComponentId: "",
 				key: "",
-				newValue: "",
+				expression: "",
 			};
 			break;
 		}
-		case "triggerOther": {
+		case "triggerOtherAction": {
 			action.params = {
 				targetComponentId: "",
 				name: "",
@@ -101,7 +101,7 @@ function checkParams(action: Action) {
 						<option value="changeVisible">改变可见性</option>
 						<option value="changeProp">改变属性</option>
 						<option value="changeState">改变状态</option>
-						<option value="triggerOther">触发其它事件</option>
+						<option value="triggerOtherAction">触发其它事件</option>
 					</select>
 				</article>
 				<template v-if="v.type === 'changeVisible'">
@@ -137,9 +137,9 @@ function checkParams(action: Action) {
 						</select>
 					</article>
 					<article class="form-item">
-						<label for="change-prop-new-value">新属性值</label>
-						<input id="change-prop-new-value" type="text" readonly :value="v.params.newValue" />
-						<button type="button" @click="editObjectValue(v.params, 'newValue')">
+						<label for="change-prop-expression">新属性值</label>
+						<input id="change-prop-expression" type="text" readonly :value="v.params.expression" />
+						<button type="button" @click="editObjectValue(v.params, 'expression')">
 							<svg class="icon"><use href="#link" /></svg>
 						</button>
 					</article>
@@ -161,14 +161,14 @@ function checkParams(action: Action) {
 						</select>
 					</article>
 					<article class="form-item">
-						<label for="change-state-new-value">新值</label>
-						<input id="change-state-new-value" type="text" readonly :value="v.params.newValue" />
-						<button type="button" @click="editObjectValue(v.params, 'newValue')">
+						<label for="change-state-expression">新值</label>
+						<input id="change-state-expression" type="text" readonly :value="v.params.expression" />
+						<button type="button" @click="editObjectValue(v.params, 'expression')">
 							<svg class="icon"><use href="#link" /></svg>
 						</button>
 					</article>
 				</template>
-				<template v-if="v.type === 'triggerOther'">
+				<template v-if="v.type === 'triggerOtherAction'">
 					<article class="form-item">
 						<label for="trigger-other-target-component-id">选择组件</label>
 						<select id="trigger-other-target-component-id" v-model="v.params.targetComponentId">
@@ -215,7 +215,7 @@ function checkParams(action: Action) {
 					</select>
 				</article>
 				<article class="form-item">
-					<label for="setter-emit-actions-name">动作</label>
+					<label for="setter-emit-actions-name">选择动作</label>
 					<div id="setter-emit-actions-name" class="checkbox-group">
 						<label v-for="v in props.component.actions" :key="v.name">
 							<input

@@ -20,10 +20,10 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(object: 
 	});
 };
 // 获取表达式结果
-export const getExpressionResult = (expression: string | undefined, component: Schema | Component) => {
+export const getExpressionResult = (expression: string | undefined, component: Schema | Component, payload?: any) => {
 	const schemaStore = useSchema();
 	try {
-		return { result: new Function("$state", "state", "parent", "return " + expression)(schemaStore.state, component.state, schemaStore.findParent(component.id)) };
+		return { result: new Function("$state", "state", "parent", "payload", "return " + expression)(schemaStore.state, component.state, schemaStore.findParent(component.id), payload) };
 	} catch (error: any) {
 		console.error(error);
 		return { error };
@@ -54,6 +54,34 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 			if (!beforeReuslt) throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
 			switch (action.type) {
 				case "changeVisible": {
+					action.params.targetComponentsId.forEach((componentId) => {
+						const targetComponent = schemaStore.findComponent(componentId);
+						if (targetComponent && !schemaStore.isSchema(targetComponent)) {
+							targetComponent.hidden = action.params.visible === "show" ? true : action.params.visible === "hide" ? false : !targetComponent.hidden;
+						}
+					});
+					break;
+				}
+				case "changeProp": {
+					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
+					if (targetComponent) {
+						targetComponent.props[action.params.key] = getExpressionResult(action.params.expression, component, payload);
+					}
+					break;
+				}
+				case "changeState": {
+					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
+					if (targetComponent) {
+						targetComponent.state[action.params.key] = getExpressionResult(action.params.expression, component, payload);
+					}
+					break;
+				}
+				case "triggerOtherAction": {
+					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
+					const targetAction = targetComponent?.actions.find((v) => v.name === action.params.name);
+					if (targetComponent && targetAction) {
+						await triggerAction(targetAction, targetComponent, event, payload);
+					}
 					break;
 				}
 			}
