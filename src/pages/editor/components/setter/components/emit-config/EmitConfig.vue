@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Schema } from "@/types/Schema";
-import type { Component } from "@/types/Component";
+import type { Component, Action } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import MyButton from "@/components/my-button/MyButton.vue";
 import emit_dict from "@/assets/data/emit_dict.json";
@@ -16,7 +16,7 @@ const addAction = () => {
 	fn(0);
 	function fn(depth: number) {
 		const name = "action" + (props.component.actions.length + 1 + depth);
-		if (!props.component.actions.some((v) => v.name == name)) props.component.actions.push({ name, type: "none", params: {}, handler: "" });
+		if (!props.component.actions.some((v) => v.name == name)) props.component.actions.push({ name, type: "none", params: {}, beforeHandler: "", afterHandler: "" });
 		else fn(depth + 1);
 	}
 };
@@ -34,6 +34,49 @@ const editName = (name: string) => {
 		}
 	}
 };
+const changeType = (e: Event, action: Action) => {
+	const value = (e.target as HTMLSelectElement).value as Action["type"];
+	action.type = value;
+	checkParams(action);
+};
+function checkParams(action: Action) {
+	switch (action.type) {
+		case "none": {
+			action.params = {};
+			break;
+		}
+		case "changeVisible": {
+			action.params = {
+				targetComponentsId: [],
+				visible: "hide",
+			};
+			break;
+		}
+		case "changeProp": {
+			action.params = {
+				targetComponentId: "",
+				key: "",
+				newValue: "",
+			};
+			break;
+		}
+		case "changeState": {
+			action.params = {
+				targetComponentId: "",
+				key: "",
+				newValue: "",
+			};
+			break;
+		}
+		case "triggerOther": {
+			action.params = {
+				targetComponentId: "",
+				name: "",
+			};
+			break;
+		}
+	}
+}
 </script>
 
 <template>
@@ -53,7 +96,7 @@ const editName = (name: string) => {
 				</article>
 				<article class="form-item">
 					<label for="setter-action-type">类型</label>
-					<select id="setter-action-type" v-model="v.type">
+					<select id="setter-action-type" :value="v.type" @input="changeType($event, v)">
 						<option value="none">无</option>
 						<option value="changeVisible">改变可见性</option>
 						<option value="changeProp">改变属性</option>
@@ -141,9 +184,16 @@ const editName = (name: string) => {
 					</article>
 				</template>
 				<article class="form-item">
-					<label for="setter-action-handler">自定义函数</label>
-					<textarea readonly v-model="v.handler"></textarea>
-					<button class="input-button" @click="editObjectValue(v, 'handler')">
+					<label for="setter-action-before-handler">执行动作前</label>
+					<textarea readonly v-model="v.beforeHandler"></textarea>
+					<button class="input-button" @click="editObjectValue(v, 'beforeHandler')">
+						<svg class="icon"><use href="#code" /></svg>
+					</button>
+				</article>
+				<article class="form-item">
+					<label for="setter-action-after-handler">执行动作后</label>
+					<textarea readonly v-model="v.afterHandler"></textarea>
+					<button class="input-button" @click="editObjectValue(v, 'afterHandler')">
 						<svg class="icon"><use href="#code" /></svg>
 					</button>
 				</article>
@@ -165,13 +215,17 @@ const editName = (name: string) => {
 					</select>
 				</article>
 				<article class="form-item">
-					<label for="setter-emit-actions">动作</label>
-					<div id="setter-emit-actions" class="checkbox-group">
+					<label for="setter-emit-actions-name">动作</label>
+					<div id="setter-emit-actions-name" class="checkbox-group">
 						<label v-for="v in props.component.actions" :key="v.name">
 							<input
 								type="checkbox"
-								:checked="props.component.emits[k].actions.includes(v.name)"
-								@change="props.component.emits[k].actions.includes(v.name) ? props.component.emits[k].actions.splice(props.component.emits[k].actions.indexOf(v.name), 1) : props.component.emits[k].actions.push(v.name)"
+								:checked="props.component.emits[k].actionsName.includes(v.name)"
+								@change="
+									props.component.emits[k].actionsName.includes(v.name)
+										? props.component.emits[k].actionsName.splice(props.component.emits[k].actionsName.indexOf(v.name), 1)
+										: props.component.emits[k].actionsName.push(v.name)
+								"
 							/>
 							<span>{{ v.name }}</span>
 						</label>

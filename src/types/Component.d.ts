@@ -1,7 +1,8 @@
 export type ComponentKey = "text" | "container";
 type BasicAction = {
 	name: string;
-	handler: string;
+	beforeHandler: string;
+	afterHandler: string;
 };
 // 无动作
 export type NoneAction = BasicAction & {
@@ -45,7 +46,7 @@ export type TriggerOtherAction = BasicAction & {
 export type Action = NoneAction | ChangeVisibleAction | ChangePropAction | ChangeStateAction | TriggerOtherAction;
 export type EmitEvent = {
 	executeType: "sequential" | "concurrent";
-	actions: string[];
+	actionsName: string[];
 };
 export interface Component<Props = any, EmitKey = string> {
 	version: string;
