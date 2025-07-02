@@ -278,7 +278,6 @@ function createComponent(asset: Asset): Component {
 		state: cloneAsset.material.state,
 		actions: cloneAsset.material.actions,
 		emits: cloneAsset.material.emits,
-		lifecycle: cloneAsset.material.lifecycle,
 		components: cloneAsset.material.components,
 		propsExpression: cloneAsset.material.propsExpression,
 		stateExpression: cloneAsset.material.stateExpression,
@@ -413,7 +412,7 @@ const computedSelector = () => {
 function getNearestGridLinePosition(position: number) {
 	const clientStore = useClient();
 	if (clientStore.grid.enable) {
-		return (position / clientStore.grid.span) * clientStore.grid.span;
+		return Math.round(position / clientStore.grid.span) * clientStore.grid.span;
 	} else return position;
 }
 // 获取逻辑左边距（组件相对于渲染器->组件相对于画布）
