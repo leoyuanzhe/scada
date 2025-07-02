@@ -47,7 +47,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 所有组件
 		flatComponents(): Component[] {
-			return this.components.flatMap((v) => flat(v));
+			return this.components.flatMap(flat);
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
@@ -103,6 +103,12 @@ export const useSchema = defineStore("schema", {
 			};
 			fn(component);
 			return { left, top };
+		},
+		createComponent(component: Component, assignedNewId: boolean = true) {
+			if (assignedNewId) {
+				component.id = component.id + "-" + Math.random().toString(36).substring(2, 7);
+			}
+			this.components.push(component);
 		},
 		// 删除组件
 		removeComponent(componentId: string) {
