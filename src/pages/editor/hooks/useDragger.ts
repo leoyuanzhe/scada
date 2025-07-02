@@ -155,7 +155,7 @@ const rendererMousedown = (e: MouseEvent) => {
 			function mousemove(e: MouseEvent) {
 				const moveX = e.clientX - startX; // 移动的X轴距离
 				const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
-				const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < clientStore.snap.distance); // 组件的左边定位到的垂直吸附线
+				const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
 				const middleV = snapLines.v.find((v) => Math.abs(v - dragLeft - selector.width / 2) < clientStore.snap.distance);
 				const rightV = snapLines.v.find((v) => Math.abs(v - dragLeft - selector.width) < clientStore.snap.distance);
 				if (leftV !== undefined) {
@@ -189,7 +189,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				}
 				const moveY = e.clientY - startY;
 				const dragTop = startSelectorTop + moveY; // 拖拽后的相对于渲染器的left值
-				const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < clientStore.snap.distance); // 组件的左边定位到的垂直吸附线
+				const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
 				const middleH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height / 2) < clientStore.snap.distance);
 				const bottomH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height) < clientStore.snap.distance);
 				if (topH !== undefined) {
@@ -238,12 +238,12 @@ const canvasDrop = (e: DragEvent) => {
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
-		const newComponent: Component = createComponent(asset);
+		const newComponent: Component = assetTransferComponent(asset);
 		if (newComponent.layout) {
 			newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
 			newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
 		}
-		schemaStore.components.push(newComponent);
+		schemaStore.createComponent(newComponent);
 		computedSelector();
 	}
 };
@@ -253,20 +253,20 @@ const componentDrop = (e: DragEvent, component: Component) => {
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
-		const newComponent: Component = createComponent(asset);
+		const newComponent: Component = assetTransferComponent(asset);
 		if (newComponent.layout) {
 			newComponent.layout.left = e.offsetX + schemaStore.getOffsetFromSchema(component).left - (newComponent.layout.width ?? 0) / 2;
 			newComponent.layout.top = e.offsetY + schemaStore.getOffsetFromSchema(component).top - (newComponent.layout.height ?? 0) / 2;
 		}
-		schemaStore.components.push(newComponent);
+		schemaStore.createComponent(newComponent);
 		computedSelector();
 	}
 };
-function createComponent(asset: Asset): Component {
+function assetTransferComponent(asset: Asset): Component {
 	const cloneAsset = deepClone(asset);
 	return {
 		version: cloneAsset.material.version,
-		id: Date.now().toString(),
+		id: "",
 		key: cloneAsset.material.key,
 		title: cloneAsset.material.title,
 		active: true,
@@ -299,14 +299,14 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const targetComponent = useTargetComponent();
 	if (targetComponent.component.value?.layout) {
-		document.body.addEventListener("mousemove", mousemove);
-		document.body.addEventListener("mouseup", mouseup);
 		const startX = e.clientX; // 鼠标按下时的X坐标
 		const startY = e.clientY;
 		const startLeft = targetComponent.component.value.layout.left;
 		const startTop = targetComponent.component.value.layout.top;
 		const startWidth = targetComponent.component.value.layout.width;
 		const startHeight = targetComponent.component.value.layout.height;
+		document.body.addEventListener("mousemove", mousemove);
+		document.body.addEventListener("mouseup", mouseup);
 		function mousemove(e: MouseEvent) {
 			const moveX = Math.round(getUnscaledOffset(e.clientX - startX)); // 移动的X轴距离
 			const moveY = Math.round(getUnscaledOffset(e.clientY - startY)); // 移动的X轴距离

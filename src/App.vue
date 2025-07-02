@@ -49,7 +49,13 @@ function init() {
 		material: c2,
 	});
 	const text = Text();
-	schemaStore.components.push(text);
+	schemaStore.createComponent(text);
+	const text2 = Text();
+	text2.layout.left = 50;
+	text2.layout.top = 200;
+	text2.layout.width = 55;
+	schemaStore.createComponent(text2);
+	clientStore.grid.span = 20;
 }
 </script>
 
