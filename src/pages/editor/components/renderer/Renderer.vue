@@ -10,6 +10,7 @@ import AlignLineV from "./components/align-line/AlignLineV.vue";
 import AlignLineH from "./components/align-line/AlignLineH.vue";
 import Selector from "./components/selector/Selector.vue";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
+import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
@@ -28,7 +29,7 @@ onMounted(() => {
 		:class="{
 			renderer: true,
 			moving: clientStore.keyboard.spaceKey,
-			action: clientStore.action.enable,
+			operating: clientStore.operate.enable,
 		}"
 		@wheel="dragger.rendererWheel($event)"
 		@mousedown="dragger.rendererMousedown($event)"
@@ -45,6 +46,7 @@ onMounted(() => {
 			}"
 			@dragover.prevent
 			@drop="dragger.canvasDrop($event)"
+			@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 		>
 			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" />
 		</div>
@@ -69,7 +71,7 @@ onMounted(() => {
 	&.moving {
 		cursor: grab;
 	}
-	&.action {
+	&.operating {
 		user-select: auto;
 	}
 }

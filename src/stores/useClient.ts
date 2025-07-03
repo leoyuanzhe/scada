@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { useSchema } from "./useSchema";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
+import type { Component } from "@/types/Component";
 
 export const useClient = defineStore("client", {
 	state() {
@@ -22,8 +24,11 @@ export const useClient = defineStore("client", {
 				enable: true,
 				distance: 10,
 			},
-			action: {
+			operate: {
 				enable: false,
+			},
+			clipboard: {
+				component: null as Component | null,
 			},
 		};
 	},
@@ -52,6 +57,12 @@ export const useClient = defineStore("client", {
 				this.canvas.top = 30;
 				this.canvas.scale = Math.max(Math.min((this.oRenderer.offsetWidth - 40) / schemaStore.layout.width, 5), 0.1);
 			}
+		},
+		// 启用触发操作
+		enableGrid() {
+			const targetComponent = useTargetComponent();
+			this.operate.enable = true;
+			targetComponent.componentId.value = "";
 		},
 	},
 });

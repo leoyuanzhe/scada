@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema, SchemaProps } from "@/types/Schema";
 import { initComponent } from "@/helpers/component";
+import { Container } from "@/materials/container/Container";
 
 export const useSchema = defineStore("schema", {
 	state() {
@@ -104,11 +105,12 @@ export const useSchema = defineStore("schema", {
 			fn(component);
 			return { left, top };
 		},
-		createComponent(component: Component, assignedNewId: boolean = true) {
+		createComponent<T extends Component>(component: T, assignedNewId: boolean = true): T {
 			if (assignedNewId) {
 				component.id = component.id + "-" + Math.random().toString(36).substring(2, 7);
 			}
 			this.components.push(component);
+			return component;
 		},
 		// 删除组件
 		removeComponent(componentId: string) {
@@ -137,6 +139,25 @@ export const useSchema = defineStore("schema", {
 					} else return parent.components.splice(index, 1)[0];
 				}
 			}
+		},
+		// 创建分组
+		createGroup(componentsId: string[]) {
+			const container = this.createComponent(Container());
+			container.layout.left = Infinity;
+			container.layout.top = Infinity;
+			componentsId.forEach((componentId) => {
+				const component = this.findComponent(componentId);
+				if (component && !this.isSchema(component)) {
+					if (component.layout?.resizable) {
+						container.layout.left = Math.min(component.layout.left, container.layout.left);
+						container.layout.top = Math.min(component.layout.top, container.layout.top);
+					}
+				}
+			});
+			componentsId.forEach((componentId) => {
+				this.joinGroup(componentId, container.id);
+			});
+			return container;
 		},
 		// 加入分组
 		joinGroup(componentId: string, parentId: string) {
@@ -207,7 +228,6 @@ export const useSchema = defineStore("schema", {
 							return v;
 						})
 					);
-					this.removeComponent(componentId);
 				}
 			}
 		},

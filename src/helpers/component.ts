@@ -48,7 +48,7 @@ export const initComponent = (component: Schema | Component) => {
 export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	if (clientStore.action.enable) {
+	if (clientStore.operate.enable) {
 		try {
 			const beforeReuslt = await new Function("event", "payload", "$state", "state", "parent", action.beforeHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
 			if (!beforeReuslt) throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");

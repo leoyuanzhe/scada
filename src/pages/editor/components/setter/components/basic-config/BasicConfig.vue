@@ -84,12 +84,12 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 			</fieldset>
 			<fieldset>
 				<legend>操作</legend>
-				<FormItem label="启用" for="setter-action-enable">
+				<FormItem label="启用" for="setter-operate-enable">
 					<input
-						id="setter-action-enable"
+						id="setter-operate-enable"
 						type="checkbox"
-						:checked="clientStore.action.enable"
-						@input="(clientStore.action.enable = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
+						:checked="clientStore.operate.enable"
+						@input="(clientStore.operate.enable = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
 					/>
 				</FormItem>
 			</fieldset>
