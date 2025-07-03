@@ -5,7 +5,6 @@ import { useAsset } from "./stores/useAsset";
 import { useSchema } from "./stores/useSchema";
 import { Container } from "./materials/container/Container";
 import { Text } from "./materials/text/Text";
-import ContextMenu from "./components/context-menu/ContextMenu.vue";
 
 const clientStore = useClient();
 const materialStore = useMaterial();
@@ -68,5 +67,4 @@ function init() {
 			</KeepAlive>
 		</Transition>
 	</RouterView>
-	<ContextMenu />
 </template>

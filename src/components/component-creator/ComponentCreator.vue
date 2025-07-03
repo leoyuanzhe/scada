@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import type { Material } from "@/types/Material";
 import type { Component } from "@/types/Component";
-import { useMaterial } from "@/stores/useMaterial";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useClient } from "@/stores/useClient";
+import { useMaterial } from "@/stores/useMaterial";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 interface Props {
 	component: Component;
@@ -25,7 +25,7 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 			active: props.component.active,
 			target: props.component.id === targetComponent.componentId.value,
 			locked: !clientStore.isPreview && props.component.locked,
-			action: clientStore.action.enable,
+			action: clientStore.operate.enable,
 		}"
 		v-show="!props.component.hidden"
 		:style="{

@@ -1,15 +1,22 @@
 <script lang="ts" setup>
-import type { MenuItem } from "@/types/ContextMenu";
+import type { MenuItem } from "../types/ContextMenu";
 
 interface Props {
 	menuItem: MenuItem;
 }
 const props = withDefaults(defineProps<Props>(), {});
+const onClick = (e: MouseEvent) => {
+	if (props.menuItem.list?.length) e.stopPropagation();
+	props.menuItem.onClick?.();
+};
 </script>
 
 <template>
 	<li v-if="props.menuItem.type !== 'divider' || props.menuItem.type === undefined" class="context-menu-item">
-		<button :class="{ [props.menuItem.type || '']: true }" :disabled="props.menuItem.disabled" @click="props.menuItem.onClick?.()">{{ props.menuItem.label }}</button>
+		<button :class="{ [props.menuItem.type || '']: true }" :disabled="props.menuItem.disabled" @click="onClick($event)">
+			<span>{{ props.menuItem.label }}</span>
+			<svg v-if="props.menuItem.list?.length" class="icon"><use href="#caret-right" /></svg>
+		</button>
 		<menu v-if="props.menuItem.list?.length">
 			<slot></slot>
 		</menu>
@@ -18,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {});
 </template>
 
 <style lang="scss" scoped>
+@use "@/styles/mixins" as *;
 .context-menu-item {
 	position: relative;
 	button {
@@ -27,11 +35,21 @@ const props = withDefaults(defineProps<Props>(), {});
 		line-height: 30px;
 		text-align: left;
 		transition: background-color 0.2s;
-		&.danger {
-			color: var(--danger-color);
+		display: flex;
+		align-items: center;
+		span {
+			flex: 1;
+			@include text-ellipsis();
 		}
-		&:not(:disabled):hover {
-			background-color: #232323;
+		&:not(:disabled) {
+			@each $variant in info, primary, success, warning, danger {
+				&.#{$variant} {
+					color: var(--#{$variant}-color);
+				}
+			}
+			&:hover {
+				background-color: #232323;
+			}
 		}
 	}
 	menu {

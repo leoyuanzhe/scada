@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MenuItem } from "@/types/ContextMenu";
+import type { MenuItem } from "../types/ContextMenu";
 import ContextMenuItem from "./ContextMenuItem.vue";
 
 interface Props {
