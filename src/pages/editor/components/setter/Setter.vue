@@ -18,10 +18,10 @@ const targetComponentV2 = computed<Schema | Component>(() => (targetComponent.co
 <template>
 	<div class="setter">
 		<menu>
-			<button :class="{ active: current === 'basic' }" @click="current = 'basic'">基本</button>
-			<button :class="{ active: current === 'prop' }" @click="current = 'prop'">属性</button>
-			<button :class="{ active: current === 'state' }" @click="current = 'state'">状态</button>
-			<button :class="{ active: current === 'emit' }" @click="current = 'emit'">事件</button>
+			<button :class="{ actived: current === 'basic' }" @click="current = 'basic'">基本</button>
+			<button :class="{ actived: current === 'prop' }" @click="current = 'prop'">属性</button>
+			<button :class="{ actived: current === 'state' }" @click="current = 'state'">状态</button>
+			<button :class="{ actived: current === 'emit' }" @click="current = 'emit'">事件</button>
 		</menu>
 		<div class="container">
 			<BasicConfig v-if="current === 'basic'" :component="targetComponentV2" />
@@ -50,7 +50,7 @@ const targetComponentV2 = computed<Schema | Component>(() => (targetComponent.co
 			background-color: #444;
 			border-radius: 4px;
 			transition: box-shadow 0.2s;
-			&.active,
+			&.actived,
 			&:hover {
 				box-shadow: 0 0 3px 1px var(--primary-color);
 			}

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema, SchemaProps } from "@/types/Schema";
-import { initComponent } from "@/helpers/component";
+import { generateComponetId, initComponent } from "@/helpers/component";
 import { Container } from "@/materials/container/Container";
 
 export const useSchema = defineStore("schema", {
@@ -39,12 +39,12 @@ export const useSchema = defineStore("schema", {
 			return this.moveableComponents.filter((v) => !v.hidden && !v.locked);
 		},
 		// 激活的有布局属性的组件
-		activeMoveableComponents(): ComponentWithLayout[] {
-			return this.components.filter((v) => v.active && v.layout) as ComponentWithLayout[];
+		activedMoveableComponents(): ComponentWithLayout[] {
+			return this.components.filter((v) => v.actived && v.layout) as ComponentWithLayout[];
 		},
 		// 未激活的有布局属性的组件
-		unactiveMoveableComponents(): ComponentWithLayout[] {
-			return this.components.filter((v) => !v.active && v.layout) as ComponentWithLayout[];
+		unactivedMoveableComponents(): ComponentWithLayout[] {
+			return this.components.filter((v) => !v.actived && v.layout) as ComponentWithLayout[];
 		},
 		// 所有组件
 		flatComponents(): Component[] {
@@ -54,8 +54,8 @@ export const useSchema = defineStore("schema", {
 			}
 		},
 		// 激活的所有组件
-		activeFlatComponents(): Component[] {
-			return this.flatComponents.filter((v) => v.active);
+		activedFlatComponents(): Component[] {
+			return this.flatComponents.filter((v) => v.actived);
 		},
 	},
 	actions: {
@@ -105,18 +105,19 @@ export const useSchema = defineStore("schema", {
 			fn(component);
 			return { left, top };
 		},
-		createComponent<T extends Component>(component: T, assignedNewId: boolean = true): T {
-			if (assignedNewId) {
-				component.id = component.id + "-" + Math.random().toString(36).substring(2, 7);
-			}
+		addComponent(component: Component) {
+			this.components.push(component);
+		},
+		createComponent<T extends Component>(component: T): T {
+			component.id = generateComponetId();
 			this.components.push(component);
 			return component;
 		},
 		// 删除组件
-		removeComponent(componentId: string) {
-			const parent = this.findParent(componentId);
+		deleteComponent(component: Component) {
+			const parent = this.findParent(component.id);
 			if (parent) {
-				const index = parent.components.findIndex((v) => v.id === componentId);
+				const index = parent.components.findIndex((v) => v.id === component.id);
 				if (index !== -1) {
 					if (parent.components[index].layout) {
 						const { left, top } = this.getOffsetFromSchema(parent.components[index]);
@@ -198,7 +199,7 @@ export const useSchema = defineStore("schema", {
 							} else {
 								child.layout.top = child.layout.top - newParent.layout.top;
 							}
-							newParent.components.push(this.removeComponent(child.id)!);
+							newParent.components.push(this.deleteComponent(child)!);
 						}
 					}
 				}
@@ -230,6 +231,30 @@ export const useSchema = defineStore("schema", {
 					);
 				}
 			}
+		},
+		// 锁定组件
+		lockComponent(component: Component) {
+			component.locked = true;
+		},
+		// 解锁组件
+		unlockComponent(component: Component) {
+			component.locked = false;
+		},
+		// 显示组件
+		showComponent(component: Component) {
+			component.hidden = false;
+		},
+		// 隐藏组件
+		hideComponent(component: Component) {
+			component.hidden = true;
+		},
+		// 激活组件
+		activateComponent(component: Component) {
+			component.actived = true;
+		},
+		// 取消激活组件
+		deactivateComponent(component: Component) {
+			component.actived = false;
 		},
 	},
 });

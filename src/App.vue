@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useClient } from "./stores/useClient";
+import { useCommand } from "./stores/useCommand";
 import { useMaterial } from "./stores/useMaterial";
 import { useAsset } from "./stores/useAsset";
 import { useSchema } from "./stores/useSchema";
@@ -7,6 +8,7 @@ import { Container } from "./materials/container/Container";
 import { Text } from "./materials/text/Text";
 
 const clientStore = useClient();
+const commandStore = useCommand();
 const materialStore = useMaterial();
 const assetStore = useAsset();
 const schemaStore = useSchema();
@@ -18,6 +20,7 @@ schemaStore.init();
 schemaStore.stateExpression.a = "2";
 function init() {
 	clientStore.init();
+	commandStore.init();
 	materialStore.init();
 	assetStore.init();
 	const c1 = Container();

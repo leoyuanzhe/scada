@@ -7,7 +7,7 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	id: "container",
 	key: "container",
 	title: "容器",
-	active: false,
+	actived: false,
 	nestable: true,
 	locked: false,
 	hidden: false,

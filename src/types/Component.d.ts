@@ -53,7 +53,7 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	id: string;
 	key: ComponentKey;
 	title: string;
-	active: boolean;
+	actived: boolean;
 	nestable: boolean;
 	locked: boolean;
 	hidden: boolean;

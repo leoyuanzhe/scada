@@ -29,7 +29,7 @@ onMounted(() => {
 		:class="{
 			renderer: true,
 			moving: clientStore.keyboard.spaceKey,
-			operating: clientStore.operate.enable,
+			operating: clientStore.enabledOperate,
 		}"
 		@wheel="dragger.rendererWheel($event)"
 		@mousedown="dragger.rendererMousedown($event)"
