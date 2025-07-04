@@ -9,8 +9,8 @@ const current = ref<"asset" | "layer" | "state">("asset");
 <template>
 	<div class="sidebar">
 		<menu>
-			<button :class="{ active: current === 'asset' }" @click="current = 'asset'">资产</button>
-			<button :class="{ active: current === 'layer' }" @click="current = 'layer'">图层</button>
+			<button :class="{ actived: current === 'asset' }" @click="current = 'asset'">资产</button>
+			<button :class="{ actived: current === 'layer' }" @click="current = 'layer'">图层</button>
 		</menu>
 		<div class="container">
 			<Asset v-if="current === 'asset'" />
@@ -36,7 +36,7 @@ const current = ref<"asset" | "layer" | "state">("asset");
 			background-color: #444;
 			border-radius: 4px;
 			transition: box-shadow 0.2s;
-			&.active,
+			&.actived,
 			&:hover {
 				box-shadow: 0 0 3px 1px var(--primary-color);
 			}

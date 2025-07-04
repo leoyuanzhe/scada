@@ -2,7 +2,7 @@ import type { Component, EmitEvent } from "./Component";
 export interface SchemaProps {
 	backgroundColor: string;
 }
-export interface Schema<Props = Record<string, any>> extends Omit<Component, "key" | "layout" | "props" | "active" | "nestable" | "locked" | "hidden"> {
+export interface Schema<Props = Record<string, any>> extends Omit<Component, "key" | "layout" | "props" | "actived" | "nestable" | "locked" | "hidden"> {
 	key: "schema";
 	layout: {
 		width: number;

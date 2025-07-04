@@ -55,20 +55,20 @@ export const openSettingMenu = (position: MenuPosition) => {
 	const clientStore = useClient();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
-			label: "触发操作",
+			label: "启用操作",
 			list: [
 				{
 					label: "启用",
-					disabled: clientStore.operate.enable,
+					disabled: clientStore.enabledOperate,
 					onClick: () => {
-						clientStore.operate.enable = true;
+						clientStore.enabledOperate = true;
 					},
 				},
 				{
 					label: "禁用",
-					disabled: !clientStore.operate.enable,
+					disabled: !clientStore.enabledOperate,
 					onClick: () => {
-						clientStore.operate.enable = false;
+						clientStore.enabledOperate = false;
 					},
 				},
 			],
@@ -121,56 +121,65 @@ export const openComponentMenu = (position: MenuPosition) => {
 	const dragger = useDragger();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
+			label: "剪切",
+			disabled: !schemaStore.activedFlatComponents.length,
+			onClick: () => {
+				clientStore.cutComponents(schemaStore.activedFlatComponents);
+			},
+		},
+		{
 			label: "复制",
-			disabled: !schemaStore.activeFlatComponents.length,
-			onClick: () => {},
+			disabled: !schemaStore.activedFlatComponents.length,
+			onClick: () => {
+				clientStore.copyComponents(schemaStore.activedFlatComponents);
+			},
 		},
 		{
 			label: "粘贴",
-			disabled: !clientStore.clipboard.component,
-			onClick: () => {},
+			disabled: !clientStore.copiedComponents?.length,
+			onClick: () => {
+				clientStore.pasteComponents();
+			},
 		},
 		{ type: "divider" },
 		{
 			label: "锁定状态",
-			disabled: schemaStore.activeFlatComponents.every((v) => v.locked),
+			disabled: schemaStore.activedFlatComponents.every((v) => v.locked),
 			list: [
 				{
 					label: "锁定",
-					disabled: schemaStore.activeFlatComponents.every((v) => v.locked),
+					disabled: schemaStore.activedFlatComponents.every((v) => v.locked),
 					onClick: () => {
-						schemaStore.activeFlatComponents.forEach((v) => {
-							v.locked = true;
-							v.active = false;
-						});
+						schemaStore.activedFlatComponents.forEach((v) => schemaStore.lockComponent(v));
 						targetComponent.componentId.value = "";
 						dragger.computedSelector();
 					},
 				},
 				{
 					label: "解锁",
-					disabled: schemaStore.activeFlatComponents.every((v) => !v.locked),
-					onClick: () => schemaStore.activeFlatComponents.forEach((v) => (v.locked = false)),
+					disabled: schemaStore.activedFlatComponents.every((v) => !v.locked),
+					onClick: () => {
+						schemaStore.activedFlatComponents.forEach((v) => schemaStore.unlockComponent(v));
+					},
 				},
 			],
 		},
 		{
 			label: "隐藏状态",
-			disabled: schemaStore.activeFlatComponents.every((v) => v.hidden),
+			disabled: schemaStore.activedFlatComponents.every((v) => v.hidden),
 			list: [
 				{
 					label: "显示",
-					disabled: schemaStore.activeFlatComponents.every((v) => !v.hidden),
-					onClick: () => schemaStore.activeFlatComponents.forEach((v) => (v.hidden = false)),
+					disabled: schemaStore.activedFlatComponents.every((v) => !v.hidden),
+					onClick: () => {
+						schemaStore.activedFlatComponents.forEach((v) => schemaStore.showComponent(v));
+					},
 				},
 				{
 					label: "隐藏",
-					disabled: schemaStore.activeFlatComponents.every((v) => v.hidden),
+					disabled: schemaStore.activedFlatComponents.every((v) => v.hidden),
 					onClick: () => {
-						schemaStore.activeFlatComponents.forEach((v) => {
-							v.hidden = true;
-							v.active = false;
-						});
+						schemaStore.activedFlatComponents.forEach((v) => schemaStore.hideComponent(v));
 						targetComponent.componentId.value = "";
 						dragger.computedSelector();
 					},
@@ -180,26 +189,26 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			type: "danger",
 			label: "删除",
-			disabled: !schemaStore.activeFlatComponents.length,
+			disabled: !schemaStore.activedFlatComponents.length,
 			onClick: () => {
-				schemaStore.activeFlatComponents.forEach((v) => schemaStore.removeComponent(v.id));
+				schemaStore.activedFlatComponents.forEach((v) => schemaStore.deleteComponent(v));
 				dragger.computedSelector();
 			},
 		},
 		{ type: "divider" },
 		{
 			label: "创建分组",
-			disabled: !schemaStore.activeFlatComponents.length,
+			disabled: !schemaStore.activedFlatComponents.length,
 			onClick: () => {
-				const container = schemaStore.createGroup(schemaStore.activeFlatComponents.map((v) => v.id));
-				schemaStore.activeFlatComponents.forEach((v) => (v.active = false));
+				const container = schemaStore.createGroup(schemaStore.activedFlatComponents.map((v) => v.id));
+				schemaStore.activedFlatComponents.forEach((v) => schemaStore.deactivateComponent(v));
 				targetComponent.componentId.value = container.id;
 				dragger.computedSelector();
 			},
 		},
 		{
 			label: "加入分组",
-			disabled: !schemaStore.activeFlatComponents.length,
+			disabled: !schemaStore.activedFlatComponents.length,
 			list: schemaStore.flatComponents
 				.filter((v) => v.nestable)
 				.map((v) => ({
@@ -209,16 +218,16 @@ export const openComponentMenu = (position: MenuPosition) => {
 		},
 		{
 			label: "移出分组",
-			disabled: schemaStore.activeFlatComponents.every((component) => {
+			disabled: schemaStore.activedFlatComponents.every((component) => {
 				const parent = schemaStore.findParent(component.id);
 				return parent && schemaStore.isSchema(parent);
 			}),
-			onClick: () => schemaStore.activeFlatComponents.forEach((v) => schemaStore.moveOut(v.id)),
+			onClick: () => schemaStore.activedFlatComponents.forEach((v) => schemaStore.moveOut(v.id)),
 		},
 		{
 			label: "展开子组件到根组件",
-			disabled: schemaStore.activeFlatComponents.every((v) => !v.components.length),
-			onClick: () => schemaStore.activeFlatComponents.forEach((v) => schemaStore.flatChindrenToSchema(v.id)),
+			disabled: schemaStore.activedFlatComponents.every((v) => !v.components.length),
+			onClick: () => schemaStore.activedFlatComponents.forEach((v) => schemaStore.flatChindrenToSchema(v.id)),
 		},
 	]);
 };

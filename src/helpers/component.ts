@@ -5,6 +5,10 @@ import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import CodeEditor from "@/components/code-editor";
 
+// 生成组件id
+export const generateComponetId = () => {
+	return Math.random().toString(36).substring(2, 7);
+};
 type StringKeyOf<T> = {
 	[K in keyof T]: T[K] extends string ? K : never;
 }[keyof T];
@@ -48,7 +52,7 @@ export const initComponent = (component: Schema | Component) => {
 export const triggerAction = async (action: Action, component: Schema | Component, event?: any, payload?: any) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	if (clientStore.operate.enable) {
+	if (clientStore.enabledOperate) {
 		try {
 			const beforeReuslt = await new Function("event", "payload", "$state", "state", "parent", action.beforeHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
 			if (!beforeReuslt) throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
@@ -57,7 +61,9 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 					action.params.targetComponentsId.forEach((componentId) => {
 						const targetComponent = schemaStore.findComponent(componentId);
 						if (targetComponent && !schemaStore.isSchema(targetComponent)) {
-							targetComponent.hidden = action.params.visible === "show" ? true : action.params.visible === "hide" ? false : !targetComponent.hidden;
+							if (action.params.visible === "show") schemaStore.showComponent(targetComponent);
+							else if (action.params.visible === "hide") schemaStore.showComponent(targetComponent);
+							else targetComponent.hidden ? schemaStore.showComponent(targetComponent) : schemaStore.hideComponent(targetComponent);
 						}
 					});
 					break;

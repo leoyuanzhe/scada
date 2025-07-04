@@ -11,7 +11,7 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	id: "text",
 	key: "text",
 	title: "文本",
-	active: false,
+	actived: false,
 	nestable: false,
 	locked: false,
 	hidden: false,

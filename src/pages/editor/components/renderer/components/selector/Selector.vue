@@ -7,7 +7,7 @@ import { useSchema } from "@/stores/useSchema";
 const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
-const showDirection = computed(() => schemaStore.activeFlatComponents.length === 1 && targetComponent.component.value?.layout?.resizable);
+const showDirection = computed(() => schemaStore.activedFlatComponents.length === 1 && targetComponent.component.value?.layout?.resizable);
 </script>
 
 <template>

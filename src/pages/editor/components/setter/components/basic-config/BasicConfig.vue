@@ -88,8 +88,8 @@ const props = withDefaults(defineProps<{ component: Schema | Component }>(), {})
 					<input
 						id="setter-operate-enable"
 						type="checkbox"
-						:checked="clientStore.operate.enable"
-						@input="(clientStore.operate.enable = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
+						:checked="clientStore.enabledOperate"
+						@input="(clientStore.enabledOperate = Boolean(($event.target as HTMLInputElement).checked)), (targetComponent.componentId.value = '')"
 					/>
 				</FormItem>
 			</fieldset>

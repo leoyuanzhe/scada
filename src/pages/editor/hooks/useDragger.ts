@@ -43,7 +43,7 @@ const rendererMousedown = (e: MouseEvent) => {
 		const clientStore = useClient();
 		const schemaStore = useSchema();
 		const targetComponent = useTargetComponent();
-		if (!clientStore.isPreview && !clientStore.operate.enable) {
+		if (!clientStore.previewing && !clientStore.enabledOperate) {
 			const oRenderer = document.querySelector<HTMLDivElement>(".renderer");
 			const offsetX = e.pageX - oRenderer!.offsetLeft; // 选择器的offsetX
 			const offsetY = e.pageY - oRenderer!.offsetTop;
@@ -72,7 +72,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				selector.top = 0;
 				selector.width = 0;
 				selector.height = 0;
-				schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
+				schemaStore.activedFlatComponents.forEach((v) => schemaStore.deactivateComponent(v));
 				targetComponent.componentId.value = "";
 				document.body.addEventListener("mousemove", mousemove);
 				document.body.addEventListener("mouseup", mouseup);
@@ -99,7 +99,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				}
 				function mouseup(e: MouseEvent) {
 					if (!e.shiftKey) {
-						schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
+						schemaStore.activedFlatComponents.forEach((v) => schemaStore.deactivateComponent(v));
 					}
 					// 正框选（从左往右框选）
 					if (startX < e.clientX) {
@@ -109,7 +109,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							const width = getScaledOffset(component.layout.width);
 							const height = getScaledOffset(component.layout.height);
 							if (left >= selector.left && left + width <= selector.left + selector.width && top >= selector.top && top + height <= selector.top + selector.height) {
-								component.active = true;
+								schemaStore.activateComponent(component);
 							}
 						});
 					} else {
@@ -119,7 +119,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							const width = getScaledOffset(component.layout.width);
 							const height = getScaledOffset(component.layout.height);
 							if (left < selector.left + selector.width && left + width > selector.left && top < selector.top + selector.height && top + height > selector.top) {
-								component.active = true;
+								schemaStore.activateComponent(component);
 							}
 						});
 					}
@@ -140,17 +140,17 @@ const rendererMousedown = (e: MouseEvent) => {
 								getActualLeft(0),
 								getActualLeft(schemaStore.layout.width / 2),
 								getActualLeft(schemaStore.layout.width),
-								...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualLeft(v.layout.left), getActualLeft(v.layout.left + v.layout.width / 2), getActualLeft(v.layout.left + v.layout.width)]),
+								...schemaStore.unactivedMoveableComponents.flatMap((v) => [getActualLeft(v.layout.left), getActualLeft(v.layout.left + v.layout.width / 2), getActualLeft(v.layout.left + v.layout.width)]),
 							],
 							h: [
 								getActualTop(0),
 								getActualTop(schemaStore.layout.height / 2),
 								getActualTop(schemaStore.layout.height),
-								...schemaStore.unactiveMoveableComponents.flatMap((v) => [getActualTop(v.layout.top), getActualTop(v.layout.top + v.layout.height / 2), getActualTop(v.layout.top + v.layout.height)]),
+								...schemaStore.unactivedMoveableComponents.flatMap((v) => [getActualTop(v.layout.top), getActualTop(v.layout.top + v.layout.height / 2), getActualTop(v.layout.top + v.layout.height)]),
 							],
 					  }
 					: { v: [], h: [] };
-				const startActiveComponentsPosition = schemaStore.activeMoveableComponents.map((v) => ({ left: getActualLeft(v.layout.left), top: getActualTop(v.layout.top) })); // 激活组件拖拽开始时的坐标
+				const startActiveComponentsPosition = schemaStore.activedMoveableComponents.map((v) => ({ left: getActualLeft(v.layout.left), top: getActualTop(v.layout.top) })); // 激活组件拖拽开始时的坐标
 				document.body.addEventListener("mousemove", mousemove);
 				document.body.addEventListener("mouseup", mouseup);
 				function mousemove(e: MouseEvent) {
@@ -161,28 +161,28 @@ const rendererMousedown = (e: MouseEvent) => {
 					const rightV = snapLines.v.find((v) => Math.abs(v - dragLeft - selector.width) < clientStore.snap.distance);
 					if (leftV !== undefined) {
 						const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
 						alignLine.v = left;
 					} else if (middleV !== undefined) {
 						const middle = getLogicalLeft(middleV);
 						const left = middle - getUnscaledOffset(selector.width / 2);
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
 						alignLine.v = middle;
 					} else if (rightV !== undefined) {
 						const right = getLogicalLeft(rightV);
 						const left = right - getUnscaledOffset(selector.width);
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.left = getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
 						alignLine.v = right;
 					} else {
 						const logicalDragLeft = getLogicalLeft(dragLeft); // 将当前位置转换为逻辑坐标（未缩放）
 						const snappedLogicalLeft = Math.round(getNearestGridLinePosition(logicalDragLeft)); // 获取最接近的网格线位置（逻辑坐标）
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							const originalLeft = getLogicalLeft(startActiveComponentsPosition[index].left);
 							component.layout.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
 						});
@@ -195,28 +195,28 @@ const rendererMousedown = (e: MouseEvent) => {
 					const bottomH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height) < clientStore.snap.distance);
 					if (topH !== undefined) {
 						const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
 						alignLine.h = top;
 					} else if (middleH !== undefined) {
 						const middle = getLogicalTop(middleH);
 						const top = middle - getUnscaledOffset(selector.height / 2);
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
 						alignLine.h = middle;
 					} else if (bottomH !== undefined) {
 						const right = getLogicalTop(bottomH);
 						const top = right - getUnscaledOffset(selector.height);
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							component.layout.top = getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
 						alignLine.h = right;
 					} else {
 						const logicalDragTop = getLogicalTop(dragTop);
 						const snappedLogicalTop = Math.round(getNearestGridLinePosition(logicalDragTop));
-						schemaStore.activeMoveableComponents.forEach((component, index) => {
+						schemaStore.activedMoveableComponents.forEach((component, index) => {
 							const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
 							component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
 						});
@@ -271,7 +271,7 @@ function assetTransferComponent(asset: Asset): Component {
 		id: "",
 		key: cloneAsset.material.key,
 		title: cloneAsset.material.title,
-		active: true,
+		actived: true,
 		nestable: cloneAsset.material.nestable,
 		locked: cloneAsset.material.locked,
 		hidden: cloneAsset.material.hidden,
@@ -289,11 +289,11 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
-	if (!clientStore.isPreview && !clientStore.operate.enable) {
+	if (!clientStore.previewing && !clientStore.enabledOperate) {
 		if (!e.shiftKey) {
-			if (!component.active) schemaStore.flatComponents.forEach((v) => v.active && (v.active = false));
+			if (!component.actived) schemaStore.activedFlatComponents.forEach((v) => schemaStore.deactivateComponent(v));
 		}
-		component.active = true;
+		schemaStore.activateComponent(component);
 		targetComponent.componentId.value = component.id;
 		computedSelector();
 	}
@@ -386,12 +386,12 @@ const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "
 // 计算选择器坐标、宽高
 const computedSelector = () => {
 	const schemaStore = useSchema();
-	if (schemaStore.activeMoveableComponents.length) {
+	if (schemaStore.activedMoveableComponents.length) {
 		let left = Infinity;
 		let top = Infinity;
 		let right = -Infinity;
 		let bottom = -Infinity;
-		schemaStore.activeMoveableComponents.forEach((component) => {
+		schemaStore.activedMoveableComponents.forEach((component) => {
 			left = Math.min(left, getActualLeft(component.layout.left));
 			top = Math.min(top, getActualTop(component.layout.top));
 			right = Math.max(right, getActualLeft(component.layout.left + component.layout.width));

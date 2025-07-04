@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
-	<details :class="{ 'component-details': true, active: props.component.active, target: props.component.id === targetComponent.componentId.value }" draggable="true">
+	<details :class="{ 'component-details': true, actived: props.component.actived, target: props.component.id === targetComponent.componentId.value }" draggable="true">
 		<summary :class="{ empty: !props.component.components.length }" contenteditable @mousedown.stop="dragger.componentMousedown($event, props.component)" @input="props.component.title = ($event.target as HTMLElement).innerText">
 			{{ props.component.title }}
 		</summary>
@@ -54,7 +54,7 @@ const props = withDefaults(defineProps<Props>(), {});
 	&:last-child {
 		margin-bottom: 0;
 	}
-	&.active {
+	&.actived {
 		box-shadow: 0 0 1px 1px #ff0000cc;
 	}
 	&.target {

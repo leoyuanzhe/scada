@@ -22,10 +22,10 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 		v-if="props.component.layout"
 		:class="{
 			component: true,
-			active: props.component.active,
+			actived: props.component.actived,
 			target: props.component.id === targetComponent.componentId.value,
-			locked: !clientStore.isPreview && props.component.locked,
-			action: clientStore.operate.enable,
+			locked: !clientStore.previewing && props.component.locked,
+			action: clientStore.enabledOperate,
 		}"
 		v-show="!props.component.hidden"
 		:style="{
@@ -54,7 +54,7 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 		width: 100%;
 		height: 100%;
 	}
-	&.active {
+	&.actived {
 		box-shadow: 0 0 1px 1px #ff0000cc;
 	}
 	&.target {

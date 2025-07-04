@@ -5,15 +5,20 @@ import { useClient } from "@/stores/useClient";
 const clientStore = useClient();
 const oRuler = ref<HTMLCanvasElement | null>(null);
 watch([() => clientStore.canvas.scale, () => clientStore.canvas.left], () => drawRuler());
-onMounted(() => drawRuler());
+onMounted(() => {
+	drawRuler();
+	window.addEventListener("resize", drawRuler);
+});
 function drawRuler() {
 	const rulerStart = clientStore.canvas.left - 20;
 	if (oRuler.value) {
-		oRuler.value.width = oRuler.value.offsetWidth;
-		oRuler.value.height = oRuler.value.offsetHeight;
+		oRuler.value.width = oRuler.value.offsetWidth * devicePixelRatio;
+		oRuler.value.height = oRuler.value.offsetHeight * devicePixelRatio;
 		const ctx = oRuler.value.getContext("2d");
 		if (ctx) {
 			ctx.clearRect(0, 0, oRuler.value.width, oRuler.value.height);
+			ctx.save();
+			ctx.scale(devicePixelRatio, devicePixelRatio);
 			for (let i = rulerStart; i <= oRuler.value.width; i += 50) {
 				ctx.save();
 				ctx.beginPath();
