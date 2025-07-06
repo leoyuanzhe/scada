@@ -55,10 +55,10 @@ const RenderComponent = () => (materialStore.materials.find((v) => v.key == prop
 		height: 100%;
 	}
 	&.actived {
-		box-shadow: 0 0 1px 1px #ff0000cc;
+		box-shadow: 0 0 1px 1px #ff000066;
 	}
 	&.target {
-		box-shadow: 0 0 3px 1px #ff0000;
+		box-shadow: 0 0 3px 2px #ff0000;
 	}
 	&.locked {
 		pointer-events: none;

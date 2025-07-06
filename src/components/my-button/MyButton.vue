@@ -18,11 +18,10 @@ const props = withDefaults(defineProps<Props>(), {
 <style lang="scss" scoped>
 .my-button {
 	box-sizing: border-box;
-	padding: 8px 16px;
 	display: block;
-	flex: 1;
+	padding: 8px 16px;
 	width: 100%;
-	height: 40px;
+	height: 30px;
 	border-radius: 4px;
 	background-color: transparent;
 	border: 1px solid var(--info-color);

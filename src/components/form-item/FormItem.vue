@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
 		flex-shrink: 0;
 		min-width: 80px;
 		font-size: 14px;
-		line-height: 40px;
+		line-height: 30px;
 	}
 	.control {
 		flex: 1;
@@ -47,8 +47,10 @@ const props = withDefaults(defineProps<Props>(), {
 	> button {
 		flex-shrink: 0;
 		padding: 0 10px;
+		height: 30px;
 		font-size: 14px;
-		line-height: 40px;
+		border-radius: 2px;
+		transition: background-color 0.2s;
 		.icon {
 			color: #ccc;
 			@each $variant in info, primary, success, warning, danger {
