@@ -15,7 +15,7 @@ const selector = reactive({
 	height: 0,
 });
 // 吸附对齐线
-const alignLine = reactive({
+const snappedLine = reactive({
 	v: null as number | null,
 	h: null as number | null,
 });
@@ -77,7 +77,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				selector.top = 0;
 				selector.width = 0;
 				selector.height = 0;
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deactivateComponent(v));
+				schemaStore.deactivateAllComponent();
 				targetComponent.componentId.value = "";
 				document.body.addEventListener("mousemove", mousemove);
 				document.body.addEventListener("mouseup", mouseup);
@@ -104,7 +104,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				}
 				function mouseup(e: MouseEvent) {
 					if (!e.shiftKey) {
-						schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deactivateComponent(v));
+						schemaStore.deactivateAllComponent();
 					}
 					// 正框选（从左往右框选）
 					if (startX < e.clientX) {
@@ -148,7 +148,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				const startY = e.clientY;
 				const startSelectorLeft = selector.left;
 				const startSelectorTop = selector.top;
-				// 吸附线
+				// TODO 吸附线 临时关闭对齐 拖动时按住Ctrl/Cmd
 				const snapLines = clientStore.snap.enable
 					? {
 							v: [
@@ -197,7 +197,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.left =
 								getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
-						alignLine.v = left;
+						snappedLine.v = left;
 					} else if (middleV !== undefined) {
 						const middle = getLogicalLeft(middleV);
 						const left = middle - getUnscaledOffset(selector.width / 2);
@@ -205,7 +205,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.left =
 								getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
-						alignLine.v = middle;
+						snappedLine.v = middle;
 					} else if (rightV !== undefined) {
 						const right = getLogicalLeft(rightV);
 						const left = right - getUnscaledOffset(selector.width);
@@ -213,7 +213,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.left =
 								getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 						});
-						alignLine.v = right;
+						snappedLine.v = right;
 					} else {
 						const logicalDragLeft = getLogicalLeft(dragLeft); // 将当前位置转换为逻辑坐标（未缩放）
 						const snappedLogicalLeft = Math.round(getNearestGridLinePosition(logicalDragLeft)); // 获取最接近的网格线位置（逻辑坐标）
@@ -222,7 +222,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.left =
 								originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
 						});
-						alignLine.v = null;
+						snappedLine.v = null;
 					}
 					const moveY = e.clientY - startY;
 					const dragTop = startSelectorTop + moveY; // 拖拽后的相对于渲染器的left值
@@ -241,7 +241,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.top =
 								getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
-						alignLine.h = top;
+						snappedLine.h = top;
 					} else if (middleH !== undefined) {
 						const middle = getLogicalTop(middleH);
 						const top = middle - getUnscaledOffset(selector.height / 2);
@@ -249,7 +249,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.top =
 								getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
-						alignLine.h = middle;
+						snappedLine.h = middle;
 					} else if (bottomH !== undefined) {
 						const right = getLogicalTop(bottomH);
 						const top = right - getUnscaledOffset(selector.height);
@@ -257,7 +257,7 @@ const rendererMousedown = (e: MouseEvent) => {
 							component.layout.top =
 								getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 						});
-						alignLine.h = right;
+						snappedLine.h = right;
 					} else {
 						const logicalDragTop = getLogicalTop(dragTop);
 						const snappedLogicalTop = Math.round(getNearestGridLinePosition(logicalDragTop));
@@ -265,15 +265,15 @@ const rendererMousedown = (e: MouseEvent) => {
 							const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
 							component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
 						});
-						alignLine.h = null;
+						snappedLine.h = null;
 					}
 					computedSelector();
 				}
 				function mouseup() {
 					document.body.removeEventListener("mousemove", mousemove);
 					document.body.removeEventListener("mouseup", mouseup);
-					alignLine.v = null;
-					alignLine.h = null;
+					snappedLine.v = null;
+					snappedLine.h = null;
 				}
 			}
 		}
@@ -338,8 +338,7 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 	const targetComponent = useTargetComponent();
 	if (!clientStore.previewing && !clientStore.enabledOperate) {
 		if (!e.shiftKey) {
-			if (!component.actived)
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deactivateComponent(v));
+			if (!component.actived) schemaStore.deactivateAllComponent();
 		}
 		schemaStore.activateComponent(component);
 		targetComponent.componentId.value = component.id;
@@ -498,7 +497,7 @@ function getUnscaledOffset(number: number) {
 
 export const useDragger = () => ({
 	selector,
-	alignLine,
+	snappedLine,
 	assetDragstart,
 	rendererWheel,
 	rendererMousedown,

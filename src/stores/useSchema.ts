@@ -259,5 +259,9 @@ export const useSchema = defineStore("schema", {
 		deactivateComponent(component: Component) {
 			component.actived = false;
 		},
+		// 取消激活所有组件
+		deactivateAllComponent() {
+			this.activedFlatedComponents.forEach((v) => this.deactivateComponent(v));
+		},
 	},
 });
