@@ -3,11 +3,9 @@ import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import GridLines from "./components/grid-lines/GridLines.vue";
-import RulerH from "./components/ruler/RulerH.vue";
-import RulerV from "./components/ruler/RulerV.vue";
-import AlignLineV from "./components/align-line/AlignLineV.vue";
-import AlignLineH from "./components/align-line/AlignLineH.vue";
+import GridLine from "./components/grid-line/GridLine.vue";
+import Ruler from "./components/ruler/Ruler.vue";
+import SnappedLine from "./components/snapped-line/SnappedLine.vue";
 import Selector from "./components/selector/Selector.vue";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
@@ -50,11 +48,9 @@ onMounted(() => {
 		>
 			<ComponentCreator v-for="v in schemaStore.components" :key="v.id" :component="v" />
 		</div>
-		<GridLines />
-		<RulerH />
-		<RulerV />
-		<AlignLineV />
-		<AlignLineH />
+		<GridLine />
+		<Ruler />
+		<SnappedLine />
 		<Selector />
 	</div>
 </template>

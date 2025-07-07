@@ -1,52 +1,27 @@
 import type { MenuPosition } from "@/components/context-menu/types/ContextMenu";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
-import ContextMenu from "@/components/context-menu";
 import { useCommand } from "@/stores/useCommand";
+import { useTargetComponent } from "@/hooks/useTargetComponent";
+import ContextMenu from "@/components/context-menu";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
-	const schemaStore = useSchema();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
 			label: "导出",
+			remark: "Ctrl + Shift + S",
 			onClick: () => {
-				try {
-					const json = JSON.stringify(schemaStore.$state);
-					const blob = new Blob([json], { type: "application/json" });
-					const url = URL.createObjectURL(blob);
-					const a = document.createElement("a");
-					a.href = url;
-					a.download = schemaStore.title + ".json";
-					a.click();
-					URL.revokeObjectURL(url);
-				} catch (error: any) {
-					throw new Error(error);
-				}
+				const commandStore = useCommand();
+				commandStore.export();
 			},
 		},
 		{
 			label: "导入",
+			remark: "Ctrl + I",
 			onClick: () => {
-				const input = document.createElement("input");
-				input.type = "file";
-				input.accept = ".json";
-				input.onchange = (e: any) => {
-					const file = e.target.files[0];
-					const reader = new FileReader();
-					reader.onload = () => {
-						try {
-							const json = JSON.parse(reader.result as string);
-							schemaStore.$state = json;
-						} catch (error: any) {
-							throw new Error(error);
-						}
-					};
-					reader.readAsText(file);
-				};
-				input.click();
+				const commandStore = useCommand();
+				commandStore.import();
 			},
 		},
 	]);
@@ -57,19 +32,22 @@ export const openSettingMenu = (position: MenuPosition) => {
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
 			label: "启用操作",
+			remark: "Ctrl + O",
 			list: [
 				{
 					label: "启用",
 					disabled: clientStore.enabledOperate,
 					onClick: () => {
-						clientStore.enabledOperate = true;
+						const commandStore = useCommand();
+						commandStore.toggleOperate(true);
 					},
 				},
 				{
 					label: "禁用",
 					disabled: !clientStore.enabledOperate,
 					onClick: () => {
-						clientStore.enabledOperate = false;
+						const commandStore = useCommand();
+						commandStore.toggleOperate(false);
 					},
 				},
 			],
@@ -119,12 +97,11 @@ export const openComponentMenu = (position: MenuPosition) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
-	const dragger = useDragger();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
 			label: "剪切",
 			disabled: !schemaStore.activedFlatedComponents.length,
-			remark: "Ctrl + x",
+			remark: "Ctrl + X",
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.cut();
@@ -133,7 +110,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "复制",
 			disabled: !schemaStore.activedFlatedComponents.length,
-			remark: "Ctrl + c",
+			remark: "Ctrl + C",
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.copy();
@@ -142,7 +119,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "粘贴",
 			disabled: !clientStore.copiedComponents?.length,
-			remark: "Ctrl + v",
+			remark: "Ctrl + V",
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.paste();
@@ -152,14 +129,14 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "锁定状态",
 			disabled: schemaStore.activedFlatedComponents.every((v) => v.locked),
-			remark: "Ctrl + l",
+			remark: "Ctrl + L",
 			list: [
 				{
 					label: "锁定",
 					disabled: schemaStore.activedFlatedComponents.every((v) => v.locked),
 					onClick: () => {
 						const commandStore = useCommand();
-						commandStore.lock(true);
+						commandStore.toggleLocked(true);
 					},
 				},
 				{
@@ -167,7 +144,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 					disabled: schemaStore.activedFlatedComponents.every((v) => !v.locked),
 					onClick: () => {
 						const commandStore = useCommand();
-						commandStore.lock(false);
+						commandStore.toggleLocked(false);
 					},
 				},
 			],
@@ -175,14 +152,14 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "隐藏状态",
 			disabled: schemaStore.activedFlatedComponents.every((v) => v.hidden),
-			remark: "Ctrl + h",
+			remark: "Ctrl + H",
 			list: [
 				{
 					label: "隐藏",
 					disabled: schemaStore.activedFlatedComponents.every((v) => v.hidden),
 					onClick: () => {
 						const commandStore = useCommand();
-						commandStore.hide(true);
+						commandStore.toggleHidden(true);
 					},
 				},
 				{
@@ -190,7 +167,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 					disabled: schemaStore.activedFlatedComponents.every((v) => !v.hidden),
 					onClick: () => {
 						const commandStore = useCommand();
-						commandStore.hide(false);
+						commandStore.toggleHidden(false);
 					},
 				},
 			],
@@ -209,11 +186,10 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "创建分组",
 			disabled: !schemaStore.activedFlatedComponents.length,
+			remark: "Ctrl + G",
 			onClick: () => {
-				const container = schemaStore.createGroup(schemaStore.activedFlatedComponents.map((v) => v.id));
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deactivateComponent(v));
-				targetComponent.componentId.value = container.id;
-				dragger.computedSelector();
+				const commandStore = useCommand();
+				commandStore.createGroup();
 			},
 		},
 		{
@@ -236,8 +212,12 @@ export const openComponentMenu = (position: MenuPosition) => {
 		},
 		{
 			label: "展开子组件到根组件",
+			remark: "Ctrl + Shift + G",
 			disabled: schemaStore.activedFlatedComponents.every((v) => !v.components.length),
-			onClick: () => schemaStore.activedFlatedComponents.forEach((v) => schemaStore.flatChindrenToSchema(v.id)),
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.flatChildrenToSchema();
+			},
 		},
 	]);
 };

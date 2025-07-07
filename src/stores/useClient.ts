@@ -65,6 +65,18 @@ export const useClient = defineStore("client", {
 							break;
 					}
 					switch (this.keyboard.pressingKey) {
+						case "ctrl+shift+s":
+							e.preventDefault();
+							commandStore.export();
+							break;
+						case "ctrl+i":
+							e.preventDefault();
+							commandStore.import();
+							break;
+						case "ctrl+o":
+							e.preventDefault();
+							commandStore.toggleOperate();
+							break;
 						case "ctrl+c":
 							e.preventDefault();
 							commandStore.copy();
@@ -83,11 +95,19 @@ export const useClient = defineStore("client", {
 							break;
 						case "ctrl+l":
 							e.preventDefault();
-							commandStore.lock();
+							commandStore.toggleLocked();
 							break;
 						case "ctrl+h":
 							e.preventDefault();
-							commandStore.hide();
+							commandStore.toggleHidden();
+							break;
+						case "ctrl+g":
+							e.preventDefault();
+							commandStore.createGroup();
+							break;
+						case "ctrl+shift+g":
+							e.preventDefault();
+							commandStore.flatChildrenToSchema();
 							break;
 					}
 				}
@@ -113,10 +133,32 @@ export const useClient = defineStore("client", {
 			}
 		},
 		// 启用触发操作
-		enableGrid() {
+		enableOperate() {
+			const schemaStore = useSchema();
 			const targetComponent = useTargetComponent();
 			this.enabledOperate = true;
+			schemaStore.deactivateAllComponent();
 			targetComponent.componentId.value = "";
+		},
+		// 禁用触发操作
+		disableOperate() {
+			this.enabledOperate = false;
+		},
+		// 启用网格
+		enableGrid() {
+			this.grid.enable = true;
+		},
+		// 禁用网格线
+		disableGrid() {
+			this.grid.enable = false;
+		},
+		// 启用吸附
+		enableSnap() {
+			this.snap.enable = true;
+		},
+		// 禁用吸附
+		disableSnap() {
+			this.snap.enable = false;
 		},
 		// 复制组件
 		copyComponents(components: Component[]) {
