@@ -23,7 +23,6 @@ const props = withDefaults(defineProps<Props>(), {});
 			{ href: props.component.propsExpression[props.propKey] !== undefined ? '#code' : '', variant: 'danger', onClick: () => delete props.component.propsExpression[props.propKey] },
 		]"
 	>
-		<p>{{ props.component.propsExpression[props.propKey] }}</p>
 		<input :id="'setter-' + props.propKey" :type="props.inputType" :value="props.component.props[props.propKey]" @input="props.component.props[props.propKey] = ($event.target as HTMLInputElement).value" />
 	</FormItem>
 </template>

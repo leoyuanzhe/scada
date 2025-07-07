@@ -17,7 +17,14 @@ const addAction = () => {
 	fn(0);
 	function fn(depth: number) {
 		const name = "action" + (props.component.actions.length + 1 + depth);
-		if (!props.component.actions.some((v) => v.name == name)) props.component.actions.push({ name, type: "none", params: {}, beforeHandler: "return true;", afterHandler: "" });
+		if (!props.component.actions.some((v) => v.name == name))
+			props.component.actions.push({
+				name,
+				type: "none",
+				params: {},
+				beforeHandler: "return true;",
+				afterHandler: "",
+			});
 		else fn(depth + 1);
 	}
 };
@@ -88,7 +95,11 @@ function checkParams(action: Action) {
 				<span>{{ v.name }}</span>
 			</summary>
 			<fieldset>
-				<FormItem label="名称" for="setter-action-name" :icons="[{ href: '#pen-to-square', onClick: () => editName(v.name) }]">
+				<FormItem
+					label="名称"
+					for="setter-action-name"
+					:icons="[{ href: '#pen-to-square', onClick: () => editName(v.name) }]"
+				>
 					<input id="setter-action-name" readonly :value="v.name" />
 				</FormItem>
 				<FormItem label="类型" for="setter-action-type">
@@ -103,7 +114,9 @@ function checkParams(action: Action) {
 				<template v-if="v.type === 'changeVisible'">
 					<FormItem label="选择组件" for="change-visible-target-components-id">
 						<select id="change-visible-target-components-id" multiple v-model="v.params.targetComponentsId">
-							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
+							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
+								{{ v2.title }}
+							</option>
 						</select>
 					</FormItem>
 					<FormItem label="选择可见性" for="change-visible-visible">
@@ -118,17 +131,32 @@ function checkParams(action: Action) {
 					<FormItem label="选择组件" for="change-prop-target-components-id">
 						<select id="change-prop-target-components-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
-							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
+							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
+								{{ v2.title }}
+							</option>
 						</select>
 					</FormItem>
 					<FormItem label="选择属性" for="change-prop-key">
 						<select id="change-prop-key" v-model="v.params.key">
-							<option v-for="k in Object.keys(schemaStore.findComponent(v.params.targetComponentId)?.props || {})" :key="k" :value="k">
-								{{ prop_dict[schemaStore.findComponent(v.params.targetComponentId)?.key || ""]?.[k] || k }}
+							<option
+								v-for="k in Object.keys(
+									schemaStore.findComponent(v.params.targetComponentId)?.props || {}
+								)"
+								:key="k"
+								:value="k"
+							>
+								{{
+									prop_dict[schemaStore.findComponent(v.params.targetComponentId)?.key || ""]?.[k] ||
+									k
+								}}
 							</option>
 						</select>
 					</FormItem>
-					<FormItem label="新属性值" for="change-prop-expression" :icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]">
+					<FormItem
+						label="新属性值"
+						for="change-prop-expression"
+						:icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]"
+					>
 						<input id="change-prop-expression" type="text" readonly :value="v.params.expression" />
 					</FormItem>
 				</template>
@@ -136,17 +164,29 @@ function checkParams(action: Action) {
 					<FormItem label="选择组件" for="change-state-target-component-id">
 						<select id="change-state-target-component-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
-							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
+							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
+								{{ v2.title }}
+							</option>
 						</select>
 					</FormItem>
 					<FormItem label="选择键" for="change-state-key">
 						<select id="change-state-key" v-model="v.params.key">
-							<option v-for="k in Object.keys(schemaStore.findComponent(v.params.targetComponentId)?.stateExpression || {})" :key="k" :value="k">
+							<option
+								v-for="k in Object.keys(
+									schemaStore.findComponent(v.params.targetComponentId)?.stateExpression || {}
+								)"
+								:key="k"
+								:value="k"
+							>
 								{{ k }}
 							</option>
 						</select>
 					</FormItem>
-					<FormItem label="新值" for="change-state-expression" :icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]">
+					<FormItem
+						label="新值"
+						for="change-state-expression"
+						:icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]"
+					>
 						<input id="change-state-expression" type="text" readonly :value="v.params.expression" />
 					</FormItem>
 				</template>
@@ -154,19 +194,35 @@ function checkParams(action: Action) {
 					<FormItem label="选择组件" for="trigger-other-target-component-id">
 						<select id="trigger-other-target-component-id" v-model="v.params.targetComponentId">
 							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
-							<option v-for="v2 in schemaStore.flatComponents" :key="v2.id" :value="v2.id">{{ v2.title }}</option>
+							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
+								{{ v2.title }}
+							</option>
 						</select>
 					</FormItem>
 					<FormItem label="选择事件" for="trigger-other-name">
 						<select id="trigger-other-name" v-model="v.params.name">
-							<option v-for="v2 in schemaStore.findComponent(v.params.targetComponentId)?.actions || []" :key="v2.name" :value="v2.name">{{ v2.name }}</option>
+							<option
+								v-for="v2 in schemaStore.findComponent(v.params.targetComponentId)?.actions || []"
+								:key="v2.name"
+								:value="v2.name"
+							>
+								{{ v2.name }}
+							</option>
 						</select>
 					</FormItem>
 				</template>
-				<FormItem label="执行动作前" for="setter-action-before-handler" :icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]">
+				<FormItem
+					label="执行动作前"
+					for="setter-action-before-handler"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]"
+				>
 					<textarea readonly v-model="v.beforeHandler"></textarea>
 				</FormItem>
-				<FormItem label="执行动作后" for="setter-action-after-handler" :icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]">
+				<FormItem
+					label="执行动作后"
+					for="setter-action-after-handler"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]"
+				>
 					<textarea readonly v-model="v.afterHandler"></textarea>
 				</FormItem>
 				<MyButton variant="danger" @click="props.component.actions.splice(i, 1)">删除</MyButton>
@@ -193,7 +249,10 @@ function checkParams(action: Action) {
 								:checked="props.component.emits[k].actionsName.includes(v.name)"
 								@change="
 									props.component.emits[k].actionsName.includes(v.name)
-										? props.component.emits[k].actionsName.splice(props.component.emits[k].actionsName.indexOf(v.name), 1)
+										? props.component.emits[k].actionsName.splice(
+												props.component.emits[k].actionsName.indexOf(v.name),
+												1
+										  )
 										: props.component.emits[k].actionsName.push(v.name)
 								"
 							/>

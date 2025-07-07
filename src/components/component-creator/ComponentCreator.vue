@@ -14,7 +14,10 @@ const materialStore = useMaterial();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
-const RenderComponent = () => (materialStore.materials.find((v) => v.key == props.component.key) as ReturnType<Material["render"]>)?.render(props.component);
+const RenderComponent = () =>
+	(materialStore.materials.find((v) => v.key == props.component.key) as ReturnType<Material["render"]>)?.render(
+		props.component
+	);
 </script>
 
 <template>
