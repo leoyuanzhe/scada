@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 .my-button {
 	box-sizing: border-box;
 	display: block;
-	padding: 8px 16px;
+	padding: 2px 8px;
 	width: 100%;
 	height: 30px;
 	border-radius: 4px;

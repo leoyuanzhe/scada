@@ -3,8 +3,8 @@ import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { deepClone } from "@/utils/conversion";
+import { generateComponetId } from "@/helpers/component";
 
 export const useClient = defineStore("client", {
 	state() {
@@ -35,7 +35,6 @@ export const useClient = defineStore("client", {
 	},
 	actions: {
 		init() {
-			const commandStore = useCommand();
 			document.addEventListener("focusin", () => {
 				this.typing = true;
 			});
@@ -43,35 +42,54 @@ export const useClient = defineStore("client", {
 				this.typing = false;
 			});
 			document.addEventListener("keydown", (e) => {
-				this.keyboard.pressingKey = "";
-				const key = e.key.toLowerCase();
-				if (e.ctrlKey) this.keyboard.pressingKey += "ctrl+";
-				else if (e.metaKey) this.keyboard.pressingKey += "ctrl+";
-				if (e.altKey) this.keyboard.pressingKey += "alt+";
-				if (e.shiftKey) this.keyboard.pressingKey += "shift+";
-				switch (key) {
-					case " ":
-						this.keyboard.pressingKey += "space";
-						break;
-					case "control":
-					case "meta":
-					case "alt":
-					case "shift":
-						break;
-					default:
-						this.keyboard.pressingKey += key;
-						break;
-				}
-				switch (this.keyboard.pressingKey) {
-					case "space":
-						e.preventDefault();
-						this.keyboard.spaceKey = true;
-						break;
-				}
-				const command = commandStore.commands.find((v) => v.shortcutKey === this.keyboard.pressingKey);
-				if (command && !this.typing) {
-					e.preventDefault();
-					command.execute();
+				if (!this.typing) {
+					const commandStore = useCommand();
+					this.keyboard.pressingKey = "";
+					const key = e.key.toLowerCase();
+					if (e.ctrlKey) this.keyboard.pressingKey += "ctrl+";
+					else if (e.metaKey) this.keyboard.pressingKey += "ctrl+";
+					if (e.altKey) this.keyboard.pressingKey += "alt+";
+					if (e.shiftKey) this.keyboard.pressingKey += "shift+";
+					switch (key) {
+						case " ":
+							this.keyboard.spaceKey = true;
+							this.keyboard.pressingKey += "space";
+							break;
+						case "control":
+						case "meta":
+						case "alt":
+						case "shift":
+							break;
+						default:
+							this.keyboard.pressingKey += key;
+							break;
+					}
+					switch (this.keyboard.pressingKey) {
+						case "ctrl+c":
+							e.preventDefault();
+							commandStore.copy();
+							break;
+						case "ctrl+x":
+							e.preventDefault();
+							commandStore.cut();
+							break;
+						case "ctrl+v":
+							e.preventDefault();
+							commandStore.paste();
+							break;
+						case "delete":
+							e.preventDefault();
+							commandStore.delete();
+							break;
+						case "ctrl+l":
+							e.preventDefault();
+							commandStore.lock();
+							break;
+						case "ctrl+h":
+							e.preventDefault();
+							commandStore.hide();
+							break;
+					}
 				}
 			});
 			document.addEventListener("keyup", (e) => {
@@ -88,7 +106,10 @@ export const useClient = defineStore("client", {
 			if (this.oRenderer) {
 				this.canvas.left = 30;
 				this.canvas.top = 30;
-				this.canvas.scale = Math.max(Math.min((this.oRenderer.offsetWidth - 40) / schemaStore.layout.width, 5), 0.1);
+				this.canvas.scale = Math.max(
+					Math.min((this.oRenderer.offsetWidth - 40) / schemaStore.layout.width, 5),
+					0.1
+				);
 			}
 		},
 		// 启用触发操作
@@ -110,30 +131,23 @@ export const useClient = defineStore("client", {
 		// 剪切组件
 		cutComponents(components: Component[]) {
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
-			const dragger = useDragger();
 			this.copyComponents(components);
 			components.forEach((v) => schemaStore.deleteComponent(v));
-			targetComponent.componentId.value = "";
-			dragger.computedSelector();
 		},
 		// 粘贴组件
-		pasteComponents() {
+		pasteComponents(parent?: Component | null) {
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
-			const dragger = useDragger();
+			const components: Component[] = [];
 			if (this.copiedComponents) {
-				const targetComponentId = targetComponent.componentId.value;
-				schemaStore.activedFlatComponents.forEach((v) => schemaStore.deactivateComponent(v));
-				const tempTargetComponent = schemaStore.findComponent(targetComponentId);
 				deepClone(this.copiedComponents).forEach((component) => {
-					if (tempTargetComponent && !schemaStore.isSchema(tempTargetComponent) && tempTargetComponent.nestable) tempTargetComponent.components.push(component);
-					else schemaStore.createComponent(component);
-					schemaStore.activateComponent(component);
+					if (parent && parent.nestable) {
+						component.id = generateComponetId();
+						parent.components.push(component);
+					} else schemaStore.createComponent(component);
+					components.push(component);
 				});
-				targetComponent.componentId.value = "";
-				dragger.computedSelector();
-				this.copyComponents(schemaStore.activedFlatComponents);
+				this.copyComponents(schemaStore.activedFlatedComponents);
+				return components;
 			}
 		},
 	},

@@ -5,16 +5,16 @@ const componentId = ref("");
 const component = computed(() => {
 	const schemaStore = useSchema();
 	if (componentId.value) {
-		return schemaStore.activedFlatComponents.find((v) => v.id === componentId.value) || null;
-	} else if (schemaStore.activedFlatComponents.length == 0) {
+		return schemaStore.activedFlatedComponents.find((v) => v.id === componentId.value) || null;
+	} else if (schemaStore.activedFlatedComponents.length == 0) {
 		componentId.value = "";
 		return null;
-	} else if (schemaStore.activedFlatComponents.length === 1) {
-		componentId.value = schemaStore.activedFlatComponents[0].id;
-		return schemaStore.activedFlatComponents[0];
+	} else if (schemaStore.activedFlatedComponents.length === 1) {
+		componentId.value = schemaStore.activedFlatedComponents[0].id;
+		return schemaStore.activedFlatedComponents[0];
 	} else {
-		componentId.value = schemaStore.activedFlatComponents[schemaStore.activedFlatComponents.length - 1].id;
-		return schemaStore.activedFlatComponents[schemaStore.activedFlatComponents.length - 1];
+		componentId.value = schemaStore.activedFlatedComponents[schemaStore.activedFlatedComponents.length - 1].id;
+		return schemaStore.activedFlatedComponents[schemaStore.activedFlatedComponents.length - 1];
 	}
 });
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useTemplateRef } from "vue";
+import { reactive, useTemplateRef } from "vue";
 import type { MenuPosition, MenuItem } from "./types/ContextMenu";
 import ContextMenuItem from "./components/RecursiveComponent.vue";
 
@@ -13,6 +13,18 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
 const oContextMenu = useTemplateRef("oContextMenu");
+const adjustPosition = reactive({ left: props.position.left, top: props.position.top });
+const onToggle = (e: ToggleEvent) => {
+	emits("toggle", e);
+	if (oContextMenu.value) {
+		if (props.position.left + oContextMenu.value.offsetWidth > innerWidth) {
+			adjustPosition.left = innerWidth - oContextMenu.value.offsetWidth;
+		}
+		if (props.position.top + oContextMenu.value.offsetHeight > innerHeight) {
+			adjustPosition.top = innerHeight - oContextMenu.value.offsetHeight;
+		}
+	}
+};
 defineExpose({
 	showPopover: () => oContextMenu.value?.showPopover(),
 	hidePopover: () => oContextMenu.value?.hidePopover(),
@@ -21,7 +33,16 @@ defineExpose({
 </script>
 
 <template>
-	<menu ref="oContextMenu" id="context-menu" class="context-menu" popover="auto" :style="{ left: props.position.left + 'px', top: props.position.top + 'px' }" @click="oContextMenu?.hidePopover()" @toggle="emits('toggle', $event)">
+	<menu
+		ref="oContextMenu"
+		id="context-menu"
+		class="context-menu"
+		popover="auto"
+		:data-top="props.position.top"
+		:style="{ left: adjustPosition.left + 'px', top: adjustPosition.top + 'px' }"
+		@click="oContextMenu?.hidePopover()"
+		@toggle="onToggle($event)"
+	>
 		<ContextMenuItem v-for="(v, i) in props.menuItems" :key="i" :menu-item="v" />
 	</menu>
 </template>
@@ -29,7 +50,7 @@ defineExpose({
 <style lang="scss" scoped>
 .context-menu {
 	position: fixed;
-	width: 200px;
+	width: 260px;
 	background-color: #333;
 	border-radius: 4px;
 	box-shadow: 0 0 3px 1px #666;

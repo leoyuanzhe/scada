@@ -13,8 +13,13 @@ const onClick = (e: MouseEvent) => {
 
 <template>
 	<li v-if="props.menuItem.type !== 'divider' || props.menuItem.type === undefined" class="context-menu-item">
-		<button :class="{ [props.menuItem.type || '']: true }" :disabled="props.menuItem.disabled" @click="onClick($event)">
-			<span>{{ props.menuItem.label }}</span>
+		<button
+			:class="{ [props.menuItem.type || '']: true }"
+			:disabled="props.menuItem.disabled"
+			@click="onClick($event)"
+		>
+			<b>{{ props.menuItem.label }}</b>
+			<span>{{ props.menuItem.remark }}</span>
 			<svg v-if="props.menuItem.list?.length" class="icon"><use href="#caret-right" /></svg>
 		</button>
 		<menu v-if="props.menuItem.list?.length">
@@ -32,14 +37,25 @@ const onClick = (e: MouseEvent) => {
 		padding: 0 14px;
 		width: 100%;
 		font-size: 12px;
-		line-height: 30px;
+		line-height: 36px;
 		text-align: left;
 		transition: background-color 0.2s;
+		column-gap: 10px;
 		display: flex;
 		align-items: center;
-		span {
+		b {
 			flex: 1;
+			font-size: 14px;
+			font-weight: normal;
 			@include text-ellipsis();
+		}
+		span {
+			flex-shrink: 0;
+			font-size: 12px;
+		}
+		.icon {
+			flex-shrink: 0;
+			font-size: 14px;
 		}
 		&:not(:disabled) {
 			@each $variant in info, primary, success, warning, danger {
@@ -64,7 +80,7 @@ const onClick = (e: MouseEvent) => {
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 9;
 	}
-	&:hover {
+	&:has(button:not(:disabled)):hover {
 		> menu {
 			display: flex;
 		}

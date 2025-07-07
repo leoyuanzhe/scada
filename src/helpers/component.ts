@@ -13,7 +13,11 @@ type StringKeyOf<T> = {
 	[K in keyof T]: T[K] extends string ? K : never;
 }[keyof T];
 // 代码编辑器编辑对象的属性
-export const editObjectValue = <T extends Partial<Record<string, any>>>(object: T, key: StringKeyOf<T>, defaultValue?: string): Promise<null> => {
+export const editObjectValue = <T extends Partial<Record<string, any>>>(
+	object: T,
+	key: StringKeyOf<T>,
+	defaultValue?: string
+): Promise<null> => {
 	return new Promise((resolve) => {
 		CodeEditor(defaultValue ?? object[key])
 			.then((value) => {
@@ -27,7 +31,14 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(object: 
 export const getExpressionResult = (expression: string | undefined, component: Schema | Component, payload?: any) => {
 	const schemaStore = useSchema();
 	try {
-		return { result: new Function("$state", "state", "parent", "payload", "return " + expression)(schemaStore.state, component.state, schemaStore.findParent(component.id), payload) };
+		return {
+			result: new Function("$state", "state", "parent", "payload", "return " + expression)(
+				schemaStore.state,
+				component.state,
+				schemaStore.findParent(component.id),
+				payload
+			),
+		};
 	} catch (error: any) {
 		console.error(error);
 		return { error };
@@ -43,7 +54,10 @@ export const initComponent = (component: Schema | Component) => {
 			else component.state[key] = null;
 		}
 		for (let key in component.propsExpression) {
-			const { result, error } = getExpressionResult(component.propsExpression[key as keyof typeof component.propsExpression], component);
+			const { result, error } = getExpressionResult(
+				component.propsExpression[key as keyof typeof component.propsExpression],
+				component
+			);
 			if (!error) component.props[key] = result;
 		}
 	});
@@ -54,8 +68,16 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 	const schemaStore = useSchema();
 	if (clientStore.enabledOperate) {
 		try {
-			const beforeReuslt = await new Function("event", "payload", "$state", "state", "parent", action.beforeHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
-			if (!beforeReuslt) throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
+			const beforeReuslt = await new Function(
+				"event",
+				"payload",
+				"$state",
+				"state",
+				"parent",
+				action.beforeHandler
+			)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+			if (!beforeReuslt)
+				throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
 			switch (action.type) {
 				case "changeVisible": {
 					action.params.targetComponentsId.forEach((componentId) => {
@@ -63,7 +85,10 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 						if (targetComponent && !schemaStore.isSchema(targetComponent)) {
 							if (action.params.visible === "show") schemaStore.showComponent(targetComponent);
 							else if (action.params.visible === "hide") schemaStore.showComponent(targetComponent);
-							else targetComponent.hidden ? schemaStore.showComponent(targetComponent) : schemaStore.hideComponent(targetComponent);
+							else
+								targetComponent.hidden
+									? schemaStore.showComponent(targetComponent)
+									: schemaStore.hideComponent(targetComponent);
 						}
 					});
 					break;
@@ -95,7 +120,13 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 					break;
 				}
 			}
-			await new Function("event", "payload", "$state", "state", "parent", action.afterHandler)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
+			await new Function("event", "payload", "$state", "state", "parent", action.afterHandler)(
+				event,
+				payload,
+				schemaStore.state,
+				component.state,
+				schemaStore.findParent(component.id)
+			);
 		} catch (error: any) {
 			console.error(error);
 		}

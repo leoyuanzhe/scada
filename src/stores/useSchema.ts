@@ -47,15 +47,15 @@ export const useSchema = defineStore("schema", {
 			return this.components.filter((v) => !v.actived && v.layout) as ComponentWithLayout[];
 		},
 		// 所有组件
-		flatComponents(): Component[] {
+		flatedComponents(): Component[] {
 			return this.components.flatMap(flat);
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
 		},
 		// 激活的所有组件
-		activedFlatComponents(): Component[] {
-			return this.flatComponents.filter((v) => v.actived);
+		activedFlatedComponents(): Component[] {
+			return this.flatedComponents.filter((v) => v.actived);
 		},
 	},
 	actions: {
@@ -65,11 +65,14 @@ export const useSchema = defineStore("schema", {
 		},
 		// 找到组件
 		findComponent(componentId: string) {
-			return [this.$state, ...this.flatComponents].find((v) => v.id === componentId) || null;
+			return [this.$state, ...this.flatedComponents].find((v) => v.id === componentId) || null;
 		},
 		// 找到组件的父元素
 		findParent(componentId: string) {
-			const findInComponents = (components: Component[], parent: Schema | Component): Schema | Component | null => {
+			const findInComponents = (
+				components: Component[],
+				parent: Schema | Component
+			): Schema | Component | null => {
 				for (const component of components) {
 					if (component.id === componentId) return parent;
 					if (component.components && component.components.length > 0) {
