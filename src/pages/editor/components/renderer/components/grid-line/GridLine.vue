@@ -15,7 +15,7 @@ function scaleSize(size: number): number {
 <template>
 	<div
 		v-if="clientStore.grid.enable"
-		class="grid-lines"
+		class="grid-line"
 		:style="{
 			backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
 			backgroundSize: `${gridSize}px ${gridSize}px`,
@@ -24,11 +24,12 @@ function scaleSize(size: number): number {
 </template>
 
 <style lang="scss" scoped>
-.grid-lines {
+.grid-line {
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	background-image: linear-gradient(to right, #ffffff33 1px, transparent 1px), linear-gradient(to bottom, #ffffff33 1px, transparent 1px);
+	background-image: linear-gradient(to right, #ffffff33 1px, transparent 1px),
+		linear-gradient(to bottom, #ffffff33 1px, transparent 1px);
 	background-repeat: repeat;
 	pointer-events: none;
 }
