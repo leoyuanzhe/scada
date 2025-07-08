@@ -3,12 +3,12 @@ import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 import GridLine from "./components/grid-line/GridLine.vue";
 import Ruler from "./components/ruler/Ruler.vue";
-import SnappedLine from "./components/snapped-line/SnappedLine.vue";
+import SnapLine from "./components/snap-line/SnapLine.vue";
 import Selector from "./components/selector/Selector.vue";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
-import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
@@ -50,7 +50,7 @@ onMounted(() => {
 		</div>
 		<GridLine />
 		<Ruler />
-		<SnappedLine />
+		<SnapLine />
 		<Selector />
 	</div>
 </template>

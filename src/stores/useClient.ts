@@ -12,6 +12,8 @@ export const useClient = defineStore("client", {
 			oRenderer: null as HTMLDivElement | null,
 			previewing: false,
 			typing: false,
+			enabledOperate: false,
+			copiedComponents: null as Component[] | null,
 			canvas: {
 				left: 30,
 				top: 30,
@@ -21,16 +23,26 @@ export const useClient = defineStore("client", {
 				pressingKey: "",
 				spaceKey: false,
 			},
+			ruler: {
+				show: true,
+			},
+			guide: {
+				enable: true,
+				width: 1,
+				color: "#ff0000",
+			},
 			grid: {
 				enable: true,
 				span: 10,
+				width: 1,
+				color: "#ffffff33",
 			},
 			snap: {
 				enable: true,
 				distance: 10,
+				width: 1,
+				color: "#ff0000",
 			},
-			enabledOperate: false,
-			copiedComponents: null as Component[] | null,
 		};
 	},
 	actions: {

@@ -6,19 +6,19 @@ const dragger = useDragger();
 
 <template>
 	<div
-		v-if="dragger.snappedLine.h !== null"
-		class="snapped-line-h"
-		:style="{ top: dragger.getActualTop(dragger.snappedLine.h) + 'px' }"
+		v-if="dragger.snapLine.h !== null"
+		class="snap-line-h"
+		:style="{ top: dragger.getActualTop(dragger.snapLine.h) + 'px' }"
 	></div>
 	<div
-		v-if="dragger.snappedLine.v !== null"
-		class="snapped-line-v"
-		:style="{ left: dragger.getActualLeft(dragger.snappedLine.v) + 'px' }"
+		v-if="dragger.snapLine.v !== null"
+		class="snap-line-v"
+		:style="{ left: dragger.getActualLeft(dragger.snapLine.v) + 'px' }"
 	></div>
 </template>
 
 <style lang="scss" scoped>
-.snapped-line-h {
+.snap-line-h {
 	position: absolute;
 	left: 0;
 	width: 100%;
@@ -27,7 +27,7 @@ const dragger = useDragger();
 	transform: translateY(-50%);
 	transition: top 0.2s;
 }
-.snapped-line-v {
+.snap-line-v {
 	position: absolute;
 	top: 0;
 	width: 1px;
