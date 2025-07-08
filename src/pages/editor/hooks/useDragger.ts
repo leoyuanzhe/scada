@@ -160,6 +160,7 @@ const rendererMousedown = (e: MouseEvent) => {
 										getActualLeft(v.layout.left + v.layout.width / 2),
 										getActualLeft(v.layout.left + v.layout.width),
 									]),
+									...clientStore.guide.line.v.map((v) => getActualLeft(v)),
 								],
 								h: [
 									getActualTop(0),
@@ -170,6 +171,7 @@ const rendererMousedown = (e: MouseEvent) => {
 										getActualTop(v.layout.top + v.layout.height / 2),
 										getActualTop(v.layout.top + v.layout.height),
 									]),
+									...clientStore.guide.line.h.map((v) => getActualTop(v)),
 								],
 						  }
 						: { v: [], h: [] };
@@ -506,6 +508,10 @@ export const useDragger = () => ({
 	componentMousedown,
 	selectorMousedown,
 	computedSelector,
+	getLogicalLeft,
+	getLogicalTop,
 	getActualLeft,
 	getActualTop,
+	getScaledOffset,
+	getUnscaledOffset,
 });

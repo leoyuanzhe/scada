@@ -53,33 +53,33 @@ export const useCommand = defineStore("command", {
 			else if (enabled === false) clientStore.disableOperate();
 			else clientStore.enabledOperate ? clientStore.disableOperate() : clientStore.enableOperate();
 		},
-		// TODO 显示/隐藏标尺 Ctrl/Cmd+R
+		// 切换标尺
 		toggleRuler(enabled?: boolean) {
 			const clientStore = useClient();
-			if (enabled) clientStore.enableOperate();
-			else if (enabled === false) clientStore.disableOperate();
-			else clientStore.enabledOperate ? clientStore.disableOperate() : clientStore.enableOperate();
+			if (enabled) clientStore.ruler.show = true;
+			else if (enabled === false) clientStore.ruler.show = false;
+			else clientStore.ruler.show ? (clientStore.ruler.show = false) : (clientStore.ruler.show = true);
 		},
-		// TODO 显示/隐藏参考线 Ctrl/Cmd+;
+		// 切换参考线
 		toggleGuide(enabled?: boolean) {
 			const clientStore = useClient();
-			if (enabled) clientStore.enableOperate();
-			else if (enabled === false) clientStore.disableOperate();
-			else clientStore.enabledOperate ? clientStore.disableOperate() : clientStore.enableOperate();
+			if (enabled) clientStore.guide.enable;
+			else if (enabled === false) clientStore.guide.enable = false;
+			else clientStore.guide.enable ? (clientStore.guide.enable = false) : (clientStore.guide.enable = true);
 		},
-		// TODO 切换网格 Ctrl/Cmd+'
+		// 切换网格
 		toggleGrid(enabled?: boolean) {
 			const clientStore = useClient();
-			if (enabled) clientStore.enableGrid();
-			else if (enabled === false) clientStore.disableGrid();
-			else clientStore.enabledOperate ? clientStore.disableGrid() : clientStore.enableGrid();
+			if (enabled) clientStore.grid.enable = true;
+			else if (enabled === false) clientStore.grid.enable = false;
+			else clientStore.grid.enable ? (clientStore.grid.enable = false) : (clientStore.grid.enable = true);
 		},
-		// TODO 切换吸附 Shift+Ctrl/Cmd+;
+		// 切换吸附
 		toggleSnap(enabled?: boolean) {
 			const clientStore = useClient();
-			if (enabled) clientStore.enableSnap();
-			else if (enabled === false) clientStore.disableSnap();
-			else clientStore.enabledOperate ? clientStore.disableSnap() : clientStore.enableSnap();
+			if (enabled) clientStore.snap.enable = true;
+			else if (enabled === false) clientStore.snap.enable = false;
+			else clientStore.snap.enable ? (clientStore.snap.enable = false) : (clientStore.snap.enable = true);
 		},
 		// 复制
 		copy() {
@@ -87,6 +87,7 @@ export const useCommand = defineStore("command", {
 			const schemaStore = useSchema();
 			clientStore.copyComponents(schemaStore.activedFlatedComponents);
 		},
+		// 剪切
 		cut() {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
@@ -96,6 +97,7 @@ export const useCommand = defineStore("command", {
 			targetComponent.componentId.value = "";
 			dragger.computedSelector();
 		},
+		// 粘贴
 		paste() {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
@@ -111,12 +113,14 @@ export const useCommand = defineStore("command", {
 			targetComponent.componentId.value = "";
 			dragger.computedSelector();
 		},
+		// 删除
 		delete() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deleteComponent(v));
 			dragger.computedSelector();
 		},
+		// 切换锁定
 		toggleLocked(locked?: boolean) {
 			const schemaStore = useSchema();
 			const targetComponent = useTargetComponent();
@@ -137,6 +141,7 @@ export const useCommand = defineStore("command", {
 				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.unlockComponent(v));
 			}
 		},
+		// 切换隐藏
 		toggleHidden(hidden?: boolean) {
 			const schemaStore = useSchema();
 			const targetComponent = useTargetComponent();
@@ -156,6 +161,7 @@ export const useCommand = defineStore("command", {
 				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.showComponent(v));
 			}
 		},
+		// 创建分组
 		createGroup() {
 			const schemaStore = useSchema();
 			const targetComponent = useTargetComponent();
@@ -165,9 +171,10 @@ export const useCommand = defineStore("command", {
 			targetComponent.componentId.value = container.id;
 			dragger.computedSelector();
 		},
-		flatChildrenToSchema() {
+		// 移出分组
+		moveOut() {
 			const schemaStore = useSchema();
-			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.flatChindrenToSchema(v.id));
+			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v.id));
 		},
 	},
 });

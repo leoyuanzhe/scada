@@ -8,7 +8,12 @@ const dragger = useDragger();
 
 <template>
 	<div class="asset">
-		<figure v-for="v in assetStore.assets" :key="v.id" draggable="true" @dragstart="dragger.assetDragstart($event, v.id)">
+		<figure
+			v-for="v in assetStore.assets"
+			:key="v.id"
+			draggable="true"
+			@dragstart="dragger.assetDragstart($event, v.id)"
+		>
 			<img :src="v.cover" alt="" />
 			<figcaption>{{ v.title }}</figcaption>
 		</figure>
@@ -30,7 +35,7 @@ const dragger = useDragger();
 		justify-content: center;
 		align-items: center;
 		border-radius: 10px;
-		cursor: pointer;
+		cursor: grab;
 		transition: box-shadow 0.2s;
 		&:hover {
 			box-shadow: 0 0 3px 1px var(--primary-color);

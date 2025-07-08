@@ -213,11 +213,14 @@ export const useSchema = defineStore("schema", {
 			const parent = this.findParent(componentId);
 			if (parent) {
 				const child = this.findComponent(componentId);
-				if (child && !this.isSchema(child)) parent.components.push(child);
+				if (child) {
+					parent.components.push(child as Component);
+					if (!this.isSchema(parent) && parent.components.length === 0) this.deleteComponent(parent);
+				}
 			}
 		},
 		// 展开子组件到根组件
-		flatChindrenToSchema(componentId: string) {
+		flatChildrenToSchema(componentId: string) {
 			const component = this.findComponent(componentId);
 			if (component && !this.isSchema(component)) {
 				const parent = this.findParent(componentId);
@@ -232,6 +235,7 @@ export const useSchema = defineStore("schema", {
 							return v;
 						})
 					);
+					if (!this.isSchema(parent) && parent.components.length === 0) this.deleteComponent(parent);
 				}
 			}
 		},

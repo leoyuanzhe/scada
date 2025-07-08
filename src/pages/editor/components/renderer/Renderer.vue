@@ -4,10 +4,11 @@ import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
-import GridLine from "./components/grid-line/GridLine.vue";
-import Ruler from "./components/ruler/Ruler.vue";
-import SnapLine from "./components/snap-line/SnapLine.vue";
-import Selector from "./components/selector/Selector.vue";
+import GridLine from "./components/GridLine.vue";
+import Ruler from "./components/Ruler.vue";
+import GuideLine from "./components/GuideLine.vue";
+import SnapLine from "./components/SnapLine.vue";
+import Selector from "./components/Selector.vue";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 const clientStore = useClient();
@@ -50,6 +51,7 @@ onMounted(() => {
 		</div>
 		<GridLine />
 		<Ruler />
+		<GuideLine />
 		<SnapLine />
 		<Selector />
 	</div>

@@ -40,6 +40,7 @@ import { openFileMenu, openComponentMenu, computedTargetPosition, openSettingMen
 			font-size: 12px;
 			line-height: 40px;
 			transition: background-color 0.2s;
+			cursor: context-menu;
 			&:hover {
 				background-color: #232323;
 			}
