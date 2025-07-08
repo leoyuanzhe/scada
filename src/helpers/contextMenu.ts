@@ -53,39 +53,89 @@ export const openSettingMenu = (position: MenuPosition) => {
 			],
 		},
 		{
+			label: "显示标尺",
+			remark: "Ctrl + R",
+			list: [
+				{
+					label: "显示",
+					disabled: clientStore.ruler.show,
+					onClick: () => {
+						const commandStore = useCommand();
+						commandStore.toggleRuler(true);
+					},
+				},
+				{
+					label: "隐藏",
+					disabled: !clientStore.ruler.show,
+					onClick: () => {
+						const commandStore = useCommand();
+						commandStore.toggleRuler(false);
+					},
+				},
+			],
+		},
+		{
 			label: "启用网格",
+			remark: "Ctrl + '",
 			list: [
 				{
 					label: "启用",
 					disabled: clientStore.grid.enable,
 					onClick: () => {
-						clientStore.grid.enable = true;
+						const commandStore = useCommand();
+						commandStore.toggleGrid(true);
 					},
 				},
 				{
 					label: "禁用",
 					disabled: !clientStore.grid.enable,
 					onClick: () => {
-						clientStore.grid.enable = false;
+						const commandStore = useCommand();
+						commandStore.toggleGrid(false);
 					},
 				},
 			],
 		},
 		{
-			label: "启用吸附",
+			label: "启用参考线",
+			remark: "Ctrl + ;",
 			list: [
 				{
 					label: "启用",
 					disabled: clientStore.snap.enable,
 					onClick: () => {
-						clientStore.snap.enable = true;
+						const commandStore = useCommand();
+						commandStore.toggleGuide(true);
 					},
 				},
 				{
 					label: "禁用",
 					disabled: !clientStore.snap.enable,
 					onClick: () => {
-						clientStore.snap.enable = false;
+						const commandStore = useCommand();
+						commandStore.toggleGuide(false);
+					},
+				},
+			],
+		},
+		{
+			label: "启用吸附",
+			remark: "Ctrl + Shift + ;",
+			list: [
+				{
+					label: "启用",
+					disabled: clientStore.snap.enable,
+					onClick: () => {
+						const commandStore = useCommand();
+						commandStore.toggleSnap(true);
+					},
+				},
+				{
+					label: "禁用",
+					disabled: !clientStore.snap.enable,
+					onClick: () => {
+						const commandStore = useCommand();
+						commandStore.toggleSnap(false);
 					},
 				},
 			],

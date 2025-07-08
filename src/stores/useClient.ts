@@ -30,6 +30,10 @@ export const useClient = defineStore("client", {
 				enable: true,
 				width: 1,
 				color: "#ff0000",
+				line: {
+					v: [] as number[],
+					h: [] as number[],
+				},
 			},
 			grid: {
 				enable: true,
@@ -89,6 +93,22 @@ export const useClient = defineStore("client", {
 							e.preventDefault();
 							commandStore.toggleOperate();
 							break;
+						case "ctrl+r":
+							e.preventDefault();
+							commandStore.toggleRuler();
+							break;
+						case "ctrl+'":
+							e.preventDefault();
+							commandStore.toggleGrid();
+							break;
+						case "ctrl+;":
+							e.preventDefault();
+							commandStore.toggleGuide();
+							break;
+						case "ctrl+shift+;":
+							e.preventDefault();
+							commandStore.toggleSnap();
+							break;
 						case "ctrl+c":
 							e.preventDefault();
 							commandStore.copy();
@@ -119,7 +139,7 @@ export const useClient = defineStore("client", {
 							break;
 						case "ctrl+shift+g":
 							e.preventDefault();
-							commandStore.flatChildrenToSchema();
+							commandStore.moveOut();
 							break;
 					}
 				}
@@ -155,22 +175,6 @@ export const useClient = defineStore("client", {
 		// 禁用触发操作
 		disableOperate() {
 			this.enabledOperate = false;
-		},
-		// 启用网格
-		enableGrid() {
-			this.grid.enable = true;
-		},
-		// 禁用网格线
-		disableGrid() {
-			this.grid.enable = false;
-		},
-		// 启用吸附
-		enableSnap() {
-			this.snap.enable = true;
-		},
-		// 禁用吸附
-		disableSnap() {
-			this.snap.enable = false;
 		},
 		// 复制组件
 		copyComponents(components: Component[]) {

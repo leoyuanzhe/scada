@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useClient } from "@/stores/useClient";
 import { computed } from "vue";
+import { useClient } from "@/stores/useClient";
 
 const clientStore = useClient();
 const gridSize = computed(() => {
