@@ -20,6 +20,7 @@ function init() {
 	clientStore.init();
 	materialStore.init();
 	assetStore.init();
+	clientStore.canvas.scale = 0.8;
 	const c1 = Container();
 	const c2 = Container();
 	c1.id = Date.now().toString() + "1";

@@ -1,15 +1,39 @@
 import { defineStore } from "pinia";
 import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
+import { useUndoStack } from "./useUndoStack";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { useUndoStack } from "./useUndoStack";
 
 export const useCommand = defineStore("command", {
 	state() {
 		return {};
 	},
 	actions: {
+		moveUp() {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.top--);
+			dragger.computedSelector();
+		},
+		moveDown() {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.top++);
+			dragger.computedSelector();
+		},
+		moveLeft() {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.left--);
+			dragger.computedSelector();
+		},
+		moveRight() {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.left++);
+			dragger.computedSelector();
+		},
 		// 导出
 		async export() {
 			const schemaStore = useSchema();

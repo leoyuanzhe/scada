@@ -2,9 +2,10 @@ import type { MenuPosition } from "@/components/context-menu/types/ContextMenu";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useCommand } from "@/stores/useCommand";
+import { useUndoStack } from "@/stores/useUndoStack";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
-import ContextMenu from "@/components/context-menu";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import ContextMenu from "@/components/context-menu";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
@@ -145,10 +146,12 @@ export const openSettingMenu = (position: MenuPosition) => {
 };
 // 打开编辑菜单
 export const openEditMenu = (position: MenuPosition) => {
+	const undoStackStore = useUndoStack();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
 			label: "撤销",
 			remark: "Ctrl + Z",
+			disabled: undoStackStore.current === -1,
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.undo();
@@ -157,6 +160,7 @@ export const openEditMenu = (position: MenuPosition) => {
 		{
 			label: "重做",
 			remark: "Ctrl + Y",
+			disabled: undoStackStore.current === undoStackStore.stacks.length - 1,
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.redo();

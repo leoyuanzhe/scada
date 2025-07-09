@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { openFileMenu, openComponentMenu, computedTargetPosition, openSettingMenu } from "@/helpers/contextMenu";
+import {
+	openFileMenu,
+	openComponentMenu,
+	computedTargetPosition,
+	openSettingMenu,
+	openEditMenu,
+} from "@/helpers/contextMenu";
 </script>
 
 <template>
@@ -7,8 +13,9 @@ import { openFileMenu, openComponentMenu, computedTargetPosition, openSettingMen
 		<div class="logo">L</div>
 		<menu class="menu">
 			<button @click="openFileMenu(computedTargetPosition($event))">文件</button>
-			<button @click="openComponentMenu(computedTargetPosition($event))">组件</button>
 			<button @click="openSettingMenu(computedTargetPosition($event))">设置</button>
+			<button @click="openEditMenu(computedTargetPosition($event))">编辑</button>
+			<button @click="openComponentMenu(computedTargetPosition($event))">组件</button>
 		</menu>
 	</div>
 </template>

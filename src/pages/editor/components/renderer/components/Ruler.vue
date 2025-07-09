@@ -111,7 +111,9 @@ const vMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mouseup", mouseUp);
 	function mouseMove(e: MouseEvent) {
 		const dragLeft = e.clientX - startX;
-		clientStore.guide.line.v[clientStore.guide.line.v.length - 1] = dragger.getLogicalLeft(startLeft + dragLeft);
+		clientStore.guide.line.v[clientStore.guide.line.v.length - 1] = Math.round(
+			dragger.getLogicalLeft(startLeft + dragLeft)
+		);
 	}
 	function mouseUp() {
 		document.body.removeEventListener("mousemove", mouseMove);
@@ -126,7 +128,9 @@ const hMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mouseup", mouseUp);
 	function mouseMove(e: MouseEvent) {
 		const dragTop = e.clientY - startY;
-		clientStore.guide.line.h[clientStore.guide.line.h.length - 1] = dragger.getLogicalTop(startTop + dragTop);
+		clientStore.guide.line.h[clientStore.guide.line.h.length - 1] = Math.round(
+			dragger.getLogicalTop(startTop + dragTop)
+		);
 	}
 	function mouseUp() {
 		document.body.removeEventListener("mousemove", mouseMove);

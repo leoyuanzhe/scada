@@ -10,8 +10,8 @@ const vMouseDown = (e: MouseEvent, index: number) => {
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);
 	function mouseMove(e: MouseEvent) {
-		const dragLeft = e.clientX - startX;
-		clientStore.guide.line.v[index] = Math.round(dragger.getScaledOffset(startLeft + dragLeft));
+		const dragLeft = dragger.getUnscaledOffset(e.clientX - startX);
+		clientStore.guide.line.v[index] = Math.round(startLeft + dragLeft);
 	}
 	function mouseUp() {
 		document.body.removeEventListener("mousemove", mouseMove);
@@ -24,8 +24,8 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);
 	function mouseMove(e: MouseEvent) {
-		const dragTop = e.clientY - startY;
-		clientStore.guide.line.h[index] = Math.round(dragger.getScaledOffset(startTop + dragTop));
+		const dragTop = dragger.getUnscaledOffset(e.clientY - startY);
+		clientStore.guide.line.h[index] = Math.round(startTop + dragTop);
 	}
 	function mouseUp() {
 		document.body.removeEventListener("mousemove", mouseMove);

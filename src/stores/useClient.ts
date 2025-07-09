@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
+import type { Schema, SchemaProps } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { deepClone } from "@/utils/conversion";
 import { generateComponetId } from "@/helpers/component";
+import { deepClone } from "@/utils/conversion";
 
 export const useClient = defineStore("client", {
 	state() {
@@ -51,6 +52,7 @@ export const useClient = defineStore("client", {
 	},
 	actions: {
 		init() {
+			let oldSchema = null as Schema<SchemaProps> | null;
 			document.addEventListener("focusin", () => {
 				this.typing = true;
 			});
@@ -81,6 +83,58 @@ export const useClient = defineStore("client", {
 							break;
 					}
 					switch (this.keyboard.pressingKey) {
+						case "arrowup": {
+							e.preventDefault();
+							const schemaStore = useSchema();
+							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+							commandStore.moveUp();
+							document.addEventListener("keyup", keyUp);
+							function keyUp() {
+								if (oldSchema) schemaStore.recordStack(oldSchema);
+								oldSchema = null;
+								document.removeEventListener("keyup", keyUp);
+							}
+							break;
+						}
+						case "arrowdown": {
+							e.preventDefault();
+							const schemaStore = useSchema();
+							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+							commandStore.moveDown();
+							document.addEventListener("keyup", keyUp);
+							function keyUp() {
+								if (oldSchema) schemaStore.recordStack(oldSchema);
+								oldSchema = null;
+								document.removeEventListener("keyup", keyUp);
+							}
+							break;
+						}
+						case "arrowleft": {
+							e.preventDefault();
+							const schemaStore = useSchema();
+							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+							commandStore.moveLeft();
+							document.addEventListener("keyup", keyUp);
+							function keyUp() {
+								if (oldSchema) schemaStore.recordStack(oldSchema);
+								oldSchema = null;
+								document.removeEventListener("keyup", keyUp);
+							}
+							break;
+						}
+						case "arrowright": {
+							e.preventDefault();
+							const schemaStore = useSchema();
+							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+							commandStore.moveRight();
+							document.addEventListener("keyup", keyUp);
+							function keyUp() {
+								if (oldSchema) schemaStore.recordStack(oldSchema);
+								oldSchema = null;
+								document.removeEventListener("keyup", keyUp);
+							}
+							break;
+						}
 						case "ctrl+shift+s":
 							e.preventDefault();
 							commandStore.export();

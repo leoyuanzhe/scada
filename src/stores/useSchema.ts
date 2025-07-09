@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema, SchemaProps } from "@/types/Schema";
+import { useUndoStack } from "./useUndoStack";
 import { generateComponetId, initComponent } from "@/helpers/component";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
 
 export const useSchema = defineStore("schema", {
@@ -56,6 +59,10 @@ export const useSchema = defineStore("schema", {
 		// 激活的所有组件
 		activedFlatedComponents(): Component[] {
 			return this.flatedComponents.filter((v) => v.actived);
+		},
+		// 激活的有布局属性的所有组件
+		activedMoveableFlatedComponents(): ComponentWithLayout[] {
+			return this.flatedComponents.filter((v) => v.actived && v.layout) as ComponentWithLayout[];
 		},
 	},
 	actions: {
@@ -276,6 +283,21 @@ export const useSchema = defineStore("schema", {
 		// 取消激活所有组件
 		deactivateAllComponent() {
 			this.activedFlatedComponents.forEach((v) => (v.actived = false));
+		},
+		recordStack(oldSchema: Schema<SchemaProps>) {
+			const undoStackStore = useUndoStack();
+			const newSchema = deepClone(this.$state);
+			const dragger = useDragger();
+			undoStackStore.push({
+				undo: () => {
+					this.setSchema(oldSchema);
+					dragger.computedSelector();
+				},
+				redo: () => {
+					this.setSchema(newSchema);
+					dragger.computedSelector();
+				},
+			});
 		},
 	},
 });
