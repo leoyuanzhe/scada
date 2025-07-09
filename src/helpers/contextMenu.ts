@@ -143,6 +143,27 @@ export const openSettingMenu = (position: MenuPosition) => {
 		},
 	]);
 };
+// 打开编辑菜单
+export const openEditMenu = (position: MenuPosition) => {
+	ContextMenu({ left: position.left, top: position.top }, [
+		{
+			label: "撤销",
+			remark: "Ctrl + Z",
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.undo();
+			},
+		},
+		{
+			label: "重做",
+			remark: "Ctrl + Y",
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.redo();
+			},
+		},
+	]);
+};
 // 打开组件菜单
 export const openComponentMenu = (position: MenuPosition) => {
 	const clientStore = useClient();

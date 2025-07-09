@@ -4,8 +4,9 @@ import type { Asset } from "@/types/Asset";
 import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
-import { deepClone } from "@/utils/conversion";
+import { useUndoStack } from "@/stores/useUndoStack";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
+import { deepClone } from "@/utils/conversion";
 
 // 框选器
 const selector = reactive({
@@ -284,9 +285,11 @@ const rendererMousedown = (e: MouseEvent) => {
 const canvasDrop = (e: DragEvent) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
+	const undoStackStore = useUndoStack();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
+		const oldSchema = deepClone(schemaStore.$state);
 		const newComponent: Component = assetTransferComponent(asset);
 		if (newComponent.layout) {
 			newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
@@ -294,6 +297,17 @@ const canvasDrop = (e: DragEvent) => {
 		}
 		schemaStore.createComponent(newComponent);
 		computedSelector();
+		const newSchema = deepClone(schemaStore.$state);
+		undoStackStore.push({
+			undo: () => {
+				schemaStore.setSchema(oldSchema);
+				computedSelector();
+			},
+			redo: () => {
+				schemaStore.setSchema(newSchema);
+				computedSelector();
+			},
+		});
 	}
 };
 const componentDrop = (e: DragEvent, component: Component) => {
