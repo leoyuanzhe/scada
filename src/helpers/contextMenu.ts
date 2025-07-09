@@ -4,6 +4,7 @@ import { useSchema } from "@/stores/useSchema";
 import { useCommand } from "@/stores/useCommand";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import ContextMenu from "@/components/context-menu";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
@@ -261,12 +262,25 @@ export const openComponentMenu = (position: MenuPosition) => {
 			onClick: () => schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v.id)),
 		},
 		{
-			label: "展开子组件到根组件",
+			label: "展开子组件到父组件",
 			remark: "Ctrl + Shift + G",
 			disabled: schemaStore.activedFlatedComponents.every((v) => !v.components.length),
 			onClick: () => {
 				const commandStore = useCommand();
-				commandStore.flatChildrenToSchema();
+				commandStore.flatChildrenToParent();
+			},
+		},
+		{
+			label: "展开子组件到根组件",
+			disabled: schemaStore.activedFlatedComponents.every((v) => !v.components.length),
+			onClick: () => {
+				const schemaStore = useSchema();
+				const dragger = useDragger();
+				schemaStore.activedFlatedComponents.forEach((component) => {
+					component.components.forEach((component) => (component.actived = true));
+					schemaStore.flatChildrenToSchema(component.id);
+				});
+				dragger.computedSelector();
 			},
 		},
 	]);
