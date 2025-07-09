@@ -4,7 +4,6 @@ import type { Asset } from "@/types/Asset";
 import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
-import { useUndoStack } from "@/stores/useUndoStack";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { deepClone } from "@/utils/conversion";
 
@@ -44,6 +43,8 @@ const rendererMousedown = (e: MouseEvent) => {
 		const clientStore = useClient();
 		const schemaStore = useSchema();
 		const targetComponent = useTargetComponent();
+		const oldSchema = deepClone(schemaStore.$state);
+		let moved = false;
 		if (!clientStore.previewing && !clientStore.enabledOperate) {
 			const oRenderer = document.querySelector<HTMLDivElement>(".renderer");
 			const offsetX = e.pageX - oRenderer!.offsetLeft; // 选择器的offsetX
@@ -183,6 +184,7 @@ const rendererMousedown = (e: MouseEvent) => {
 				document.body.addEventListener("mousemove", mousemove);
 				document.body.addEventListener("mouseup", mouseup);
 				function mousemove(e: MouseEvent) {
+					moved = true;
 					const moveX = e.clientX - startX; // 移动的X轴距离
 					const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
 					const leftV = snapLines.v.find(
@@ -273,10 +275,11 @@ const rendererMousedown = (e: MouseEvent) => {
 					computedSelector();
 				}
 				function mouseup() {
-					document.body.removeEventListener("mousemove", mousemove);
-					document.body.removeEventListener("mouseup", mouseup);
 					snapLine.v = null;
 					snapLine.h = null;
+					if (moved) schemaStore.recordStack(oldSchema);
+					document.body.removeEventListener("mousemove", mousemove);
+					document.body.removeEventListener("mouseup", mouseup);
 				}
 			}
 		}
@@ -285,7 +288,6 @@ const rendererMousedown = (e: MouseEvent) => {
 const canvasDrop = (e: DragEvent) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
-	const undoStackStore = useUndoStack();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
@@ -297,17 +299,7 @@ const canvasDrop = (e: DragEvent) => {
 		}
 		schemaStore.createComponent(newComponent);
 		computedSelector();
-		const newSchema = deepClone(schemaStore.$state);
-		undoStackStore.push({
-			undo: () => {
-				schemaStore.setSchema(oldSchema);
-				computedSelector();
-			},
-			redo: () => {
-				schemaStore.setSchema(newSchema);
-				computedSelector();
-			},
-		});
+		schemaStore.recordStack(oldSchema);
 	}
 };
 const componentDrop = (e: DragEvent, component: Component) => {
@@ -316,6 +308,7 @@ const componentDrop = (e: DragEvent, component: Component) => {
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
+		const oldSchema = deepClone(schemaStore.$state);
 		const newComponent: Component = assetTransferComponent(asset);
 		if (newComponent.layout) {
 			newComponent.layout.left =
@@ -325,6 +318,7 @@ const componentDrop = (e: DragEvent, component: Component) => {
 		}
 		schemaStore.createComponent(newComponent);
 		computedSelector();
+		schemaStore.recordStack(oldSchema);
 	}
 };
 function assetTransferComponent(asset: Asset): Component {
@@ -362,7 +356,9 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 	}
 };
 const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
+	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
+	const oldSchema = deepClone(schemaStore.$state);
 	if (targetComponent.component.value?.layout) {
 		const startX = e.clientX; // 鼠标按下时的X坐标
 		const startY = e.clientY;
@@ -441,6 +437,7 @@ const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "
 			computedSelector();
 		}
 		function mouseup() {
+			schemaStore.recordStack(oldSchema);
 			document.body.removeEventListener("mousemove", mousemove);
 			document.body.removeEventListener("mouseup", mouseup);
 		}
