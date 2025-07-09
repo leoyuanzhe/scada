@@ -117,10 +117,10 @@ export const useSchema = defineStore("schema", {
 			return component;
 		},
 		// 删除组件
-		deleteComponent(component: Component) {
-			const parent = this.findParent(component.id);
+		deleteComponent(componentId: string) {
+			const parent = this.findParent(componentId);
 			if (parent) {
-				const index = parent.components.findIndex((v) => v.id === component.id);
+				const index = parent.components.findIndex((v) => v.id === componentId);
 				if (index !== -1) {
 					if (parent.components[index].layout) {
 						const { left, top } = this.getOffsetFromSchema(parent.components[index]);
@@ -202,7 +202,7 @@ export const useSchema = defineStore("schema", {
 							} else {
 								child.layout.top = child.layout.top - newParent.layout.top;
 							}
-							newParent.components.push(this.deleteComponent(child)!);
+							newParent.components.push(this.deleteComponent(child.id)!);
 						}
 					}
 				}
@@ -210,23 +210,20 @@ export const useSchema = defineStore("schema", {
 		},
 		// 移出分组
 		moveOut(componentId: string) {
-			const parent = this.findParent(componentId);
+			const parent = this.findParent(this.findParent(componentId)?.id || "");
 			if (parent) {
-				const child = this.findComponent(componentId);
-				if (child) {
-					parent.components.push(child as Component);
-					if (!this.isSchema(parent) && parent.components.length === 0) this.deleteComponent(parent);
-				}
+				const component = this.deleteComponent(componentId);
+				parent.components.push(component as Component);
 			}
 		},
-		// 展开子组件到根组件
-		flatChildrenToSchema(componentId: string) {
+		// 展开子组件到父组件
+		flatChildrenToParent(componentId: string) {
 			const component = this.findComponent(componentId);
-			if (component && !this.isSchema(component)) {
-				const parent = this.findParent(componentId);
+			const parent = this.findParent(componentId);
+			if (component && !this.isSchema(component) && parent) {
 				if (parent) {
 					const { left, top } = this.getOffsetFromSchema(component);
-					this.components.push(
+					parent.components.push(
 						...component.components.splice(0).map((v) => {
 							if (v.layout) {
 								v.layout.left += left;
@@ -235,37 +232,31 @@ export const useSchema = defineStore("schema", {
 							return v;
 						})
 					);
-					if (!this.isSchema(parent) && parent.components.length === 0) this.deleteComponent(parent);
+					this.deleteComponent(component.id);
 				}
 			}
 		},
-		// 锁定组件
-		lockComponent(component: Component) {
-			component.locked = true;
-		},
-		// 解锁组件
-		unlockComponent(component: Component) {
-			component.locked = false;
-		},
-		// 显示组件
-		showComponent(component: Component) {
-			component.hidden = false;
-		},
-		// 隐藏组件
-		hideComponent(component: Component) {
-			component.hidden = true;
-		},
-		// 激活组件
-		activateComponent(component: Component) {
-			component.actived = true;
-		},
-		// 取消激活组件
-		deactivateComponent(component: Component) {
-			component.actived = false;
+		// 展开子组件到根组件
+		flatChildrenToSchema(componentId: string) {
+			const component = this.findComponent(componentId);
+			const parent = this.findParent(componentId);
+			if (component && !this.isSchema(component) && !this.isSchema(parent)) {
+				const { left, top } = this.getOffsetFromSchema(component);
+				this.components.push(
+					...component.components.splice(0).map((v) => {
+						if (v.layout) {
+							v.layout.left += left;
+							v.layout.top += top;
+						}
+						return v;
+					})
+				);
+				this.deleteComponent(component.id);
+			}
 		},
 		// 取消激活所有组件
 		deactivateAllComponent() {
-			this.activedFlatedComponents.forEach((v) => this.deactivateComponent(v));
+			this.activedFlatedComponents.forEach((v) => (v.actived = false));
 		},
 	},
 });

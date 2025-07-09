@@ -83,12 +83,12 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 					action.params.targetComponentsId.forEach((componentId) => {
 						const targetComponent = schemaStore.findComponent(componentId);
 						if (targetComponent && !schemaStore.isSchema(targetComponent)) {
-							if (action.params.visible === "show") schemaStore.showComponent(targetComponent);
-							else if (action.params.visible === "hide") schemaStore.showComponent(targetComponent);
+							if (action.params.visible === "show") targetComponent.hidden = false;
+							else if (action.params.visible === "hide") targetComponent.hidden = true;
 							else
 								targetComponent.hidden
-									? schemaStore.showComponent(targetComponent)
-									: schemaStore.hideComponent(targetComponent);
+									? (targetComponent.hidden = false)
+									: (targetComponent.hidden = true);
 						}
 					});
 					break;

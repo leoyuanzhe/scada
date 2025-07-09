@@ -109,7 +109,7 @@ export const useCommand = defineStore("command", {
 			const components = clientStore.pasteComponents(
 				tempTargetComponent && !schemaStore.isSchema(tempTargetComponent) ? tempTargetComponent : null
 			);
-			components?.forEach((v) => schemaStore.activateComponent(v));
+			components?.forEach((v) => (v.actived = true));
 			targetComponent.componentId.value = "";
 			dragger.computedSelector();
 		},
@@ -117,7 +117,7 @@ export const useCommand = defineStore("command", {
 		delete() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
-			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deleteComponent(v));
+			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deleteComponent(v.id));
 			dragger.computedSelector();
 		},
 		// 切换锁定
@@ -132,13 +132,13 @@ export const useCommand = defineStore("command", {
 				else lock();
 			}
 			function lock() {
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.lockComponent(v));
+				schemaStore.activedFlatedComponents.forEach((v) => (v.locked = true));
 				schemaStore.deactivateAllComponent();
 				targetComponent.componentId.value = "";
 				dragger.computedSelector();
 			}
 			function unlock() {
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.unlockComponent(v));
+				schemaStore.activedFlatedComponents.forEach((v) => (v.locked = false));
 			}
 		},
 		// 切换隐藏
@@ -153,12 +153,12 @@ export const useCommand = defineStore("command", {
 				else hide();
 			}
 			function hide() {
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.hideComponent(v));
+				schemaStore.activedFlatedComponents.forEach((v) => (v.hidden = true));
 				targetComponent.componentId.value = "";
 				dragger.computedSelector();
 			}
 			function show() {
-				schemaStore.activedFlatedComponents.forEach((v) => schemaStore.showComponent(v));
+				schemaStore.activedFlatedComponents.forEach((v) => (v.hidden = false));
 			}
 		},
 		// 创建分组
@@ -171,10 +171,15 @@ export const useCommand = defineStore("command", {
 			targetComponent.componentId.value = container.id;
 			dragger.computedSelector();
 		},
-		// 移出分组
-		moveOut() {
+		// 展开子组件到父组件
+		flatChildrenToParent() {
 			const schemaStore = useSchema();
-			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v.id));
+			const dragger = useDragger();
+			schemaStore.activedFlatedComponents.forEach((component) => {
+				component.components.forEach((component) => (component.actived = true));
+				schemaStore.flatChildrenToParent(component.id);
+			});
+			dragger.computedSelector();
 		},
 	},
 });

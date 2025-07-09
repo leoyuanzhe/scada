@@ -139,7 +139,7 @@ export const useClient = defineStore("client", {
 							break;
 						case "ctrl+shift+g":
 							e.preventDefault();
-							commandStore.moveOut();
+							commandStore.flatChildrenToParent();
 							break;
 					}
 				}
@@ -190,7 +190,7 @@ export const useClient = defineStore("client", {
 		cutComponents(components: Component[]) {
 			const schemaStore = useSchema();
 			this.copyComponents(components);
-			components.forEach((v) => schemaStore.deleteComponent(v));
+			components.forEach((v) => schemaStore.deleteComponent(v.id));
 		},
 		// 粘贴组件
 		pasteComponents(parent?: Component | null) {

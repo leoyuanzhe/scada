@@ -119,7 +119,7 @@ const rendererMousedown = (e: MouseEvent) => {
 								top >= selector.top &&
 								top + height <= selector.top + selector.height
 							) {
-								schemaStore.activateComponent(component);
+								component.actived = true;
 							}
 						});
 					} else {
@@ -134,7 +134,7 @@ const rendererMousedown = (e: MouseEvent) => {
 								top < selector.top + selector.height &&
 								top + height > selector.top
 							) {
-								schemaStore.activateComponent(component);
+								component.actived = true;
 							}
 						});
 					}
@@ -342,7 +342,7 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 		if (!e.shiftKey) {
 			if (!component.actived) schemaStore.deactivateAllComponent();
 		}
-		schemaStore.activateComponent(component);
+		component.actived = true;
 		targetComponent.componentId.value = component.id;
 		computedSelector();
 	}
