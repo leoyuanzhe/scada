@@ -3,6 +3,7 @@ import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useUndoStack } from "./useUndoStack";
 
 export const useCommand = defineStore("command", {
 	state() {
@@ -37,7 +38,7 @@ export const useCommand = defineStore("command", {
 				reader.onload = () => {
 					try {
 						const json = JSON.parse(reader.result as string);
-						schemaStore.$state = json;
+						schemaStore.setSchema(json);
 					} catch (error: any) {
 						throw new Error(error);
 					}
@@ -80,6 +81,14 @@ export const useCommand = defineStore("command", {
 			if (enabled) clientStore.snap.enable = true;
 			else if (enabled === false) clientStore.snap.enable = false;
 			else clientStore.snap.enable ? (clientStore.snap.enable = false) : (clientStore.snap.enable = true);
+		},
+		undo() {
+			const undoStackStore = useUndoStack();
+			undoStackStore.undo();
+		},
+		redo() {
+			const undoStackStore = useUndoStack();
+			undoStackStore.redo();
 		},
 		// 复制
 		copy() {

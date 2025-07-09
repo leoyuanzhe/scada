@@ -89,6 +89,14 @@ export const useClient = defineStore("client", {
 							e.preventDefault();
 							commandStore.import();
 							break;
+						case "ctrl+z":
+							e.preventDefault();
+							commandStore.undo();
+							break;
+						case "ctrl+y":
+							e.preventDefault();
+							commandStore.redo();
+							break;
 						case "ctrl+o":
 							e.preventDefault();
 							commandStore.toggleOperate();
