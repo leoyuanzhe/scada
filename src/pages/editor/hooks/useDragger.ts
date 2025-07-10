@@ -19,14 +19,14 @@ const snapLine = reactive({
 	v: null as number | null,
 	h: null as number | null,
 });
-const assetDragstart = (e: DragEvent, assetId: string) => {
+const assetOnDragStart = (e: DragEvent, assetId: string) => {
 	const assetStore = useAsset();
 	const item = assetStore.assets.find((v) => v.id === assetId);
 	if (item) {
 		e.dataTransfer?.setData("assetId", item.id);
 	}
 };
-const rendererWheel = (e: WheelEvent) => {
+const rendererOnWheel = (e: WheelEvent) => {
 	const clientStore = useClient();
 	if (e.ctrlKey) {
 		e.preventDefault();
@@ -38,7 +38,7 @@ const rendererWheel = (e: WheelEvent) => {
 		computedSelector();
 	}
 };
-const rendererMousedown = (e: MouseEvent) => {
+const rendererOnMouseDown = (e: MouseEvent) => {
 	if (e.button === 0) {
 		const clientStore = useClient();
 		const schemaStore = useSchema();
@@ -51,16 +51,16 @@ const rendererMousedown = (e: MouseEvent) => {
 			const offsetY = e.pageY - oRenderer!.offsetTop;
 			if (clientStore.keyboard.spaceKey) {
 				// 移动画布
-				document.body.addEventListener("mousemove", mousemove);
-				document.body.addEventListener("mouseup", mouseup);
-				function mousemove(e: MouseEvent) {
+				document.body.addEventListener("mousemove", mouseMove);
+				document.body.addEventListener("mouseup", mouseUp);
+				function mouseMove(e: MouseEvent) {
 					clientStore.canvas.left += e.movementX;
 					clientStore.canvas.top += e.movementY;
 					computedSelector();
 				}
-				function mouseup() {
-					document.body.removeEventListener("mousemove", mousemove);
-					document.body.removeEventListener("mouseup", mouseup);
+				function mouseUp() {
+					document.body.removeEventListener("mousemove", mouseMove);
+					document.body.removeEventListener("mouseup", mouseUp);
 				}
 			} else if (
 				offsetX < selector.left ||
@@ -81,9 +81,9 @@ const rendererMousedown = (e: MouseEvent) => {
 				selector.height = 0;
 				schemaStore.deactivateAllComponent();
 				targetComponent.componentId.value = "";
-				document.body.addEventListener("mousemove", mousemove);
-				document.body.addEventListener("mouseup", mouseup);
-				function mousemove(e: MouseEvent) {
+				document.body.addEventListener("mousemove", mouseMove);
+				document.body.addEventListener("mouseup", mouseUp);
+				function mouseMove(e: MouseEvent) {
 					const moveX = e.clientX - startX; // 移动的X轴距离
 					const moveY = e.clientY - startY;
 					// 鼠标向左框选
@@ -104,7 +104,7 @@ const rendererMousedown = (e: MouseEvent) => {
 					selector.width = width;
 					selector.height = height;
 				}
-				function mouseup(e: MouseEvent) {
+				function mouseUp(e: MouseEvent) {
 					if (!e.shiftKey) {
 						schemaStore.deactivateAllComponent();
 					}
@@ -141,8 +141,8 @@ const rendererMousedown = (e: MouseEvent) => {
 						});
 					}
 					computedSelector();
-					document.body.removeEventListener("mousemove", mousemove);
-					document.body.removeEventListener("mouseup", mouseup);
+					document.body.removeEventListener("mousemove", mouseMove);
+					document.body.removeEventListener("mouseup", mouseUp);
 				}
 			} else {
 				// 移动组件
@@ -181,9 +181,9 @@ const rendererMousedown = (e: MouseEvent) => {
 					left: getActualLeft(v.layout.left),
 					top: getActualTop(v.layout.top),
 				})); // 激活组件拖拽开始时的坐标
-				document.body.addEventListener("mousemove", mousemove);
-				document.body.addEventListener("mouseup", mouseup);
-				function mousemove(e: MouseEvent) {
+				document.body.addEventListener("mousemove", mouseMove);
+				document.body.addEventListener("mouseup", mouseUp);
+				function mouseMove(e: MouseEvent) {
 					moved = true;
 					const moveX = e.clientX - startX; // 移动的X轴距离
 					const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
@@ -274,18 +274,18 @@ const rendererMousedown = (e: MouseEvent) => {
 					}
 					computedSelector();
 				}
-				function mouseup() {
+				function mouseUp() {
 					snapLine.v = null;
 					snapLine.h = null;
 					if (moved) schemaStore.recordStack(oldSchema);
-					document.body.removeEventListener("mousemove", mousemove);
-					document.body.removeEventListener("mouseup", mouseup);
+					document.body.removeEventListener("mousemove", mouseMove);
+					document.body.removeEventListener("mouseup", mouseUp);
 				}
 			}
 		}
 	}
 };
-const canvasDrop = (e: DragEvent) => {
+const canvasOnDrop = (e: DragEvent) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
@@ -302,7 +302,7 @@ const canvasDrop = (e: DragEvent) => {
 		schemaStore.recordStack(oldSchema);
 	}
 };
-const componentDrop = (e: DragEvent, component: Component) => {
+const componentOnDrop = (e: DragEvent, component: Component) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
@@ -342,7 +342,7 @@ function assetTransferComponent(asset: Asset): Component {
 		stateExpression: cloneAsset.material.stateExpression,
 	};
 }
-const componentMousedown = (e: MouseEvent, component: Component) => {
+const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
@@ -355,7 +355,7 @@ const componentMousedown = (e: MouseEvent, component: Component) => {
 		computedSelector();
 	}
 };
-const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
+const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
 	const oldSchema = deepClone(schemaStore.$state);
@@ -366,9 +366,9 @@ const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "
 		const startTop = targetComponent.component.value.layout.top;
 		const startWidth = targetComponent.component.value.layout.width;
 		const startHeight = targetComponent.component.value.layout.height;
-		document.body.addEventListener("mousemove", mousemove);
-		document.body.addEventListener("mouseup", mouseup);
-		function mousemove(e: MouseEvent) {
+		document.body.addEventListener("mousemove", mouseMove);
+		document.body.addEventListener("mouseup", mouseUp);
+		function mouseMove(e: MouseEvent) {
 			const moveX = Math.round(getUnscaledOffset(e.clientX - startX)); // 移动的X轴距离
 			const moveY = Math.round(getUnscaledOffset(e.clientY - startY)); // 移动的X轴距离
 			const dragLeft = startLeft + moveX;
@@ -436,10 +436,10 @@ const selectorMousedown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "
 			}
 			computedSelector();
 		}
-		function mouseup() {
+		function mouseUp() {
 			schemaStore.recordStack(oldSchema);
-			document.body.removeEventListener("mousemove", mousemove);
-			document.body.removeEventListener("mouseup", mouseup);
+			document.body.removeEventListener("mousemove", mouseMove);
+			document.body.removeEventListener("mouseup", mouseUp);
 		}
 	}
 };
@@ -511,13 +511,13 @@ function getUnscaledOffset(number: number) {
 export const useDragger = () => ({
 	selector,
 	snapLine,
-	assetDragstart,
-	rendererWheel,
-	rendererMousedown,
-	canvasDrop,
-	componentDrop,
-	componentMousedown,
-	selectorMousedown,
+	assetOnDragStart,
+	rendererOnWheel,
+	rendererOnMouseDown,
+	canvasOnDrop,
+	componentOnDrop,
+	componentOnMouseDown,
+	selectorDirectionOnMouseDown,
 	computedSelector,
 	getLogicalLeft,
 	getLogicalTop,

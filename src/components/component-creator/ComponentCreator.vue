@@ -37,12 +37,12 @@ const RenderComponent = () =>
 			width: props.component.layout.width + 'px',
 			height: props.component.layout.height + 'px',
 		}"
-		@mousedown="dragger.componentMousedown($event, component)"
-		@drop.stop="dragger.componentDrop($event, component)"
+		@mousedown="dragger.componentOnMouseDown($event, component)"
+		@drop.stop="dragger.componentOnDrop($event, component)"
 	>
 		<Component :is="RenderComponent" />
 	</div>
-	<Component v-else :is="RenderComponent" @mousedown="dragger.componentMousedown($event, component)" />
+	<Component v-else :is="RenderComponent" @mousedown="dragger.componentOnMouseDown($event, component)" />
 </template>
 
 <style lang="scss" scoped>

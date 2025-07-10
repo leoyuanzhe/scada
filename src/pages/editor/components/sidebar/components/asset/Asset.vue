@@ -12,7 +12,7 @@ const dragger = useDragger();
 			v-for="v in assetStore.assets"
 			:key="v.id"
 			draggable="true"
-			@dragstart="dragger.assetDragstart($event, v.id)"
+			@dragstart="dragger.assetOnDragStart($event, v.id)"
 		>
 			<img :src="v.cover" alt="" />
 			<figcaption>{{ v.title }}</figcaption>
