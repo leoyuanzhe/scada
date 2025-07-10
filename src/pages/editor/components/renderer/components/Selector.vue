@@ -23,14 +23,30 @@ const showDirection = computed(
 			height: dragger.selector.height + 'px',
 		}"
 	>
-		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorMousedown($event, 't')"></div>
-		<div v-show="showDirection" class="tr" @mousedown.stop="dragger.selectorMousedown($event, 'tr')"></div>
-		<div v-show="showDirection" class="r" @mousedown.stop="dragger.selectorMousedown($event, 'r')"></div>
-		<div v-show="showDirection" class="rb" @mousedown.stop="dragger.selectorMousedown($event, 'rb')"></div>
-		<div v-show="showDirection" class="b" @mousedown.stop="dragger.selectorMousedown($event, 'b')"></div>
-		<div v-show="showDirection" class="lb" @mousedown.stop="dragger.selectorMousedown($event, 'lb')"></div>
-		<div v-show="showDirection" class="l" @mousedown.stop="dragger.selectorMousedown($event, 'l')"></div>
-		<div v-show="showDirection" class="lt" @mousedown.stop="dragger.selectorMousedown($event, 'lt')"></div>
+		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 't')"></div>
+		<div
+			v-show="showDirection"
+			class="tr"
+			@mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'tr')"
+		></div>
+		<div v-show="showDirection" class="r" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'r')"></div>
+		<div
+			v-show="showDirection"
+			class="rb"
+			@mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'rb')"
+		></div>
+		<div v-show="showDirection" class="b" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'b')"></div>
+		<div
+			v-show="showDirection"
+			class="lb"
+			@mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'lb')"
+		></div>
+		<div v-show="showDirection" class="l" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'l')"></div>
+		<div
+			v-show="showDirection"
+			class="lt"
+			@mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 'lt')"
+		></div>
 	</div>
 </template>
 
