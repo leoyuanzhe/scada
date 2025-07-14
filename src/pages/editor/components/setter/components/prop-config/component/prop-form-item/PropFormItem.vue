@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { editObjectValue } from "@/helpers/component";
 import FormItem from "@/components/form-item/FormItem.vue";
 
 type PropsExpression = Record<string, string>;
 interface Props {
-	component: Schema<any> | Component<any>;
+	component: Component;
 	label: string;
 	propKey: string;
 	inputType: "text" | "number" | "color";
@@ -23,7 +22,12 @@ const props = withDefaults(defineProps<Props>(), {});
 			{ href: props.component.propsExpression[props.propKey] !== undefined ? '#code' : '', variant: 'danger', onClick: () => delete props.component.propsExpression[props.propKey] },
 		]"
 	>
-		<input :id="'setter-' + props.propKey" :type="props.inputType" :value="props.component.props[props.propKey]" @input="props.component.props[props.propKey] = ($event.target as HTMLInputElement).value" />
+		<input
+			:id="'setter-' + props.propKey"
+			:type="props.inputType"
+			:value="props.component.props[props.propKey]"
+			@input="props.component.props[props.propKey] = ($event.target as HTMLInputElement).value"
+		/>
 	</FormItem>
 </template>
 

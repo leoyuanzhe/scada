@@ -1,13 +1,10 @@
-import type { Component, EmitEvent } from "./Component";
-export interface SchemaProps {
-	backgroundColor: string;
-}
-export interface Schema<Props = Record<string, any>>
-	extends Omit<Component, "key" | "layout" | "props" | "actived" | "nestable" | "locked" | "hidden"> {
-	key: "schema";
-	layout: {
-		width: number;
-		height: number;
-	};
-	props: Props;
+import type { Action, Component } from "./Component";
+
+export interface Schema {
+	title: string;
+	state: Record<keyof Schema["stateExpression"], any>;
+	actions: Action[];
+	current: string;
+	components: Component[];
+	stateExpression: Record<string, string>;
 }

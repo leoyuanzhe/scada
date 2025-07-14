@@ -1,7 +1,11 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import ContainerComponent from "./Container.vue";
+import { deepClone } from "@/utils/conversion";
 
-export interface ContainerProps {}
+const props = deepClone({
+	backgroundColor: "#00000000",
+});
+export type ContainerProps = typeof props;
 export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	version: "0.0.1",
 	id: "container",
@@ -11,15 +15,15 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	nestable: true,
 	locked: false,
 	hidden: false,
+	resizable: false,
 	layout: {
-		resizable: false,
 		snap: { v: [], h: [] },
 		left: 0,
 		top: 0,
 		width: 300,
 		height: 300,
 	},
-	props: {},
+	props,
 	state: {},
 	actions: [],
 	emits: {

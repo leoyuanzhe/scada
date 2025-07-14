@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { editObjectValue } from "@/helpers/component";
 import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
 
-const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
+const props = withDefaults(defineProps<{ component: Component }>(), {});
 const addState = () => {
 	fn(0);
 	function fn(depth: number) {

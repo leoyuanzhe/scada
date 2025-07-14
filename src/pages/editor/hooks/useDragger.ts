@@ -44,7 +44,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 		const schemaStore = useSchema();
 		const targetComponent = useTargetComponent();
 		const oldSchema = deepClone(schemaStore.$state);
-		let moved = false;
+		let moved = false; // 是否移动过（撤销队列使用）
 		if (!clientStore.previewing && !clientStore.enabledOperate) {
 			const oRenderer = document.querySelector<HTMLDivElement>(".renderer");
 			const offsetX = e.pageX - oRenderer!.offsetLeft; // 选择器的offsetX
@@ -155,8 +155,8 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 						? {
 								v: [
 									getActualLeft(0),
-									getActualLeft(schemaStore.layout.width / 2),
-									getActualLeft(schemaStore.layout.width),
+									getActualLeft((schemaStore.currentComponent?.layout?.width ?? 0) / 2),
+									getActualLeft(schemaStore.currentComponent?.layout?.width ?? 0),
 									...schemaStore.unactivedMoveableComponents.flatMap((v) => [
 										getActualLeft(v.layout.left),
 										getActualLeft(v.layout.left + v.layout.width / 2),
@@ -166,8 +166,8 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 								],
 								h: [
 									getActualTop(0),
-									getActualTop(schemaStore.layout.height / 2),
-									getActualTop(schemaStore.layout.height),
+									getActualTop((schemaStore.currentComponent?.layout?.height ?? 0) / 2),
+									getActualTop(schemaStore.currentComponent?.layout?.height ?? 0),
 									...schemaStore.unactivedMoveableComponents.flatMap((v) => [
 										getActualTop(v.layout.top),
 										getActualTop(v.layout.top + v.layout.height / 2),
@@ -285,40 +285,66 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 		}
 	}
 };
-const canvasOnDrop = (e: DragEvent) => {
+const rendererOnDrop = (e: DragEvent) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
 		const oldSchema = deepClone(schemaStore.$state);
-		const newComponent: Component = assetTransferComponent(asset);
+		const newComponent = assetTransferComponent(asset);
 		if (newComponent.layout) {
-			newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
-			newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
+			newComponent.layout.left = 0;
+			newComponent.layout.top = 0;
 		}
-		schemaStore.createComponent(newComponent);
+		const component = schemaStore.createRootComponent(newComponent);
+		if (!schemaStore.current) schemaStore.current = component.id;
 		computedSelector();
 		schemaStore.recordStack(oldSchema);
+	}
+};
+const componentOnMouseDown = (e: MouseEvent, component: Component) => {
+	const clientStore = useClient();
+	const schemaStore = useSchema();
+	const targetComponent = useTargetComponent();
+	if (!clientStore.previewing && !clientStore.enabledOperate && !schemaStore.isRoot(component.id)) {
+		if (!e.shiftKey) {
+			if (!component.actived) schemaStore.deactivateAllComponent();
+		}
+		component.actived = true;
+		targetComponent.componentId.value = component.id;
+		computedSelector();
+	}
+};
+const componentOnDragOver = (component: Component) => {
+	if (component.nestable) {
+		component.actived = true;
+	}
+};
+const componentOnDragLeave = (component: Component) => {
+	if (component.nestable) {
+		component.actived = false;
 	}
 };
 const componentOnDrop = (e: DragEvent, component: Component) => {
 	const assetStore = useAsset();
 	const schemaStore = useSchema();
-	const assetId = e.dataTransfer?.getData("assetId");
-	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
-	if (asset) {
-		const oldSchema = deepClone(schemaStore.$state);
-		const newComponent: Component = assetTransferComponent(asset);
-		if (newComponent.layout) {
-			newComponent.layout.left =
-				e.offsetX + schemaStore.getOffsetFromSchema(component).left - (newComponent.layout.width ?? 0) / 2;
-			newComponent.layout.top =
-				e.offsetY + schemaStore.getOffsetFromSchema(component).top - (newComponent.layout.height ?? 0) / 2;
+	if (component.nestable) {
+		const assetId = e.dataTransfer?.getData("assetId");
+		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
+		if (asset) {
+			const oldSchema = deepClone(schemaStore.$state);
+			const newComponent = assetTransferComponent(asset);
+			schemaStore.deactivateAllComponent();
+			newComponent.actived = true;
+			if (newComponent.layout) {
+				newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
+				newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
+			}
+			schemaStore.createComponent(newComponent, component);
+			computedSelector();
+			schemaStore.recordStack(oldSchema);
 		}
-		schemaStore.createComponent(newComponent);
-		computedSelector();
-		schemaStore.recordStack(oldSchema);
 	}
 };
 function assetTransferComponent(asset: Asset): Component {
@@ -328,10 +354,11 @@ function assetTransferComponent(asset: Asset): Component {
 		id: "",
 		key: cloneAsset.material.key,
 		title: cloneAsset.material.title,
-		actived: true,
+		actived: false,
 		nestable: cloneAsset.material.nestable,
 		locked: cloneAsset.material.locked,
 		hidden: cloneAsset.material.hidden,
+		resizable: cloneAsset.material.resizable,
 		layout: cloneAsset.material.layout,
 		props: cloneAsset.material.props,
 		state: cloneAsset.material.state,
@@ -342,19 +369,6 @@ function assetTransferComponent(asset: Asset): Component {
 		stateExpression: cloneAsset.material.stateExpression,
 	};
 }
-const componentOnMouseDown = (e: MouseEvent, component: Component) => {
-	const clientStore = useClient();
-	const schemaStore = useSchema();
-	const targetComponent = useTargetComponent();
-	if (!clientStore.previewing && !clientStore.enabledOperate) {
-		if (!e.shiftKey) {
-			if (!component.actived) schemaStore.deactivateAllComponent();
-		}
-		component.actived = true;
-		targetComponent.componentId.value = component.id;
-		computedSelector();
-	}
-};
 const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const schemaStore = useSchema();
 	const targetComponent = useTargetComponent();
@@ -514,9 +528,11 @@ export const useDragger = () => ({
 	assetOnDragStart,
 	rendererOnWheel,
 	rendererOnMouseDown,
-	canvasOnDrop,
-	componentOnDrop,
+	rendererOnDrop,
 	componentOnMouseDown,
+	componentOnDragOver,
+	componentOnDragLeave,
+	componentOnDrop,
 	selectorDirectionOnMouseDown,
 	computedSelector,
 	getLogicalLeft,

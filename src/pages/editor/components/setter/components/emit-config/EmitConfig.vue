@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { Schema } from "@/types/Schema";
 import type { Component, Action } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import FormItem from "@/components/form-item/FormItem.vue";
@@ -9,7 +8,7 @@ import emit_dict from "@/assets/data/emit_dict.json";
 import prop_dict from "@/assets/data/prop_dict.json";
 
 interface Props {
-	component: Schema | Component;
+	component: Component;
 }
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
@@ -130,7 +129,9 @@ function checkParams(action: Action) {
 				<template v-if="v.type === 'changeProp'">
 					<FormItem label="选择组件" for="change-prop-target-components-id">
 						<select id="change-prop-target-components-id" v-model="v.params.targetComponentId">
-							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
+							<option :value="schemaStore.currentComponent?.id">
+								{{ schemaStore.currentComponent?.title }}
+							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
 							</option>
@@ -163,7 +164,9 @@ function checkParams(action: Action) {
 				<template v-if="v.type === 'changeState'">
 					<FormItem label="选择组件" for="change-state-target-component-id">
 						<select id="change-state-target-component-id" v-model="v.params.targetComponentId">
-							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
+							<option :value="schemaStore.currentComponent?.id">
+								{{ schemaStore.currentComponent?.title }}
+							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
 							</option>
@@ -193,7 +196,9 @@ function checkParams(action: Action) {
 				<template v-if="v.type === 'triggerOtherAction'">
 					<FormItem label="选择组件" for="trigger-other-target-component-id">
 						<select id="trigger-other-target-component-id" v-model="v.params.targetComponentId">
-							<option :value="schemaStore.id">{{ schemaStore.title }}</option>
+							<option :value="schemaStore.currentComponent?.id">
+								{{ schemaStore.currentComponent?.title }}
+							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
 							</option>

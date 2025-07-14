@@ -139,9 +139,7 @@ export const useCommand = defineStore("command", {
 			const tempTargetComponent = schemaStore.findComponent(targetComponentId);
 			const dragger = useDragger();
 			schemaStore.deactivateAllComponent();
-			const components = clientStore.pasteComponents(
-				tempTargetComponent && !schemaStore.isSchema(tempTargetComponent) ? tempTargetComponent : null
-			);
+			const components = clientStore.pasteComponents(tempTargetComponent);
 			components?.forEach((v) => (v.actived = true));
 			targetComponent.componentId.value = "";
 			dragger.computedSelector();

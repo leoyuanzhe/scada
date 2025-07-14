@@ -4,27 +4,30 @@ import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
-import BasicConfig from "./components/basic-config/BasicConfig.vue";
+import CanvasConfig from "./components/canvas-config/CanvasConfig.vue";
+import LayoutConfig from "./components/layout-config/LayoutConfig.vue";
 import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/state-config/StateConfig.vue";
 import EmitConfig from "./components/emit-config/EmitConfig.vue";
 
 const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
-const current = ref<"basic" | "prop" | "state" | "emit">("basic");
-const targetComponentV2 = computed<Schema | Component>(() => (targetComponent.component.value ? targetComponent.component.value : schemaStore.$state));
+const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("canvas");
+const targetComponentV2 = computed(() => targetComponent.component.value ?? schemaStore.currentComponent);
 </script>
 
 <template>
 	<div class="setter">
 		<menu>
-			<button :class="{ actived: current === 'basic' }" @click="current = 'basic'">基本</button>
+			<button :class="{ actived: current === 'canvas' }" @click="current = 'canvas'">画布</button>
+			<button :class="{ actived: current === 'layout' }" @click="current = 'layout'">布局</button>
 			<button :class="{ actived: current === 'prop' }" @click="current = 'prop'">属性</button>
 			<button :class="{ actived: current === 'state' }" @click="current = 'state'">状态</button>
 			<button :class="{ actived: current === 'emit' }" @click="current = 'emit'">事件</button>
 		</menu>
 		<div class="container">
-			<BasicConfig v-if="current === 'basic'" :component="targetComponentV2" />
+			<CanvasConfig v-if="current === 'canvas'" :component="targetComponentV2" />
+			<LayoutConfig v-if="current === 'layout'" :component="targetComponentV2" />
 			<PropConfig v-if="current === 'prop'" :component="targetComponentV2" />
 			<StateConfig v-if="current === 'state'" :component="targetComponentV2" />
 			<EmitConfig v-if="current === 'emit'" :component="targetComponentV2" />

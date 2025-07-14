@@ -2,6 +2,7 @@
 import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 import CanvasComponent from "./components/Canvas.vue";
 import GridLine from "./components/GridLine.vue";
 import Ruler from "./components/Ruler.vue";
@@ -14,7 +15,6 @@ const dragger = useDragger();
 const oRenderer = useTemplateRef("oRenderer");
 onMounted(() => {
 	clientStore.oRenderer = oRenderer.value;
-	// watch([() => schemaStore.layout.width, () => schemaStore.layout.height], () => clientStore.computedCanvasLayout(), { immediate: true });
 });
 </script>
 
@@ -29,6 +29,9 @@ onMounted(() => {
 		}"
 		@wheel="dragger.rendererOnWheel($event)"
 		@mousedown="dragger.rendererOnMouseDown($event)"
+		@dragover.prevent
+		@drop="dragger.rendererOnDrop($event)"
+		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<CanvasComponent />
 		<GridLine />
