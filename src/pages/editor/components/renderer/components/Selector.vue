@@ -8,7 +8,7 @@ const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const showDirection = computed(
-	() => schemaStore.activedFlatedComponents.length === 1 && targetComponent.component.value?.layout?.resizable
+	() => schemaStore.activedFlatedComponents.length === 1 && targetComponent.component.value?.resizable
 );
 </script>
 

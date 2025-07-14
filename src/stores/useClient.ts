@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { Schema, SchemaProps } from "@/types/Schema";
+import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
@@ -52,7 +52,7 @@ export const useClient = defineStore("client", {
 	},
 	actions: {
 		init() {
-			let oldSchema = null as Schema<SchemaProps> | null;
+			let oldSchema = null as Schema | null;
 			document.addEventListener("focusin", () => {
 				this.typing = true;
 			});
@@ -221,7 +221,7 @@ export const useClient = defineStore("client", {
 				this.canvas.left = 30;
 				this.canvas.top = 30;
 				this.canvas.scale = Math.max(
-					Math.min((this.oRenderer.offsetWidth - 40) / schemaStore.layout.width, 5),
+					Math.min((this.oRenderer.offsetWidth - 40) / (schemaStore.currentComponent?.layout?.width ?? 0), 5),
 					0.1
 				);
 			}
@@ -242,7 +242,7 @@ export const useClient = defineStore("client", {
 		copyComponents(components: Component[]) {
 			this.copiedComponents = deepClone(components);
 			this.copiedComponents.forEach((component) => {
-				if (component.layout?.resizable) {
+				if (component.layout) {
 					component.layout.left += 20;
 					component.layout.top += 20;
 				}
@@ -257,13 +257,14 @@ export const useClient = defineStore("client", {
 		// 粘贴组件
 		pasteComponents(parent?: Component | null) {
 			const schemaStore = useSchema();
+			const targetComponent = useTargetComponent();
 			const components: Component[] = [];
 			if (this.copiedComponents) {
 				deepClone(this.copiedComponents).forEach((component) => {
 					if (parent && parent.nestable) {
 						component.id = generateComponetId();
 						parent.components.push(component);
-					} else schemaStore.createComponent(component);
+					} else schemaStore.createComponent(component, targetComponent.component.value);
 					components.push(component);
 				});
 				this.copyComponents(schemaStore.activedFlatedComponents);

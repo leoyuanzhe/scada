@@ -1,4 +1,3 @@
-export type ComponentKey = "text" | "container";
 type BasicAction = {
 	name: string;
 	beforeHandler: string;
@@ -51,14 +50,14 @@ export type EmitEvent = {
 export interface Component<Props = Record<string, any>, EmitKey = string> {
 	version: string;
 	id: string;
-	key: ComponentKey;
+	key: string;
 	title: string;
 	actived: boolean;
 	nestable: boolean;
 	locked: boolean;
 	hidden: boolean;
+	resizable: boolean;
 	layout?: {
-		resizable: boolean;
 		snap: { v: number[]; h: number[] };
 		left: number;
 		top: number;
@@ -73,6 +72,7 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	propsExpression: Partial<Record<keyof Props, string>>;
 	stateExpression: Record<string, string>;
 }
-export interface ComponentWithLayout<Props = any, EmitKey = string> extends Omit<Component<Props, EmitKey>, "layout"> {
+export interface ComponentWithLayout<Props = Record<string, any>, EmitKey = string>
+	extends Omit<Component<Props, EmitKey>, "layout"> {
 	layout: NonNullable<Component["layout"]>;
 }

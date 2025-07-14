@@ -281,8 +281,8 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "移出分组",
 			disabled: schemaStore.activedFlatedComponents.every((component) => {
-				const parent = schemaStore.findParent(component.id);
-				return parent && schemaStore.isSchema(parent);
+				const { isRoot } = schemaStore.findParent(component.id);
+				return isRoot;
 			}),
 			onClick: () => schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v.id)),
 		},

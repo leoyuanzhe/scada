@@ -3,6 +3,7 @@ import type { Material } from "@/types/Material";
 import type { Component } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
+import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 
@@ -11,6 +12,7 @@ interface Props {
 }
 const clientStore = useClient();
 const materialStore = useMaterial();
+const schemaStore = useSchema();
 const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
@@ -25,6 +27,7 @@ const RenderComponent = () =>
 		v-if="props.component.layout"
 		:class="{
 			component: true,
+			root: schemaStore.isRoot(props.component.id),
 			actived: props.component.actived,
 			target: props.component.id === targetComponent.componentId.value,
 			locked: !clientStore.previewing && props.component.locked,
@@ -38,6 +41,8 @@ const RenderComponent = () =>
 			height: props.component.layout.height + 'px',
 		}"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
+		@dragover="dragger.componentOnDragOver(component)"
+		@dragleave="dragger.componentOnDragLeave(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
 	>
 		<Component :is="RenderComponent" />
@@ -56,6 +61,11 @@ const RenderComponent = () =>
 		left: 0;
 		width: 100%;
 		height: 100%;
+	}
+	&.root {
+		&::after {
+			content: none;
+		}
 	}
 	&.actived {
 		box-shadow: 0 0 1px 1px #ff000066;
