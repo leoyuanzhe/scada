@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { Schema } from "@/types/Schema";
-import type { Component } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import { useTargetComponent } from "@/hooks/useTargetComponent";
 import CanvasConfig from "./components/canvas-config/CanvasConfig.vue";
@@ -27,10 +25,10 @@ const targetComponentV2 = computed(() => targetComponent.component.value ?? sche
 		</menu>
 		<div class="container">
 			<CanvasConfig v-if="current === 'canvas'" :component="targetComponentV2" />
-			<LayoutConfig v-if="current === 'layout'" :component="targetComponentV2" />
-			<PropConfig v-if="current === 'prop'" :component="targetComponentV2" />
-			<StateConfig v-if="current === 'state'" :component="targetComponentV2" />
-			<EmitConfig v-if="current === 'emit'" :component="targetComponentV2" />
+			<LayoutConfig v-if="current === 'layout' && targetComponentV2" :component="targetComponentV2" />
+			<PropConfig v-if="current === 'prop' && targetComponentV2" :component="targetComponentV2" />
+			<StateConfig v-if="current === 'state' && targetComponentV2" :component="targetComponentV2" />
+			<EmitConfig v-if="current === 'emit' && targetComponentV2" :component="targetComponentV2" />
 		</div>
 	</div>
 </template>
