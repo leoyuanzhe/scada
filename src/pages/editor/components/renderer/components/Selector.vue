@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { computed } from "vue";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 
+const clientStore = useClient();
 const schemaStore = useSchema();
-const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const showDirection = computed(
-	() => schemaStore.activedFlatedComponents.length === 1 && targetComponent.component.value?.resizable
+	() => schemaStore.activedFlatedComponents.length === 1 && clientStore.targetComponent?.resizable
 );
 </script>
 

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useTargetComponent } from "@/hooks/useTargetComponent";
+import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import type { Component } from "@/types/Component";
 
 interface Props {
 	component: Component;
 }
+const clientStore = useClient();
 const dragger = useDragger();
-const targetComponent = useTargetComponent();
 const props = withDefaults(defineProps<Props>(), {});
 </script>
 
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		:class="{
 			'component-details': true,
 			actived: props.component.actived,
-			target: props.component.id === targetComponent.componentId.value,
+			target: props.component.id === clientStore.targetComponent?.id,
 		}"
 		draggable="true"
 	>

@@ -1,12 +1,14 @@
+import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
+import { useClient } from "./useClient";
 import { useUndoStack } from "./useUndoStack";
-import { generateComponetId, initState } from "@/helpers/component";
+import { initState } from "@/helpers/component";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 export const useSchema = defineStore("schema", {
 	state() {
@@ -38,11 +40,9 @@ export const useSchema = defineStore("schema", {
 				(this.currentComponent?.components.filter((v) => v.actived && v.layout) as ComponentWithLayout[]) ?? []
 			);
 		},
-		// 未激活的有布局属性的根组件下的组件
-		unactivedMoveableComponents(): ComponentWithLayout[] {
-			return (
-				(this.currentComponent?.components.filter((v) => !v.actived && v.layout) as ComponentWithLayout[]) ?? []
-			);
+		// 未激活的有布局属性的所有的组件
+		unactivedMoveableFlatedComponents(): ComponentWithLayout[] {
+			return (this.flatedComponents.filter((v) => !v.actived && v.layout) as ComponentWithLayout[]) ?? [];
 		},
 		// 所有组件（不包括根组件）
 		flatedComponents(): Component[] {
@@ -63,6 +63,10 @@ export const useSchema = defineStore("schema", {
 	actions: {
 		// 初始化
 		init() {
+			const route = useRoute();
+			if (route.query.id) {
+				this.current = route.query.id as string;
+			}
 			initState(this.$state);
 		},
 		isRoot(componentId: string) {
@@ -124,15 +128,13 @@ export const useSchema = defineStore("schema", {
 			return { left, top };
 		},
 		createRootComponent(component: Component) {
-			component.id = generateComponetId();
+			component.id = generateId();
 			this.components.push(component);
 			return component;
 		},
-		createComponent<T extends Component>(component: T, targetComponent?: Component | null): T {
-			component.id = generateComponetId();
-			targetComponent
-				? targetComponent.components.push(component)
-				: this.currentComponent?.components.push(component);
+		createComponent<T extends Component>(component: T, parent?: Component | null): T {
+			component.id = generateId();
+			parent ? parent.components.push(component) : this.currentComponent?.components.push(component);
 			return component;
 		},
 		// 删除组件
@@ -266,9 +268,9 @@ export const useSchema = defineStore("schema", {
 		},
 		// 取消激活所有组件
 		deactivateAllComponent() {
-			const targetComponent = useTargetComponent();
+			const clientStore = useClient();
 			[this.currentComponent, ...this.activedFlatedComponents].forEach((v) => v?.actived && (v.actived = false));
-			targetComponent.componentId.value = "";
+			clientStore.targetComponent = null;
 		},
 		recordStack(oldSchema: Schema) {
 			const undoStackStore = useUndoStack();

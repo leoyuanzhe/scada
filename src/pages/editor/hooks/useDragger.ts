@@ -1,10 +1,9 @@
 import { reactive } from "vue";
 import type { Component } from "@/types/Component";
-import type { Asset } from "@/types/Asset";
 import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
+import { assetTransferComponent } from "@/helpers/component";
 import { deepClone } from "@/utils/conversion";
 
 // 框选器
@@ -42,7 +41,6 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 	if (e.button === 0) {
 		const clientStore = useClient();
 		const schemaStore = useSchema();
-		const targetComponent = useTargetComponent();
 		const oldSchema = deepClone(schemaStore.$state);
 		let moved = false; // 是否移动过（撤销队列使用）
 		if (!clientStore.previewing && !clientStore.enabledOperate) {
@@ -80,7 +78,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 				selector.width = 0;
 				selector.height = 0;
 				schemaStore.deactivateAllComponent();
-				targetComponent.componentId.value = "";
+				clientStore.targetComponent = null;
 				document.body.addEventListener("mousemove", mouseMove);
 				document.body.addEventListener("mouseup", mouseUp);
 				function mouseMove(e: MouseEvent) {
@@ -150,6 +148,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 				const startY = e.clientY;
 				const startSelectorLeft = selector.left;
 				const startSelectorTop = selector.top;
+				// 激活组件拖拽开始时的坐标
 				const snapLines =
 					clientStore.snap.enable && !e.ctrlKey && !e.metaKey
 						? {
@@ -157,7 +156,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 									getActualLeft(0),
 									getActualLeft((schemaStore.currentComponent?.layout?.width ?? 0) / 2),
 									getActualLeft(schemaStore.currentComponent?.layout?.width ?? 0),
-									...schemaStore.unactivedMoveableComponents.flatMap((v) => [
+									...schemaStore.unactivedMoveableFlatedComponents.flatMap((v) => [
 										getActualLeft(v.layout.left),
 										getActualLeft(v.layout.left + v.layout.width / 2),
 										getActualLeft(v.layout.left + v.layout.width),
@@ -168,7 +167,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 									getActualTop(0),
 									getActualTop((schemaStore.currentComponent?.layout?.height ?? 0) / 2),
 									getActualTop(schemaStore.currentComponent?.layout?.height ?? 0),
-									...schemaStore.unactivedMoveableComponents.flatMap((v) => [
+									...schemaStore.unactivedMoveableFlatedComponents.flatMap((v) => [
 										getActualTop(v.layout.top),
 										getActualTop(v.layout.top + v.layout.height / 2),
 										getActualTop(v.layout.top + v.layout.height),
@@ -180,7 +179,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 				const startActiveComponentsPosition = schemaStore.activedMoveableComponents.map((v) => ({
 					left: getActualLeft(v.layout.left),
 					top: getActualTop(v.layout.top),
-				})); // 激活组件拖拽开始时的坐标
+				}));
 				document.body.addEventListener("mousemove", mouseMove);
 				document.body.addEventListener("mouseup", mouseUp);
 				function mouseMove(e: MouseEvent) {
@@ -306,13 +305,12 @@ const rendererOnDrop = (e: DragEvent) => {
 const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	const targetComponent = useTargetComponent();
 	if (!clientStore.previewing && !clientStore.enabledOperate && !schemaStore.isRoot(component.id)) {
 		if (!e.shiftKey) {
 			if (!component.actived) schemaStore.deactivateAllComponent();
 		}
 		component.actived = true;
-		targetComponent.componentId.value = component.id;
+		clientStore.targetComponent = component;
 		computedSelector();
 	}
 };
@@ -347,39 +345,17 @@ const componentOnDrop = (e: DragEvent, component: Component) => {
 		}
 	}
 };
-function assetTransferComponent(asset: Asset): Component {
-	const cloneAsset = deepClone(asset);
-	return {
-		version: cloneAsset.material.version,
-		id: "",
-		key: cloneAsset.material.key,
-		title: cloneAsset.material.title,
-		actived: false,
-		nestable: cloneAsset.material.nestable,
-		locked: cloneAsset.material.locked,
-		hidden: cloneAsset.material.hidden,
-		resizable: cloneAsset.material.resizable,
-		layout: cloneAsset.material.layout,
-		props: cloneAsset.material.props,
-		state: cloneAsset.material.state,
-		actions: cloneAsset.material.actions,
-		emits: cloneAsset.material.emits,
-		components: cloneAsset.material.components,
-		propsExpression: cloneAsset.material.propsExpression,
-		stateExpression: cloneAsset.material.stateExpression,
-	};
-}
 const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
+	const clientStore = useClient();
 	const schemaStore = useSchema();
-	const targetComponent = useTargetComponent();
 	const oldSchema = deepClone(schemaStore.$state);
-	if (targetComponent.component.value?.layout) {
+	if (clientStore.targetComponent?.layout) {
 		const startX = e.clientX; // 鼠标按下时的X坐标
 		const startY = e.clientY;
-		const startLeft = targetComponent.component.value.layout.left;
-		const startTop = targetComponent.component.value.layout.top;
-		const startWidth = targetComponent.component.value.layout.width;
-		const startHeight = targetComponent.component.value.layout.height;
+		const startLeft = clientStore.targetComponent.layout.left;
+		const startTop = clientStore.targetComponent.layout.top;
+		const startWidth = clientStore.targetComponent.layout.width;
+		const startHeight = clientStore.targetComponent.layout.height;
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);
 		function mouseMove(e: MouseEvent) {
@@ -390,61 +366,61 @@ const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r"
 			switch (direction) {
 				case "t":
 					if (startHeight + -moveY > 0) {
-						targetComponent.component.value!.layout!.top = dragTop;
-						targetComponent.component.value!.layout!.height = startHeight + -moveY;
+						clientStore.targetComponent!.layout!.top = dragTop;
+						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 
 				case "tr":
 					if (startWidth + moveX > 0) {
-						targetComponent.component.value!.layout!.width = startWidth + moveX;
+						clientStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					if (startHeight + -moveY > 0) {
-						targetComponent.component.value!.layout!.top = dragTop;
-						targetComponent.component.value!.layout!.height = startHeight + -moveY;
+						clientStore.targetComponent!.layout!.top = dragTop;
+						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 				case "r":
 					if (startWidth + moveX > 0) {
-						targetComponent.component.value!.layout!.width = startWidth + moveX;
+						clientStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					break;
 				case "rb":
 					if (startWidth + moveX > 0) {
-						targetComponent.component.value!.layout!.width = startWidth + moveX;
+						clientStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					if (startHeight + moveY > 0) {
-						targetComponent.component.value!.layout!.height = startHeight + moveY;
+						clientStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "b":
 					if (startHeight + moveY > 0) {
-						targetComponent.component.value!.layout!.height = startHeight + moveY;
+						clientStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "lb":
 					if (startWidth + -moveX > 0) {
-						targetComponent.component.value!.layout!.left = dragLeft;
-						targetComponent.component.value!.layout!.width = startWidth + -moveX;
+						clientStore.targetComponent!.layout!.left = dragLeft;
+						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					if (startHeight + moveY > 0) {
-						targetComponent.component.value!.layout!.height = startHeight + moveY;
+						clientStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "l":
 					if (startWidth + -moveX > 0) {
-						targetComponent.component.value!.layout!.left = dragLeft;
-						targetComponent.component.value!.layout!.width = startWidth + -moveX;
+						clientStore.targetComponent!.layout!.left = dragLeft;
+						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					break;
 				case "lt":
 					if (startWidth + -moveX > 0) {
-						targetComponent.component.value!.layout!.left = dragLeft;
-						targetComponent.component.value!.layout!.width = startWidth + -moveX;
+						clientStore.targetComponent!.layout!.left = dragLeft;
+						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					if (startHeight + -moveY > 0) {
-						targetComponent.component.value!.layout!.top = dragTop;
-						targetComponent.component.value!.layout!.height = startHeight + -moveY;
+						clientStore.targetComponent!.layout!.top = dragTop;
+						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 			}

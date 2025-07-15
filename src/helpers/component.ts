@@ -1,12 +1,37 @@
 import { watchEffect } from "vue";
+import type { Asset } from "@/types/Asset";
 import type { Schema } from "@/types/Schema";
 import type { Action, Component, EmitEvent } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
+import { deepClone } from "@/utils/conversion";
 import CodeEditor from "@/components/code-editor";
 
-// 生成组件id
-export const generateComponetId = () => {
+// 资产转组件
+export const assetTransferComponent = (asset: Asset): Component => {
+	const cloneAsset = deepClone(asset);
+	return {
+		version: cloneAsset.material.version,
+		id: "",
+		key: cloneAsset.material.key,
+		title: cloneAsset.material.title,
+		actived: false,
+		nestable: cloneAsset.material.nestable,
+		locked: cloneAsset.material.locked,
+		hidden: cloneAsset.material.hidden,
+		resizable: cloneAsset.material.resizable,
+		layout: cloneAsset.material.layout,
+		props: cloneAsset.material.props,
+		state: cloneAsset.material.state,
+		actions: cloneAsset.material.actions,
+		emits: cloneAsset.material.emits,
+		components: cloneAsset.material.components,
+		propsExpression: cloneAsset.material.propsExpression,
+		stateExpression: cloneAsset.material.stateExpression,
+	};
+};
+// 生成id
+export const generateId = () => {
 	return Math.random().toString(36).substring(2, 7);
 };
 type StringKeyOf<T> = {

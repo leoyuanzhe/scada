@@ -5,7 +5,6 @@ import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
 
 interface Props {
 	component: Component;
@@ -13,7 +12,6 @@ interface Props {
 const clientStore = useClient();
 const materialStore = useMaterial();
 const schemaStore = useSchema();
-const targetComponent = useTargetComponent();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
 const RenderComponent = () =>
@@ -29,7 +27,7 @@ const RenderComponent = () =>
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
 			actived: props.component.actived,
-			target: props.component.id === targetComponent.componentId.value,
+			target: props.component.id === clientStore.targetComponent?.id,
 			locked: !clientStore.previewing && props.component.locked,
 			action: clientStore.enabledOperate,
 		}"
@@ -41,8 +39,9 @@ const RenderComponent = () =>
 			height: props.component.layout.height + 'px',
 		}"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
-		@dragover="dragger.componentOnDragOver(component)"
-		@dragleave="dragger.componentOnDragLeave(component)"
+		@dragover.prevent
+		@dragenter.stop="dragger.componentOnDragOver(component)"
+		@dragleave.stop="dragger.componentOnDragLeave(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
 	>
 		<Component :is="RenderComponent" />
@@ -68,10 +67,10 @@ const RenderComponent = () =>
 		}
 	}
 	&.actived {
-		box-shadow: 0 0 1px 1px #ff000066;
+		box-shadow: 0 0 1px 1px #ff0000;
 	}
 	&.target {
-		box-shadow: 0 0 3px 2px #ff0000;
+		box-shadow: 0 0 6px 3px #ff0000;
 	}
 	&.locked {
 		pointer-events: none;

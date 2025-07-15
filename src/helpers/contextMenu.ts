@@ -3,7 +3,6 @@ import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useCommand } from "@/stores/useCommand";
 import { useUndoStack } from "@/stores/useUndoStack";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import ContextMenu from "@/components/context-menu";
 
@@ -172,7 +171,6 @@ export const openEditMenu = (position: MenuPosition) => {
 export const openComponentMenu = (position: MenuPosition) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	const targetComponent = useTargetComponent();
 	ContextMenu({ left: position.left, top: position.top }, [
 		{
 			label: "剪切",
@@ -275,7 +273,9 @@ export const openComponentMenu = (position: MenuPosition) => {
 				.filter((v) => v.nestable)
 				.map((v) => ({
 					label: v.title,
-					onClick: () => schemaStore.joinGroup(targetComponent.componentId.value, v.id),
+					onClick: () => {
+						if (clientStore.targetComponent) schemaStore.joinGroup(clientStore.targetComponent.id, v.id);
+					},
 				})),
 		},
 		{

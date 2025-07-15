@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
 import CanvasConfig from "./components/canvas-config/CanvasConfig.vue";
 import LayoutConfig from "./components/layout-config/LayoutConfig.vue";
 import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/state-config/StateConfig.vue";
 import EmitConfig from "./components/emit-config/EmitConfig.vue";
 
+const clientStore = useClient();
 const schemaStore = useSchema();
-const targetComponent = useTargetComponent();
 const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("canvas");
-const targetComponentV2 = computed(() => targetComponent.component.value ?? schemaStore.currentComponent);
+const targetComponentV2 = computed(() => clientStore.targetComponent ?? schemaStore.currentComponent);
 </script>
 
 <template>

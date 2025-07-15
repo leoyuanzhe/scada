@@ -1,5 +1,6 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import ContainerComponent from "./Container.vue";
+import { generateId } from "@/helpers/component";
 import { deepClone } from "@/utils/conversion";
 
 const props = deepClone({
@@ -8,7 +9,7 @@ const props = deepClone({
 export type ContainerProps = typeof props;
 export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	version: "0.0.1",
-	id: "container",
+	id: generateId(),
 	key: "container",
 	title: "容器",
 	actived: false,
