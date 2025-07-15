@@ -3,8 +3,7 @@ import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
-import { generateComponetId } from "@/helpers/component";
+import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 
 export const useClient = defineStore("client", {
@@ -15,6 +14,7 @@ export const useClient = defineStore("client", {
 			typing: false,
 			enabledOperate: false,
 			copiedComponents: null as Component[] | null,
+			targetComponent: null as Component | null,
 			canvas: {
 				left: 30,
 				top: 30,
@@ -229,10 +229,9 @@ export const useClient = defineStore("client", {
 		// 启用触发操作
 		enableOperate() {
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			this.enabledOperate = true;
 			schemaStore.deactivateAllComponent();
-			targetComponent.componentId.value = "";
+			this.targetComponent = null;
 		},
 		// 禁用触发操作
 		disableOperate() {
@@ -257,14 +256,13 @@ export const useClient = defineStore("client", {
 		// 粘贴组件
 		pasteComponents(parent?: Component | null) {
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			const components: Component[] = [];
 			if (this.copiedComponents) {
 				deepClone(this.copiedComponents).forEach((component) => {
 					if (parent && parent.nestable) {
-						component.id = generateComponetId();
+						component.id = generateId();
 						parent.components.push(component);
-					} else schemaStore.createComponent(component, targetComponent.component.value);
+					} else schemaStore.createComponent(component, this.targetComponent);
 					components.push(component);
 				});
 				this.copyComponents(schemaStore.activedFlatedComponents);

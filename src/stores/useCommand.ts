@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
 import { useUndoStack } from "./useUndoStack";
-import { useTargetComponent } from "@/hooks/useTargetComponent";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 
 export const useCommand = defineStore("command", {
@@ -124,25 +123,23 @@ export const useCommand = defineStore("command", {
 		cut() {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			const dragger = useDragger();
 			clientStore.cutComponents(schemaStore.activedFlatedComponents);
-			targetComponent.componentId.value = "";
+			clientStore.targetComponent = null;
 			dragger.computedSelector();
 		},
 		// 粘贴
 		paste() {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
-			const targetComponentId = targetComponent.componentId.value;
-			const tempTargetComponent = schemaStore.findComponent(targetComponentId);
 			const dragger = useDragger();
-			schemaStore.deactivateAllComponent();
-			const components = clientStore.pasteComponents(tempTargetComponent);
-			components?.forEach((v) => (v.actived = true));
-			targetComponent.componentId.value = "";
-			dragger.computedSelector();
+			if (clientStore.targetComponent) {
+				schemaStore.deactivateAllComponent();
+				const components = clientStore.pasteComponents(clientStore.targetComponent);
+				components?.forEach((v) => (v.actived = true));
+				clientStore.targetComponent = null;
+				dragger.computedSelector();
+			}
 		},
 		// 删除
 		delete() {
@@ -153,8 +150,8 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换锁定
 		toggleLocked(locked?: boolean) {
+			const clientStore = useClient();
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			const dragger = useDragger();
 			if (locked) lock();
 			else if (locked === false) unlock();
@@ -165,7 +162,7 @@ export const useCommand = defineStore("command", {
 			function lock() {
 				schemaStore.activedFlatedComponents.forEach((v) => (v.locked = true));
 				schemaStore.deactivateAllComponent();
-				targetComponent.componentId.value = "";
+				clientStore.targetComponent = null;
 				dragger.computedSelector();
 			}
 			function unlock() {
@@ -174,8 +171,8 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换隐藏
 		toggleHidden(hidden?: boolean) {
+			const clientStore = useClient();
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			const dragger = useDragger();
 			if (hidden) hide();
 			else if (hidden === false) show();
@@ -185,7 +182,7 @@ export const useCommand = defineStore("command", {
 			}
 			function hide() {
 				schemaStore.activedFlatedComponents.forEach((v) => (v.hidden = true));
-				targetComponent.componentId.value = "";
+				clientStore.targetComponent = null;
 				dragger.computedSelector();
 			}
 			function show() {
@@ -194,12 +191,12 @@ export const useCommand = defineStore("command", {
 		},
 		// 创建分组
 		createGroup() {
+			const clientStore = useClient();
 			const schemaStore = useSchema();
-			const targetComponent = useTargetComponent();
 			const dragger = useDragger();
 			const container = schemaStore.createGroup(schemaStore.activedFlatedComponents.map((v) => v.id));
 			schemaStore.deactivateAllComponent();
-			targetComponent.componentId.value = container.id;
+			clientStore.targetComponent = container;
 			dragger.computedSelector();
 		},
 		// 展开子组件到父组件

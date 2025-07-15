@@ -1,5 +1,6 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import TextComponent from "./Text.vue";
+import { generateId } from "@/helpers/component";
 
 export interface TextProps {
 	text: string;
@@ -8,7 +9,7 @@ export interface TextProps {
 export type TextEmitKey = "click" | "dblclick";
 export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	version: "0.0.1",
-	id: "text",
+	id: generateId(),
 	key: "text",
 	title: "文本",
 	actived: false,
