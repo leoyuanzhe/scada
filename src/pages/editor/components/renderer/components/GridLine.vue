@@ -8,6 +8,7 @@ const gridSize = computed(() => {
 	return size;
 });
 function scaleSize(size: number): number {
+	size = Math.max(size, 2);
 	return size < 6 ? scaleSize(size * 2) : size;
 }
 </script>
