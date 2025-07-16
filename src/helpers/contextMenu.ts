@@ -274,7 +274,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 				.map((v) => ({
 					label: v.title,
 					onClick: () => {
-						if (clientStore.targetComponent) schemaStore.joinGroup(clientStore.targetComponent.id, v.id);
+						if (schemaStore.targetComponentId) schemaStore.joinGroup(schemaStore.targetComponentId, v.id);
 					},
 				})),
 		},

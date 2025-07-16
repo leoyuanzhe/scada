@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useClient } from "@/stores/useClient";
+import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import type { Component } from "@/types/Component";
 
 interface Props {
 	component: Component;
 }
-const clientStore = useClient();
+const schemaStore = useSchema();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
 </script>
@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		:class="{
 			'component-details': true,
 			actived: props.component.actived,
-			target: props.component.id === clientStore.targetComponent?.id,
+			target: props.component.id === schemaStore.targetComponentId,
 		}"
 		draggable="true"
 	>
