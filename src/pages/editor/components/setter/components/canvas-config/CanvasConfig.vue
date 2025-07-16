@@ -64,6 +64,7 @@ const dragger = useDragger();
 				<input
 					id="setter-grid-span"
 					type="number"
+					min="2"
 					:value="clientStore.grid.span"
 					@input="clientStore.grid.span = Number(($event.target as HTMLInputElement).value)"
 				/>
@@ -83,6 +84,7 @@ const dragger = useDragger();
 				<input
 					id="setter-snap-distance"
 					type="number"
+					min="1"
 					:value="clientStore.snap.distance"
 					@input="clientStore.snap.distance = Number(($event.target as HTMLInputElement).value)"
 				/>
