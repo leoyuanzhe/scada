@@ -202,7 +202,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{ type: "divider" },
 		{
 			label: "锁定状态",
-			disabled: schemaStore.activedFlatedComponents.every((v) => v.locked),
+			disabled: !schemaStore.activedFlatedComponents.length,
 			remark: "Ctrl + L",
 			list: [
 				{
@@ -225,7 +225,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 		},
 		{
 			label: "隐藏状态",
-			disabled: schemaStore.activedFlatedComponents.every((v) => v.hidden),
+			disabled: !schemaStore.activedFlatedComponents.length,
 			remark: "Ctrl + H",
 			list: [
 				{
