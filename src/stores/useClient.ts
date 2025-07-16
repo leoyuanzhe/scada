@@ -59,7 +59,7 @@ export const useClient = defineStore("client", {
 				this.typing = false;
 			});
 			document.addEventListener("keydown", (e) => {
-				if (!this.typing) {
+				if (!this.typing && !getSelection()?.toString()) {
 					const commandStore = useCommand();
 					this.keyboard.pressingKey = "";
 					const key = e.key.toLowerCase();
