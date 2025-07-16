@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useSchema } from "@/stores/useSchema";
-import CanvasConfig from "./components/canvas-config/CanvasConfig.vue";
-import LayoutConfig from "./components/layout-config/LayoutConfig.vue";
+import CanvasConfig from "./components/CanvasConfig.vue";
+import LayoutConfig from "./components/LayoutConfig.vue";
 import PropConfig from "./components/prop-config/PropConfig.vue";
-import StateConfig from "./components/state-config/StateConfig.vue";
-import EmitConfig from "./components/emit-config/EmitConfig.vue";
+import StateConfig from "./components/StateConfig.vue";
+import EmitConfig from "./components/EmitConfig.vue";
 
 const schemaStore = useSchema();
 const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("canvas");
