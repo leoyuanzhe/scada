@@ -105,10 +105,12 @@ export const useCommand = defineStore("command", {
 			else if (enabled === false) clientStore.snap.enable = false;
 			else clientStore.snap.enable ? (clientStore.snap.enable = false) : (clientStore.snap.enable = true);
 		},
+		// 撤销
 		undo() {
 			const undoStackStore = useUndoStack();
 			undoStackStore.undo();
 		},
+		// 重做
 		redo() {
 			const undoStackStore = useUndoStack();
 			undoStackStore.redo();
@@ -133,13 +135,11 @@ export const useCommand = defineStore("command", {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			const dragger = useDragger();
-			if (schemaStore.targetComponent) {
-				schemaStore.deactivateAllComponent();
-				const components = clientStore.pasteComponents(schemaStore.targetComponent);
-				components?.forEach((v) => (v.actived = true));
-				schemaStore.targetComponentId = "";
-				dragger.computedSelector();
-			}
+			schemaStore.deactivateAllComponent();
+			const components = clientStore.pasteComponents(schemaStore.targetComponent);
+			components?.forEach((v) => (v.actived = true));
+			schemaStore.targetComponentId = "";
+			dragger.computedSelector();
 		},
 		// 删除
 		delete() {
