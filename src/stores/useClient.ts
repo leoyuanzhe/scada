@@ -14,7 +14,6 @@ export const useClient = defineStore("client", {
 			typing: false,
 			enabledOperate: false,
 			copiedComponents: null as Component[] | null,
-			targetComponent: null as Component | null,
 			canvas: {
 				left: 30,
 				top: 30,
@@ -231,7 +230,7 @@ export const useClient = defineStore("client", {
 			const schemaStore = useSchema();
 			this.enabledOperate = true;
 			schemaStore.deactivateAllComponent();
-			this.targetComponent = null;
+			schemaStore.targetComponentId = "";
 		},
 		// 禁用触发操作
 		disableOperate() {
@@ -262,7 +261,7 @@ export const useClient = defineStore("client", {
 					if (parent && parent.nestable) {
 						component.id = generateId();
 						parent.components.push(component);
-					} else schemaStore.createComponent(component, this.targetComponent);
+					} else schemaStore.createComponent(component, schemaStore.targetComponent);
 					components.push(component);
 				});
 				this.copyComponents(schemaStore.activedFlatedComponents);

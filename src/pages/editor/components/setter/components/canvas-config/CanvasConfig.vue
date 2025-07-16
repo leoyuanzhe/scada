@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { useClient } from "@/stores/useClient";
+import { useSchema } from "@/stores/useSchema";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 import FormItem from "@/components/form-item/FormItem.vue";
 
+const schemaStore = useSchema();
 const clientStore = useClient();
 const dragger = useDragger();
 </script>
@@ -95,7 +97,7 @@ const dragger = useDragger();
 					:checked="clientStore.enabledOperate"
 					@input="
 						(clientStore.enabledOperate = Boolean(($event.target as HTMLInputElement).checked)),
-							(clientStore.targetComponent = null)
+							(schemaStore.targetComponentId = '')
 					"
 				/>
 			</FormItem>

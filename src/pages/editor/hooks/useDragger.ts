@@ -78,7 +78,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 				selector.width = 0;
 				selector.height = 0;
 				schemaStore.deactivateAllComponent();
-				clientStore.targetComponent = null;
+				schemaStore.targetComponentId = "";
 				document.body.addEventListener("mousemove", mouseMove);
 				document.body.addEventListener("mouseup", mouseUp);
 				function mouseMove(e: MouseEvent) {
@@ -310,11 +310,11 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			if (!component.actived) schemaStore.deactivateAllComponent();
 		}
 		component.actived = true;
-		clientStore.targetComponent = component;
+		schemaStore.targetComponentId = component.id;
 		computedSelector();
 	}
 };
-const componentOnDragOver = (component: Component) => {
+const componentOnDragEnter = (component: Component) => {
 	if (component.nestable) {
 		component.actived = true;
 	}
@@ -346,16 +346,15 @@ const componentOnDrop = (e: DragEvent, component: Component) => {
 	}
 };
 const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
-	const clientStore = useClient();
 	const schemaStore = useSchema();
 	const oldSchema = deepClone(schemaStore.$state);
-	if (clientStore.targetComponent?.layout) {
+	if (schemaStore.targetComponent?.layout) {
 		const startX = e.clientX; // 鼠标按下时的X坐标
 		const startY = e.clientY;
-		const startLeft = clientStore.targetComponent.layout.left;
-		const startTop = clientStore.targetComponent.layout.top;
-		const startWidth = clientStore.targetComponent.layout.width;
-		const startHeight = clientStore.targetComponent.layout.height;
+		const startLeft = schemaStore.targetComponent.layout.left;
+		const startTop = schemaStore.targetComponent.layout.top;
+		const startWidth = schemaStore.targetComponent.layout.width;
+		const startHeight = schemaStore.targetComponent.layout.height;
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);
 		function mouseMove(e: MouseEvent) {
@@ -366,61 +365,61 @@ const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r"
 			switch (direction) {
 				case "t":
 					if (startHeight + -moveY > 0) {
-						clientStore.targetComponent!.layout!.top = dragTop;
-						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
+						schemaStore.targetComponent!.layout!.top = dragTop;
+						schemaStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 
 				case "tr":
 					if (startWidth + moveX > 0) {
-						clientStore.targetComponent!.layout!.width = startWidth + moveX;
+						schemaStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					if (startHeight + -moveY > 0) {
-						clientStore.targetComponent!.layout!.top = dragTop;
-						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
+						schemaStore.targetComponent!.layout!.top = dragTop;
+						schemaStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 				case "r":
 					if (startWidth + moveX > 0) {
-						clientStore.targetComponent!.layout!.width = startWidth + moveX;
+						schemaStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					break;
 				case "rb":
 					if (startWidth + moveX > 0) {
-						clientStore.targetComponent!.layout!.width = startWidth + moveX;
+						schemaStore.targetComponent!.layout!.width = startWidth + moveX;
 					}
 					if (startHeight + moveY > 0) {
-						clientStore.targetComponent!.layout!.height = startHeight + moveY;
+						schemaStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "b":
 					if (startHeight + moveY > 0) {
-						clientStore.targetComponent!.layout!.height = startHeight + moveY;
+						schemaStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "lb":
 					if (startWidth + -moveX > 0) {
-						clientStore.targetComponent!.layout!.left = dragLeft;
-						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
+						schemaStore.targetComponent!.layout!.left = dragLeft;
+						schemaStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					if (startHeight + moveY > 0) {
-						clientStore.targetComponent!.layout!.height = startHeight + moveY;
+						schemaStore.targetComponent!.layout!.height = startHeight + moveY;
 					}
 					break;
 				case "l":
 					if (startWidth + -moveX > 0) {
-						clientStore.targetComponent!.layout!.left = dragLeft;
-						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
+						schemaStore.targetComponent!.layout!.left = dragLeft;
+						schemaStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					break;
 				case "lt":
 					if (startWidth + -moveX > 0) {
-						clientStore.targetComponent!.layout!.left = dragLeft;
-						clientStore.targetComponent!.layout!.width = startWidth + -moveX;
+						schemaStore.targetComponent!.layout!.left = dragLeft;
+						schemaStore.targetComponent!.layout!.width = startWidth + -moveX;
 					}
 					if (startHeight + -moveY > 0) {
-						clientStore.targetComponent!.layout!.top = dragTop;
-						clientStore.targetComponent!.layout!.height = startHeight + -moveY;
+						schemaStore.targetComponent!.layout!.top = dragTop;
+						schemaStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
 			}
@@ -506,7 +505,7 @@ export const useDragger = () => ({
 	rendererOnMouseDown,
 	rendererOnDrop,
 	componentOnMouseDown,
-	componentOnDragOver,
+	componentOnDragEnter,
 	componentOnDragLeave,
 	componentOnDrop,
 	selectorDirectionOnMouseDown,

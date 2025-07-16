@@ -2,10 +2,9 @@ import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
-import { useClient } from "./useClient";
 import { useUndoStack } from "./useUndoStack";
-import { initState } from "@/helpers/component";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { initState } from "@/helpers/component";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
@@ -14,14 +13,19 @@ export const useSchema = defineStore("schema", {
 	state() {
 		return {
 			title: "大屏",
+			current: "",
+			targetComponentId: "",
 			state: {},
 			actions: [],
-			current: "",
 			components: [],
 			stateExpression: {},
 		} as Schema;
 	},
 	getters: {
+		// 目标组件
+		targetComponent(): Component | null {
+			return this.components.find((item) => item.id === this.targetComponentId) ?? null;
+		},
 		// 当前组件
 		currentComponent(): Component | null {
 			return this.components.find((v) => v.id === this.current) ?? null;
@@ -268,9 +272,8 @@ export const useSchema = defineStore("schema", {
 		},
 		// 取消激活所有组件
 		deactivateAllComponent() {
-			const clientStore = useClient();
 			[this.currentComponent, ...this.activedFlatedComponents].forEach((v) => v?.actived && (v.actived = false));
-			clientStore.targetComponent = null;
+			this.targetComponentId = "";
 		},
 		recordStack(oldSchema: Schema) {
 			const undoStackStore = useUndoStack();

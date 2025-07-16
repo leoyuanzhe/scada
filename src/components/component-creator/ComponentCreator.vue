@@ -27,7 +27,7 @@ const RenderComponent = () =>
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
 			actived: props.component.actived,
-			target: props.component.id === clientStore.targetComponent?.id,
+			target: props.component.id === schemaStore.targetComponentId,
 			locked: !clientStore.previewing && props.component.locked,
 			action: clientStore.enabledOperate,
 		}"
@@ -40,7 +40,7 @@ const RenderComponent = () =>
 		}"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent
-		@dragenter.stop="dragger.componentOnDragOver(component)"
+		@dragenter.stop="dragger.componentOnDragEnter(component)"
 		@dragleave.stop="dragger.componentOnDragLeave(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
 	>

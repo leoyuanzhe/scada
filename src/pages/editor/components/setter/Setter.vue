@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import CanvasConfig from "./components/canvas-config/CanvasConfig.vue";
 import LayoutConfig from "./components/layout-config/LayoutConfig.vue";
@@ -8,10 +7,9 @@ import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/state-config/StateConfig.vue";
 import EmitConfig from "./components/emit-config/EmitConfig.vue";
 
-const clientStore = useClient();
 const schemaStore = useSchema();
 const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("canvas");
-const targetComponentV2 = computed(() => clientStore.targetComponent ?? schemaStore.currentComponent);
+const targetComponentV2 = computed(() => schemaStore.targetComponent ?? schemaStore.currentComponent);
 </script>
 
 <template>
