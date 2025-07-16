@@ -180,6 +180,7 @@ export const useCommand = defineStore("command", {
 			}
 			function hide() {
 				schemaStore.activedFlatedComponents.forEach((v) => (v.hidden = true));
+				schemaStore.deactivateAllComponent();
 				schemaStore.targetComponentId = "";
 				dragger.computedSelector();
 			}
