@@ -20,6 +20,7 @@ const showDirection = computed(
 			width: dragger.selector.width + 'px',
 			height: dragger.selector.height + 'px',
 		}"
+		:data-a="schemaStore.activedFlatedComponents.length"
 	>
 		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 't')"></div>
 		<div
