@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		<summary
 			:class="{ empty: !props.component.components.length }"
 			contenteditable
-			@mousedown.stop="dragger.componentOnMouseDown($event, props.component)"
+			@mousedown="dragger.componentOnMouseDown($event, props.component)"
 			@input="props.component.title = ($event.target as HTMLElement).innerText"
 		>
 			{{ props.component.title }}
