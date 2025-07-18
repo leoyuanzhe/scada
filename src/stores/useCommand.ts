@@ -1,14 +1,37 @@
 import { defineStore } from "pinia";
+import type { Component } from "@/types/Component";
 import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
 import { useUndoStack } from "./useUndoStack";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { deepClone } from "@/utils/conversion";
 
 export const useCommand = defineStore("command", {
 	state() {
 		return {};
 	},
 	actions: {
+		createRootComponent(component: Component) {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
+			schemaStore.deactivateAllComponent();
+			const tempComponent = schemaStore.createRootComponent(component);
+			if (!schemaStore.current) schemaStore.current = tempComponent.id;
+			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
+		},
+		createComponent(component: Component, parent: Component) {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
+			schemaStore.deactivateAllComponent();
+			const tempComponent = schemaStore.createComponent(component, parent);
+			tempComponent.actived = true;
+			schemaStore.targetComponentId = tempComponent.id;
+			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
+		},
 		moveUp() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
@@ -60,8 +83,10 @@ export const useCommand = defineStore("command", {
 				const reader = new FileReader();
 				reader.onload = () => {
 					try {
+						const oldSchema = deepClone(schemaStore.$state);
 						const json = JSON.parse(reader.result as string);
 						schemaStore.setSchema(json);
+						schemaStore.recordStack(oldSchema);
 					} catch (error: any) {
 						throw new Error(error);
 					}
@@ -126,38 +151,46 @@ export const useCommand = defineStore("command", {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			clientStore.cutComponents(schemaStore.activedFlatedComponents);
 			schemaStore.targetComponentId = "";
 			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
 		},
 		// 粘贴
 		paste() {
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.deactivateAllComponent();
 			const components = clientStore.pasteComponents(schemaStore.targetComponent);
 			components?.forEach((v) => (v.actived = true));
 			schemaStore.targetComponentId = "";
 			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
 		},
 		// 删除
 		delete() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.deleteComponent(v.id));
 			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
 		},
 		// 切换锁定
 		toggleLocked(locked?: boolean) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			if (locked) lock();
 			else if (locked === false) unlock();
 			else {
 				if (schemaStore.activedFlatedComponents.every((v) => v.locked)) unlock();
 				else lock();
 			}
+			schemaStore.recordStack(oldSchema);
 			function lock() {
 				schemaStore.activedFlatedComponents.forEach((v) => (v.locked = true));
 				schemaStore.deactivateAllComponent();
@@ -172,12 +205,14 @@ export const useCommand = defineStore("command", {
 		toggleHidden(hidden?: boolean) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			if (hidden) hide();
 			else if (hidden === false) show();
 			else {
 				if (schemaStore.activedFlatedComponents.every((v) => v.hidden)) show();
 				else hide();
 			}
+			schemaStore.recordStack(oldSchema);
 			function hide() {
 				schemaStore.activedFlatedComponents.forEach((v) => (v.hidden = true));
 				schemaStore.deactivateAllComponent();
@@ -192,20 +227,27 @@ export const useCommand = defineStore("command", {
 		createGroup() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			const container = schemaStore.createGroup(schemaStore.activedFlatedComponents.map((v) => v.id));
-			schemaStore.deactivateAllComponent();
-			schemaStore.targetComponentId = container.id;
-			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
+			if (container) {
+				schemaStore.deactivateAllComponent();
+				container.actived = true;
+				schemaStore.targetComponentId = container.id;
+				dragger.computedSelector();
+			}
 		},
 		// 展开子组件到父组件
 		flatChildrenToParent() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.activedFlatedComponents.forEach((component) => {
 				component.components.forEach((component) => (component.actived = true));
 				schemaStore.flatChildrenToParent(component.id);
 			});
 			dragger.computedSelector();
+			schemaStore.recordStack(oldSchema);
 		},
 	},
 });

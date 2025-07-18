@@ -2,7 +2,6 @@
 import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 import CanvasComponent from "./components/Canvas.vue";
 import GridLine from "./components/GridLine.vue";
 import Ruler from "./components/Ruler.vue";
@@ -31,7 +30,6 @@ onMounted(() => {
 		@mousedown="dragger.rendererOnMouseDown($event)"
 		@dragover.prevent
 		@drop="dragger.rendererOnDrop($event)"
-		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<CanvasComponent />
 		<GridLine />

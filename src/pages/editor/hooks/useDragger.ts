@@ -5,6 +5,7 @@ import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import { assetTransferComponent } from "@/helpers/component";
 import { deepClone } from "@/utils/conversion";
+import { useCommand } from "@/stores/useCommand";
 
 // 框选器
 const selector = reactive({
@@ -147,25 +148,22 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 };
 const rendererOnDrop = (e: DragEvent) => {
 	const assetStore = useAsset();
-	const schemaStore = useSchema();
+	const commandStore = useCommand();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 	if (asset) {
-		const oldSchema = deepClone(schemaStore.$state);
 		const newComponent = assetTransferComponent(asset);
 		if (newComponent.layout) {
 			newComponent.layout.left = 0;
 			newComponent.layout.top = 0;
 		}
-		const component = schemaStore.createRootComponent(newComponent);
-		if (!schemaStore.current) schemaStore.current = component.id;
-		computedSelector();
-		schemaStore.recordStack(oldSchema);
+		commandStore.createRootComponent(newComponent);
 	}
 };
 const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
+	if (clientStore.keyboard.spaceKey) return;
 	if (!schemaStore.isRoot(component.id)) e.stopPropagation();
 	if (!clientStore.previewing && !clientStore.enabledOperate && !schemaStore.isRoot(component.id)) {
 		if (!e.shiftKey) {
@@ -188,22 +186,34 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 							getActualLeft(0),
 							getActualLeft((schemaStore.currentComponent?.layout?.width ?? 0) / 2),
 							getActualLeft(schemaStore.currentComponent?.layout?.width ?? 0),
-							...schemaStore.unactivedMoveableFlatedComponents.flatMap((v) => [
-								getActualLeft(v.layout.left),
-								getActualLeft(v.layout.left + v.layout.width / 2),
-								getActualLeft(v.layout.left + v.layout.width),
-							]),
+							...schemaStore.unactivedMoveableFlatedComponents
+								.filter((v) => {
+									return schemaStore.activedMoveableFlatedComponents.some(
+										(v2) => !schemaStore.isContains(v2, v.id)
+									);
+								})
+								.flatMap((v) => [
+									getActualLeft(v.layout.left),
+									getActualLeft(v.layout.left + v.layout.width / 2),
+									getActualLeft(v.layout.left + v.layout.width),
+								]),
 							...clientStore.guide.line.v.map((v) => getActualLeft(v)),
 						],
 						h: [
 							getActualTop(0),
 							getActualTop((schemaStore.currentComponent?.layout?.height ?? 0) / 2),
 							getActualTop(schemaStore.currentComponent?.layout?.height ?? 0),
-							...schemaStore.unactivedMoveableFlatedComponents.flatMap((v) => [
-								getActualTop(v.layout.top),
-								getActualTop(v.layout.top + v.layout.height / 2),
-								getActualTop(v.layout.top + v.layout.height),
-							]),
+							...schemaStore.unactivedMoveableFlatedComponents
+								.filter((v) => {
+									return schemaStore.activedMoveableFlatedComponents.some(
+										(v2) => !schemaStore.isContains(v2, v.id)
+									);
+								})
+								.flatMap((v) => [
+									getActualTop(v.layout.top),
+									getActualTop(v.layout.top + v.layout.height / 2),
+									getActualTop(v.layout.top + v.layout.height),
+								]),
 							...clientStore.guide.line.h.map((v) => getActualTop(v)),
 						],
 				  }
@@ -321,23 +331,17 @@ const componentOnDragLeave = (component: Component) => {
 };
 const componentOnDrop = (e: DragEvent, component: Component) => {
 	const assetStore = useAsset();
-	const schemaStore = useSchema();
+	const commandStore = useCommand();
 	if (component.nestable) {
 		const assetId = e.dataTransfer?.getData("assetId");
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {
-			const oldSchema = deepClone(schemaStore.$state);
 			const newComponent = assetTransferComponent(asset);
-			schemaStore.deactivateAllComponent();
-			newComponent.actived = true;
 			if (newComponent.layout) {
 				newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
 				newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
 			}
-			const tempComponent = schemaStore.createComponent(newComponent, component);
-			schemaStore.targetComponentId = tempComponent.id;
-			computedSelector();
-			schemaStore.recordStack(oldSchema);
+			commandStore.createComponent(newComponent, component);
 		}
 	}
 };
@@ -437,7 +441,7 @@ const computedSelector = () => {
 		let right = -Infinity;
 		let bottom = -Infinity;
 		schemaStore.activedMoveableFlatedComponents.forEach((component) => {
-			const { left: fromSchemaLeft, top: fromSchemaTop } = getOffsetFromSchema(component);
+			const { left: fromSchemaLeft, top: fromSchemaTop } = getOffsetFromRoot(component);
 			left = Math.min(left, getActualLeft(fromSchemaLeft));
 			top = Math.min(top, getActualTop(fromSchemaTop));
 			right = Math.max(right, getActualLeft(fromSchemaLeft + component.layout.width));
@@ -456,8 +460,20 @@ const computedSelector = () => {
 		selector.height = 0;
 	}
 };
+// 获取组件相对于父组件的父组件的偏移
+function getOffsetFromParentParent(component: Component): { left: number; top: number } {
+	const schemaStore = useSchema();
+	let left = component?.layout?.left ?? 0;
+	let top = component?.layout?.top ?? 0;
+	const { parent } = schemaStore.findParent(component.id);
+	if (parent?.layout) {
+		left += parent.layout.left;
+		top += parent.layout.top;
+	}
+	return { left, top };
+}
 // 获取组件相对于根组件的偏移
-function getOffsetFromSchema(component: Component): { left: number; top: number } {
+function getOffsetFromRoot(component: Component): { left: number; top: number } {
 	const schemaStore = useSchema();
 	let left = component?.layout?.left ?? 0;
 	let top = component?.layout?.top ?? 0;
@@ -523,6 +539,8 @@ export const useDragger = () => ({
 	componentOnDrop,
 	selectorDirectionOnMouseDown,
 	computedSelector,
+	getOffsetFromParentParent,
+	getOffsetFromRoot,
 	getLogicalLeft,
 	getLogicalTop,
 	getActualLeft,
