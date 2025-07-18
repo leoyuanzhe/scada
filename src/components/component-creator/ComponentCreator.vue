@@ -5,6 +5,7 @@ import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 
 interface Props {
 	component: Component;
@@ -43,6 +44,7 @@ const RenderComponent = () =>
 		@dragenter.stop="dragger.componentOnDragEnter(component)"
 		@dragleave.stop="dragger.componentOnDragLeave(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
+		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<Component :is="RenderComponent" />
 	</div>
