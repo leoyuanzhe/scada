@@ -2,6 +2,7 @@
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import type { Component } from "@/types/Component";
+import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 
 interface Props {
 	component: Component;
@@ -19,11 +20,12 @@ const props = withDefaults(defineProps<Props>(), {});
 			target: props.component.id === schemaStore.targetComponentId,
 		}"
 		draggable="true"
+		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<summary
 			:class="{ empty: !props.component.components.length }"
 			contenteditable
-			@mousedown="dragger.componentOnMouseDown($event, props.component)"
+			@click.stop="dragger.componentOnMouseDown($event, props.component, true)"
 			@input="props.component.title = ($event.target as HTMLElement).innerText"
 		>
 			{{ props.component.title }}

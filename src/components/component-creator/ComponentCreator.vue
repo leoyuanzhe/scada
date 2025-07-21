@@ -26,7 +26,7 @@ const RenderComponent = () =>
 		v-if="props.component.layout"
 		:class="{
 			component: true,
-			nestable: props.component.nestable,
+			root: schemaStore.isRoot(props.component.id),
 			actived: props.component.actived,
 			target: props.component.id === schemaStore.targetComponentId,
 			locked: !clientStore.previewing && props.component.locked,
@@ -63,7 +63,7 @@ const RenderComponent = () =>
 		width: 100%;
 		height: 100%;
 	}
-	&.nestable {
+	&.root {
 		&::after {
 			content: none;
 		}

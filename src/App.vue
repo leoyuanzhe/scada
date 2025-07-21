@@ -25,8 +25,12 @@ function init() {
 	if (m) {
 		const c = assetTransferComponent(m);
 		const container = Container();
-		const text = Text();
-		container.components.push(text);
+		const t1 = Text();
+		const t2 = Text();
+		t2.layout.left = 200;
+		t2.layout.top = 250;
+		container.components.push(t1);
+		container.components.push(t2);
 		c.components.push(container);
 		schemaStore.createRootComponent(c);
 		schemaStore.current = schemaStore.components[0].id;

@@ -34,6 +34,36 @@ export const assetTransferComponent = (asset: Asset): Component => {
 export const generateId = () => {
 	return Math.random().toString(36).substring(2, 7);
 };
+// 重置组件的定位和大小
+export const relayoutComponent = (component: Component) => {
+	const schemaStore = useSchema();
+	if (component.layout && !schemaStore.isRoot(component.id) && component.components.filter((v) => v.layout).length) {
+		let left = Infinity;
+		let top = Infinity;
+		let width = 0;
+		let height = 0;
+		component.components.forEach((v) => {
+			if (v.layout) {
+				if (v.layout.left < 0) v.layout.left = 0;
+				if (v.layout.top < 0) v.layout.top = 0;
+				left = Math.min(left, v.layout.left);
+				top = Math.min(top, v.layout.top);
+			}
+		});
+		component.layout.left += left;
+		component.layout.top += top;
+		component.components.forEach((v) => {
+			if (v.layout) {
+				v.layout.left -= left;
+				v.layout.top -= top;
+				width = Math.max(width, v.layout.left + v.layout.width);
+				height = Math.max(height, v.layout.top + v.layout.height);
+			}
+		});
+		component.layout.width = width;
+		component.layout.height = height;
+	}
+};
 type StringKeyOf<T> = {
 	[K in keyof T]: T[K] extends string ? K : never;
 }[keyof T];
