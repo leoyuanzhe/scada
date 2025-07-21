@@ -21,7 +21,7 @@ export const useCommand = defineStore("command", {
 			dragger.computedSelector();
 			schemaStore.recordStack(oldSchema);
 		},
-		createComponent(component: Component, parent: Component) {
+		createComponent(component: Component, parent?: Component) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -229,12 +229,33 @@ export const useCommand = defineStore("command", {
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
 			const container = schemaStore.createGroup(schemaStore.activedFlatedComponents.map((v) => v.id));
-			schemaStore.recordStack(oldSchema);
 			if (container) {
 				schemaStore.deactivateAllComponent();
 				container.actived = true;
 				schemaStore.targetComponentId = container.id;
 				dragger.computedSelector();
+				schemaStore.recordStack(oldSchema);
+			}
+		},
+		// 移出分组
+		moveOut() {
+			const schemaStore = useSchema();
+			const oldSchema = deepClone(schemaStore.$state);
+			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v));
+			schemaStore.recordStack(oldSchema);
+		},
+		// 创建分组
+		joinGroup(newParentId: string) {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			const oldSchema = deepClone(schemaStore.$state);
+			const newParent = schemaStore.findComponent(newParentId);
+			if (schemaStore.targetComponent && newParent) {
+				schemaStore.joinGroup(schemaStore.targetComponent, newParent);
+				newParent.actived = true;
+				schemaStore.targetComponentId = newParent.id;
+				dragger.computedSelector();
+				schemaStore.recordStack(oldSchema);
 			}
 		},
 		// 展开子组件到父组件

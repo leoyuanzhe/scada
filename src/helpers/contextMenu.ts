@@ -274,7 +274,8 @@ export const openComponentMenu = (position: MenuPosition) => {
 				.map((v) => ({
 					label: v.title,
 					onClick: () => {
-						if (schemaStore.targetComponent) schemaStore.joinGroup(schemaStore.targetComponent, v.id);
+						const commandStore = useCommand();
+						commandStore.joinGroup(v.id);
 					},
 				})),
 		},
@@ -284,7 +285,10 @@ export const openComponentMenu = (position: MenuPosition) => {
 				const { isRoot } = schemaStore.findParent(component.id);
 				return isRoot;
 			}),
-			onClick: () => schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v.id)),
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.moveOut();
+			},
 		},
 		{
 			label: "展开子组件到父组件",

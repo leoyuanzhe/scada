@@ -8,7 +8,7 @@ import StateConfig from "./components/StateConfig.vue";
 import EmitConfig from "./components/EmitConfig.vue";
 
 const schemaStore = useSchema();
-const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("canvas");
+const current = ref<"canvas" | "layout" | "prop" | "state" | "emit">("layout");
 const targetComponentV2 = computed(() => schemaStore.targetComponent ?? schemaStore.currentComponent);
 </script>
 

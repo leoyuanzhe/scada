@@ -134,7 +134,7 @@ export const useSchema = defineStore("schema", {
 							component.layout.top + component.layout.height,
 							container.layout.height
 						);
-						this.joinGroup(component, container.id);
+						this.joinGroup(component, container);
 					}
 				});
 				container.components.forEach((component) => {
@@ -163,43 +163,32 @@ export const useSchema = defineStore("schema", {
 						const moveableComponents = component.components.filter(
 							(v) => v.layout
 						) as ComponentWithLayout[];
-						if (moveableComponents.length === 1) {
-							const childLeft = moveableComponents[0].layout.left;
-							const childTop = moveableComponents[0].layout.top;
-							moveableComponents[0].layout.left = 0;
-							moveableComponents[0].layout.top = 0;
-							component.layout.left = component.layout.left + childLeft;
-							component.layout.top = component.layout.top + childTop;
-							component.layout.width = moveableComponents[0].layout.width;
-							component.layout.height = moveableComponents[0].layout.height;
-						} else if (moveableComponents.length) {
-							let parentLeft = Infinity;
-							let parentTop = Infinity;
-							let left = Infinity;
-							let top = Infinity;
-							let width = 0;
-							let height = 0;
-							moveableComponents.forEach((child) => {
-								const { left: toParentParentLeft, top: toParentParentTop } =
-									dragger.getOffsetFromParentParent(child);
-								parentLeft = Math.min(toParentParentLeft, parentLeft);
-								parentTop = Math.min(toParentParentTop, parentTop);
-								left = Math.min(child.layout.left, left);
-								top = Math.min(child.layout.top, top);
-								width = Math.max(child.layout.left + child.layout.width, width);
-								height = Math.max(child.layout.top + child.layout.height, height);
-								component.layout!.width = Math.max(child.layout.left + child.layout.width, width);
-								component.layout!.height = Math.max(child.layout.left + child.layout.height, height);
-							});
-							component.layout.left = parentLeft;
-							component.layout.top = parentTop;
-							moveableComponents.forEach((component) => {
-								component.layout.left -= left;
-								component.layout.top -= top;
-							});
-							component.layout.width -= left;
-							component.layout.height -= top;
-						}
+						let parentLeft = Infinity;
+						let parentTop = Infinity;
+						let left = Infinity;
+						let top = Infinity;
+						let width = 0;
+						let height = 0;
+						moveableComponents.forEach((child) => {
+							const { left: toParentParentLeft, top: toParentParentTop } =
+								dragger.getOffsetFromParentParent(child);
+							parentLeft = Math.min(toParentParentLeft, parentLeft);
+							parentTop = Math.min(toParentParentTop, parentTop);
+							left = Math.min(child.layout.left, left);
+							top = Math.min(child.layout.top, top);
+							width = Math.max(child.layout.left + child.layout.width, width);
+							height = Math.max(child.layout.top + child.layout.height, height);
+							component.layout!.width = Math.max(child.layout.left + child.layout.width, width);
+							component.layout!.height = Math.max(child.layout.left + child.layout.height, height);
+						});
+						component.layout.left = parentLeft;
+						component.layout.top = parentTop;
+						moveableComponents.forEach((component) => {
+							component.layout.left -= left;
+							component.layout.top -= top;
+						});
+						component.layout.width -= left;
+						component.layout.height -= top;
 					}
 				}
 			};
@@ -210,24 +199,54 @@ export const useSchema = defineStore("schema", {
 			}
 		},
 		// 加入分组
-		joinGroup(component: Component, newParentId: string) {
+		joinGroup(component: Component, newParent: Component) {
+			const schemaStore = useSchema();
 			const dragger = useDragger();
-			if (component.id !== newParentId) {
+			if (component.id !== newParent.id) {
+				const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 				this.deleteComponent(component.id);
-				const newParent = this.findComponent(newParentId);
-				if (component && newParent) {
-					newParent.components.push(component);
-					newParent.actived = true;
-					dragger.computedSelector();
+				if (component.layout) {
+					component.layout.left = componentLeft;
+					component.layout.top = componentTop;
+					const fn = (parent: Component) => {
+						const { parent: parentParent, isRoot } = schemaStore.findParent(parent.id);
+						if (parentParent) {
+							if (!isRoot) fn(parentParent);
+							if (parent.layout) {
+								const { left: parentLeft, top: parentTop } = dragger.getOffsetFromRoot(parent);
+								if (componentLeft < parentLeft) {
+									const diff = parentLeft - componentLeft;
+									parent.layout.left = componentLeft;
+									parent.layout.width += diff;
+									component.layout!.left = 0;
+									parent.components.forEach((v) => v.layout && (v.layout.left += diff));
+								} else component.layout!.left = componentLeft - parentLeft;
+								if (componentTop < parentTop) {
+									const diff = parentTop - componentTop;
+									parent.layout.top = componentTop;
+									component.layout!.top = 0;
+									parent.components.forEach((v) => v.layout && (v.layout.top += diff));
+								} else component.layout!.top = componentTop - parentTop;
+								if (componentLeft + component.layout!.width > parentLeft + parent.layout.width) {
+									parent.layout.width = component.layout!.left + component.layout!.width;
+								}
+								if (componentTop + component.layout!.height > parentTop + parent.layout.height) {
+									parent.layout.height = component.layout!.top + component.layout!.height;
+								}
+							}
+						}
+					};
+					fn(newParent);
 				}
+				newParent.components.push(component);
+				dragger.computedSelector();
 			}
 		},
 		// 移出分组
-		moveOut(componentId: string) {
-			const { parent } = this.findParent(this.findParent(componentId).parent?.id || "");
-			if (parent && this.findComponent(componentId)) {
-				const component = this.deleteComponent(componentId);
-				this.joinGroup(component!, parent.id);
+		moveOut(component: Component) {
+			const { parent } = this.findParent(this.findParent(component.id).parent?.id || "");
+			if (parent && this.findComponent(component.id)) {
+				this.joinGroup(component!, parent);
 			}
 		},
 		// 展开子组件到父组件

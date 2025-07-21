@@ -21,10 +21,19 @@ const snapLine = reactive({
 });
 const assetOnDragStart = (e: DragEvent, assetId: string) => {
 	const assetStore = useAsset();
+	const schemaStore = useSchema();
 	const item = assetStore.assets.find((v) => v.id === assetId);
 	if (item) {
+		schemaStore.deactivateAllComponent();
+		selector.left = 0;
+		selector.top = 0;
+		selector.width = 0;
+		selector.height = 0;
 		e.dataTransfer?.setData("assetId", item.id);
 	}
+};
+const layerOnClick = (e: MouseEvent, component: Component) => {
+	focusComponent(component);
 };
 const rendererOnWheel = (e: WheelEvent) => {
 	const clientStore = useClient();
@@ -319,6 +328,15 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 		}
 	}
 };
+function focusComponent(component: Component) {
+	const schemaStore = useSchema();
+	if (!e.shiftKey) {
+		if (!component.actived) schemaStore.deactivateAllComponent();
+	}
+	component.actived = true;
+	schemaStore.targetComponentId = component.id;
+	computedSelector();
+}
 const componentOnDragEnter = (component: Component) => {
 	if (component.nestable) {
 		component.actived = true;
@@ -332,16 +350,19 @@ const componentOnDragLeave = (component: Component) => {
 const componentOnDrop = (e: DragEvent, component: Component) => {
 	const assetStore = useAsset();
 	const commandStore = useCommand();
+	const schemaStore = useSchema();
 	if (component.nestable) {
+		const { left, top } = getOffsetFromRoot(component);
 		const assetId = e.dataTransfer?.getData("assetId");
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {
 			const newComponent = assetTransferComponent(asset);
 			if (newComponent.layout) {
-				newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
-				newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
+				newComponent.layout.left = left + e.offsetX - (newComponent.layout.width ?? 0) / 2;
+				newComponent.layout.top = top + e.offsetY - (newComponent.layout.height ?? 0) / 2;
 			}
-			commandStore.createComponent(newComponent, component);
+			commandStore.createComponent(newComponent);
+			schemaStore.joinGroup(newComponent, component);
 		}
 	}
 };
