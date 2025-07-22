@@ -275,7 +275,7 @@ export const openComponentMenu = (position: MenuPosition) => {
 					label: v.title,
 					onClick: () => {
 						const commandStore = useCommand();
-						commandStore.joinGroup(v.id);
+						commandStore.joinGroup(schemaStore.targetComponentId, v.id);
 					},
 				})),
 		},

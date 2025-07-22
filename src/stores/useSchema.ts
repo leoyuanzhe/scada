@@ -242,6 +242,28 @@ export const useSchema = defineStore("schema", {
 				dragger.computedSelector();
 			}
 		},
+		// 插入到组件之前
+		insertBefore(component: Component, targetId: string) {
+			this.deleteComponent(component.id);
+			if (this.isRoot(targetId)) {
+				const index = this.components.findIndex((v) => v.id === targetId);
+				if (index !== -1) this.components.splice(index, 0, component);
+			} else {
+				const { parent, index } = this.findParent(targetId);
+				if (parent) parent.components.splice(index, 0, component);
+			}
+		},
+		// 插入到组件之后
+		insertAfter(component: Component, targetId: string) {
+			this.deleteComponent(component.id);
+			if (this.isRoot(targetId)) {
+				const index = this.components.findIndex((v) => v.id === targetId);
+				if (index !== -1) this.components.splice(index + 1, 0, component);
+			} else {
+				const { parent, index } = this.findParent(targetId);
+				if (parent) parent.components.splice(index + 1, 0, component);
+			}
+		},
 		// 移出分组
 		moveOut(component: Component) {
 			const { parent } = this.findParent(this.findParent(component.id).parent?.id || "");

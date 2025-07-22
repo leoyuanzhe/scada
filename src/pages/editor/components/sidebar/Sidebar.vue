@@ -3,7 +3,7 @@ import { ref } from "vue";
 import Asset from "./components/asset/Asset.vue";
 import Layer from "./components/layer/Layer.vue";
 
-const current = ref<"asset" | "layer" | "state">("asset");
+const current = ref<"asset" | "layer">("layer");
 </script>
 
 <template>
@@ -22,6 +22,7 @@ const current = ref<"asset" | "layer" | "state">("asset");
 <style scoped lang="scss">
 .sidebar {
 	display: flex;
+	overflow: hidden;
 	menu {
 		padding: 10px;
 		display: flex;
@@ -30,6 +31,7 @@ const current = ref<"asset" | "layer" | "state">("asset");
 		background-color: #333;
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 1;
+		overflow: auto;
 		button {
 			width: 40px;
 			height: 40px;
@@ -44,6 +46,7 @@ const current = ref<"asset" | "layer" | "state">("asset");
 	}
 	.container {
 		flex: 1;
+		overflow: auto;
 	}
 }
 </style>
