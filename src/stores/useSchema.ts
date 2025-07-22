@@ -100,6 +100,15 @@ export const useSchema = defineStore("schema", {
 				? findInComponents(this.currentComponent, this.currentComponent.components, true)
 				: ({ parent: null, index: -1, isRoot: false } as T);
 		},
+		// 找到组件的根组件
+		findRoot(component: Component): Component {
+			let { parent } = this.findParent(component.id);
+			while (parent && !this.isRoot(parent.id)) {
+				component = parent;
+				parent = this.findParent(component.id).parent;
+			}
+			return parent || component;
+		},
 		// 创建根组件
 		createRootComponent(component: Component) {
 			component.id = generateId();
