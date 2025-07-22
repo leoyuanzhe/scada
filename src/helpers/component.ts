@@ -87,17 +87,22 @@ export const getExpressionResult = (
 	expression: string | undefined,
 	state: Record<string, any>,
 	parent: Component | null,
+	root: Component | null,
 	payload: any
 ) => {
 	const schemaStore = useSchema();
 	try {
 		return {
-			result: new Function("$state", "state", "parent", "payload", "return " + expression)(
-				schemaStore.state,
-				state,
-				parent,
-				payload
-			),
+			result: new Function(
+				"state",
+				"$state",
+				"parent",
+				"root",
+				"current",
+				"schema",
+				"payload",
+				"return " + expression
+			)(state, schemaStore.state, parent, root, schemaStore.currentComponent, schemaStore.$state, payload),
 		};
 	} catch (error: any) {
 		console.error(error);
@@ -115,6 +120,7 @@ export const initState = (component: Component | Schema) => {
 				component.stateExpression[key],
 				component.state,
 				schemaStore.findParent((component as Component)?.id).parent,
+				schemaStore.findRoot(component as Component),
 				payload
 			);
 			if (!error) component.state[key] = result;
@@ -124,13 +130,15 @@ export const initState = (component: Component | Schema) => {
 };
 // 初始化属性
 export const initProps = (component: Component) => {
+	const schemaStore = useSchema();
 	const payload = {};
 	watchEffect(() => {
 		for (let key in component.propsExpression) {
 			const { result, error } = getExpressionResult(
 				component.propsExpression[key as keyof typeof component.propsExpression],
 				component.state,
-				component,
+				schemaStore.findParent((component as Component)?.id).parent,
+				schemaStore.findRoot(component as Component),
 				payload
 			);
 			if (!error) component.props[key] = result;
