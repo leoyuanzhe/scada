@@ -18,14 +18,21 @@ const props = withDefaults(defineProps<Props>(), {});
 			'component-details': true,
 			actived: props.component.actived,
 			target: props.component.id === schemaStore.targetComponentId,
+			before: props.component.id === dragger.layer.dragOverComponentId && dragger.layer.position === 'before',
+			after: props.component.id === dragger.layer.dragOverComponentId && dragger.layer.position === 'after',
 		}"
+		open
 		draggable="true"
+		@mousedown.stop="dragger.focusComponent($event, props.component)"
+		@dragstart.stop="dragger.layerOnDragStart(props.component)"
+		@dragover.prevent="dragger.layerOnDragOver($event, component)"
+		@drop.stop="dragger.layerOnDrop(component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<summary
-			:class="{ empty: !props.component.components.length }"
+			:class="{ 'not-nestable': !props.component.nestable, dragging: dragger.layer.dragging }"
 			contenteditable
-			@click.stop="dragger.componentOnMouseDown($event, props.component, true)"
+			@dragover.prevent
 			@input="props.component.title = ($event.target as HTMLElement).innerText"
 		>
 			{{ props.component.title }}
@@ -36,9 +43,38 @@ const props = withDefaults(defineProps<Props>(), {});
 
 <style scoped lang="scss">
 .component-details {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 10px;
+	&::before {
+		content: "";
+		position: absolute;
+		top: -10px;
+		left: 0;
+		width: 100%;
+		height: 10px;
+		background-color: transparent;
+	}
+	&::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: -10px;
+		width: 100%;
+		height: 10px;
+		background-color: transparent;
+	}
+	&.before {
+		&::before {
+			background-color: #ff0000;
+		}
+	}
+	&.after {
+		&::after {
+			background-color: #ff0000;
+		}
+	}
 	summary {
 		margin-bottom: 10px;
 		padding: 0 10px;
@@ -50,7 +86,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		&:last-child {
 			margin-bottom: 0;
 		}
-		&.empty {
+		&.not-nestable {
 			padding-left: 1.5em;
 			&::marker {
 				content: "";

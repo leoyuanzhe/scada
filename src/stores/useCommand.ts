@@ -244,17 +244,38 @@ export const useCommand = defineStore("command", {
 			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v));
 			schemaStore.recordStack(oldSchema);
 		},
-		// 创建分组
-		joinGroup(newParentId: string) {
+		// 加入分组
+		joinGroup(componentId: string, newParentId: string) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
 			const newParent = schemaStore.findComponent(newParentId);
-			if (schemaStore.targetComponent && newParent) {
-				schemaStore.joinGroup(schemaStore.targetComponent, newParent);
+			const component = schemaStore.findComponent(componentId);
+			if (newParent && component) {
+				schemaStore.joinGroup(component, newParent);
 				newParent.actived = true;
 				schemaStore.targetComponentId = newParent.id;
 				dragger.computedSelector();
+				schemaStore.recordStack(oldSchema);
+			}
+		},
+		// 插入到组件之前
+		insertBefore(componentId: string, targetId: string) {
+			const schemaStore = useSchema();
+			const oldSchema = deepClone(schemaStore.$state);
+			const component = schemaStore.findComponent(componentId);
+			if (component) {
+				schemaStore.insertBefore(component, targetId);
+				schemaStore.recordStack(oldSchema);
+			}
+		},
+		// 插入到组件之后
+		insertAfter(componentId: string, targetId: string) {
+			const schemaStore = useSchema();
+			const oldSchema = deepClone(schemaStore.$state);
+			const component = schemaStore.findComponent(componentId);
+			if (component) {
+				schemaStore.insertAfter(component, targetId);
 				schemaStore.recordStack(oldSchema);
 			}
 		},

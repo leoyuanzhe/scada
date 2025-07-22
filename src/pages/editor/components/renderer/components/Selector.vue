@@ -6,7 +6,10 @@ import { useDragger } from "@/pages/editor/hooks/useDragger";
 const schemaStore = useSchema();
 const dragger = useDragger();
 const showDirection = computed(
-	() => schemaStore.activedFlatedComponents.length === 1 && schemaStore.targetComponent?.resizable
+	() =>
+		schemaStore.activedFlatedComponents.length === 1 &&
+		schemaStore.targetComponent?.resizable &&
+		schemaStore.isRoot(schemaStore.findParent(schemaStore.targetComponent.id).parent?.id ?? "")
 );
 </script>
 
@@ -20,7 +23,6 @@ const showDirection = computed(
 			width: dragger.selector.width + 'px',
 			height: dragger.selector.height + 'px',
 		}"
-		:data-a="schemaStore.activedFlatedComponents.length"
 	>
 		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 't')"></div>
 		<div
