@@ -1,3 +1,7 @@
+export type DataSource = {
+	name: string;
+	type: "json";
+};
 type BasicAction = {
 	name: string;
 	beforeHandler: string;
