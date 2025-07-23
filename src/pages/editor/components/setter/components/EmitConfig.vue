@@ -3,7 +3,7 @@ import type { Component, Action } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
-import { editObjectValue } from "@/helpers/component";
+import { editObjectValue } from "@/helpers/schema";
 import emit_dict from "@/assets/data/emit_dict.json";
 import prop_dict from "@/assets/data/prop_dict.json";
 

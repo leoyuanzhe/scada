@@ -1,6 +1,6 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import TextComponent from "./Text.vue";
-import { generateId } from "@/helpers/component";
+import { generateId } from "@/helpers/schema";
 
 export interface TextProps {
 	text: string;

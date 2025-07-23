@@ -4,7 +4,7 @@ import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 import { useUndoStack } from "./useUndoStack";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { initState } from "@/helpers/component";
+import { initState } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
@@ -65,7 +65,7 @@ export const useSchema = defineStore("schema", {
 			if (route.query.id) {
 				this.current = route.query.id as string;
 			}
-			initState(this.$state);
+			initState.call(this.$state);
 		},
 		isRoot(componentId: string) {
 			return this.currentComponent?.id === componentId;

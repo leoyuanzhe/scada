@@ -5,7 +5,7 @@ import { useAsset } from "./stores/useAsset";
 import { useSchema } from "./stores/useSchema";
 import { Container } from "./materials/container/Container";
 import { Text } from "./materials/text/Text";
-import { assetTransferComponent } from "./helpers/component";
+import { assetTransferComponent } from "./helpers/schema";
 
 const clientStore = useClient();
 const materialStore = useMaterial();

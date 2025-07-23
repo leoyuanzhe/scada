@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Component } from "@/types/Component";
-import { editObjectValue } from "@/helpers/component";
+import { editObjectValue } from "@/helpers/schema";
 import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
 
