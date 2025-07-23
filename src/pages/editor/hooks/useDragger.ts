@@ -4,7 +4,7 @@ import type { Component } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
-import { assetTransferComponent } from "@/helpers/component";
+import { assetTransferComponent } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
 import { useCommand } from "@/stores/useCommand";
 

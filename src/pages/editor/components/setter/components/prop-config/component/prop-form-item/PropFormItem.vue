@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Component } from "@/types/Component";
-import { editObjectValue } from "@/helpers/component";
+import { editObjectValue } from "@/helpers/schema";
 import FormItem from "@/components/form-item/FormItem.vue";
 
 type PropsExpression = Record<string, string>;

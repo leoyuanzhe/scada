@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { watch } from "vue";
+import { onBeforeUnmount, onMounted, watch } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { ContainerProps } from "./Container";
-import { relayoutComponent } from "@/helpers/component";
+import { initProps, initState, relayoutComponent, triggerEmit } from "@/helpers/schema";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 interface Props {
 	component: ComponentWithLayout<ContainerProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
+const payload = {};
 watch(
 	() => props.component.components,
 	() => relayoutComponent(props.component),
 	{ immediate: true, deep: true }
 );
+initState.call(props.component);
+initProps.call(props.component);
+onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
+onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));
 </script>
 
 <template>

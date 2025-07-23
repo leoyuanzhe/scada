@@ -1,6 +1,6 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import ContainerComponent from "./Container.vue";
-import { generateId } from "@/helpers/component";
+import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
 
 const props = deepClone({

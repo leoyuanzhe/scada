@@ -83,13 +83,7 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(
 	});
 };
 // 获取表达式结果
-export const getExpressionResult = (
-	expression: string | undefined,
-	state: Record<string, any>,
-	parent: Component | null,
-	root: Component | null,
-	payload: any
-) => {
+function getExpressionResult(this: Component | Schema, expression: string, payload: any) {
 	const schemaStore = useSchema();
 	try {
 		return {
@@ -102,65 +96,97 @@ export const getExpressionResult = (
 				"schema",
 				"payload",
 				"return " + expression
-			)(state, schemaStore.state, parent, root, schemaStore.currentComponent, schemaStore.$state, payload),
+			).call(
+				this,
+				this.state,
+				schemaStore.state,
+				"id" in this ? schemaStore.findParent(this.id).parent : null,
+				"id" in this ? schemaStore.findRoot(this) : null,
+				schemaStore.currentComponent,
+				schemaStore.$state,
+				payload
+			),
 		};
 	} catch (error: any) {
-		console.error(error);
 		return { error };
 	}
-};
+}
+// 获取动作处理结果
+export async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {
+	const schemaStore = useSchema();
+	try {
+		return {
+			result: await new Function(
+				"state",
+				"$state",
+				"parent",
+				"root",
+				"current",
+				"schema",
+				"payload",
+				"event",
+				handler
+			).call(
+				this,
+				this.state,
+				schemaStore.state,
+				"id" in this ? schemaStore.findParent(this.id).parent : null,
+				"id" in this ? schemaStore.findRoot(this) : null,
+				schemaStore.currentComponent,
+				schemaStore.$state,
+				payload,
+				event
+			),
+		};
+	} catch (error: any) {
+		return { error };
+	}
+}
 // 初始化状态
-export const initState = (component: Component | Schema) => {
-	const schemaStore = useSchema();
+export function initState(this: Component | Schema) {
 	const payload = {};
 	watchEffect(() => {
-		for (let key in component.stateExpression) {
-			delete component.state[key];
-			const { result, error } = getExpressionResult(
-				component.stateExpression[key],
-				component.state,
-				schemaStore.findParent((component as Component)?.id).parent,
-				schemaStore.findRoot(component as Component),
-				payload
-			);
-			if (!error) component.state[key] = result;
-			else component.state[key] = null;
+		for (let key in this.stateExpression) {
+			delete this.state[key];
+			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
+			if (error) {
+				this.state[key] = null;
+				console.error(error);
+				continue;
+			}
+			this.state[key] = result;
 		}
 	});
-};
+}
 // 初始化属性
-export const initProps = (component: Component) => {
-	const schemaStore = useSchema();
+export function initProps(this: Component) {
 	const payload = {};
 	watchEffect(() => {
-		for (let key in component.propsExpression) {
-			const { result, error } = getExpressionResult(
-				component.propsExpression[key as keyof typeof component.propsExpression],
-				component.state,
-				schemaStore.findParent((component as Component)?.id).parent,
-				schemaStore.findRoot(component as Component),
-				payload
-			);
-			if (!error) component.props[key] = result;
+		for (let key in this.propsExpression) {
+			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
+			if (error) {
+				console.error(error);
+				continue;
+			}
+			this.props[key] = result;
 		}
 	});
-};
+}
 // 触发动作
-export const triggerAction = async (action: Action, component: Component, event?: any, payload?: any) => {
+export const triggerAction = async (action: Action, component: Component, payload: any, event?: any) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	if (clientStore.enabledOperate) {
 		try {
-			const beforeReuslt = await new Function(
-				"event",
-				"payload",
-				"$state",
-				"state",
-				"parent",
-				action.beforeHandler
-			)(event, payload, schemaStore.state, component.state, schemaStore.findParent(component.id));
-			if (!beforeReuslt)
-				throw new Error(component.title + " " + action.name + " before handler trigger disrupted.");
+			const { error: beforeError, result: beforeResult } = await getActionHandlerResult.call(
+				component,
+				action.beforeHandler,
+				payload,
+				event
+			);
+			if (beforeError) throw new Error(beforeError);
+			if (!beforeResult)
+				throw new Error(`"${component.title}" "${action.name}" before handler trigger disrupted.`);
 			switch (action.type) {
 				case "changeVisible": {
 					action.params.targetComponentsId.forEach((componentId) => {
@@ -179,28 +205,26 @@ export const triggerAction = async (action: Action, component: Component, event?
 				case "changeProp": {
 					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
 					if (targetComponent) {
-						const { result, error } = getExpressionResult(
-							action.params.expression,
-							component.state,
+						const { result, error } = getExpressionResult.call(
 							component,
+							action.params.expression,
 							payload
 						);
-						if (!error) targetComponent.propsExpression[action.params.key] = result;
-						else throw new Error(component.title + " " + action.name + " change prop error.");
+						if (error) throw new Error(`"${component.title}" "${action.name}" change prop error.`);
+						targetComponent.propsExpression[action.params.key] = result;
 					}
 					break;
 				}
 				case "changeState": {
 					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
 					if (targetComponent) {
-						const { result, error } = getExpressionResult(
-							action.params.expression,
-							component.state,
+						const { result, error } = getExpressionResult.call(
 							component,
+							action.params.expression,
 							payload
 						);
 						if (!error) targetComponent.stateExpression[action.params.key] = result;
-						else throw new Error(component.title + " " + action.name + " change state error.");
+						else throw new Error(`"${component.title}" "${action.name}" change state error.`);
 					}
 					break;
 				}
@@ -208,31 +232,31 @@ export const triggerAction = async (action: Action, component: Component, event?
 					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
 					const targetAction = targetComponent?.actions.find((v) => v.name === action.params.name);
 					if (targetComponent && targetAction) {
-						await triggerAction(targetAction, targetComponent, event, payload);
+						await triggerAction(targetAction, targetComponent, payload, event);
 					}
 					break;
 				}
 			}
-			await new Function("event", "payload", "$state", "state", "parent", action.afterHandler)(
-				event,
+			const { error: afterError } = await getActionHandlerResult.call(
+				component,
+				action.afterHandler,
 				payload,
-				schemaStore.state,
-				component.state,
-				schemaStore.findParent(component.id)
+				event
 			);
+			if (afterError) throw new Error(afterError);
 		} catch (error: any) {
 			console.error(error);
 		}
 	}
 };
 // 触发事件
-export const triggerEmit = async (emit: EmitEvent, component: Component, event?: any, payload?: any) => {
+export const triggerEmit = async (emit: EmitEvent, component: Component, payload: any, event?: any) => {
 	switch (emit.executeType) {
 		case "concurrent": {
 			await Promise.all(
 				emit.actionsName.map((actionName) => {
 					const action = component.actions.find((v) => v.name === actionName);
-					if (action) return triggerAction(action, component, event, payload);
+					if (action) return triggerAction(action, component, payload, event);
 					else return Promise.resolve();
 				})
 			);
@@ -241,7 +265,7 @@ export const triggerEmit = async (emit: EmitEvent, component: Component, event?:
 		case "sequential": {
 			for (let i = 0; i < emit.actionsName.length; i++) {
 				const action = component.actions.find((v) => v.name === emit.actionsName[i]);
-				if (action) await triggerAction(action, component, event, payload);
+				if (action) await triggerAction(action, component, payload, event);
 			}
 			break;
 		}
