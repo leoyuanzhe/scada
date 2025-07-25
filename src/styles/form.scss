@@ -42,7 +42,8 @@ details.details {
 		}
 	}
 	&[open] {
-		summary {
+		> summary {
+			margin-bottom: 10px;
 			&::before {
 				transform: rotate(90deg);
 			}
@@ -53,10 +54,8 @@ details.details {
 		flex-direction: column;
 		row-gap: 10px;
 	}
-	&[open] {
-		summary {
-			margin-bottom: 10px;
-		}
+	.details {
+		box-shadow: 0 0 3px 1px #666;
 	}
 }
 .form-item {

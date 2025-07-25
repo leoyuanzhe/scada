@@ -2,7 +2,7 @@
 import { onMounted, useTemplateRef } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import CanvasComponent from "./components/Canvas.vue";
+import RootComponent from "./components/RootComponent.vue";
 import GridLine from "./components/GridLine.vue";
 import Ruler from "./components/Ruler.vue";
 import GuideLine from "./components/GuideLine.vue";
@@ -31,7 +31,7 @@ onMounted(() => {
 		@dragover.prevent
 		@drop="dragger.rendererOnDrop($event)"
 	>
-		<CanvasComponent />
+		<RootComponent />
 		<GridLine />
 		<Ruler />
 		<GuideLine />

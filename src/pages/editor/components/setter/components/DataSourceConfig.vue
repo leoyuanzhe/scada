@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Component } from "@/types/Component";
-import { editObjectValue } from "@/helpers/schema";
+import type { Component, DataSourceBodyType, DataSourceMethod } from "@/types/Component";
 import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
 
@@ -14,12 +13,14 @@ const addDataSource = () => {
 				name,
 				url: "",
 				method: "GET",
-				params: {},
-				headers: {},
+				headers: [],
+				params: [],
 				body: {
 					type: "none",
-					contentType: "Text",
-					content: "",
+					formDataParams: [],
+					xWwwFormUrlencodedParams: [],
+					rowType: "Text",
+					rawContent: "",
 				},
 			});
 		else fn(depth + 1);
@@ -59,7 +60,22 @@ const editName = (name: string) => {
 						<input id="setter-data-source-name" readonly :value="v.name" />
 					</FormItem>
 					<FormItem label="请求地址" for="setter-data-source-url">
-						<input id="setter-data-source-url" type="url" readonly :value="v.url" />
+						<input id="setter-data-source-url" type="url" :value="v.url" />
+					</FormItem>
+					<FormItem label="请求方法" for="setter-data-source-method">
+						<select
+							id="setter-data-source-method"
+							:value="v.method"
+							@input="v.method = ($event.target as HTMLSelectElement).value as DataSourceMethod"
+						>
+							<option value="GET">GET</option>
+							<option value="POST">POST</option>
+							<option value="PUT">PUT</option>
+							<option value="PATCH">PATCH</option>
+							<option value="DELETE">DELETE</option>
+							<option value="HEAD">HEAD</option>
+							<option value="OPTIONS">OPTIONS</option>
+						</select>
 					</FormItem>
 					<FormItem label="请求标头" for="setter-data-source-headers">
 						<table id="setter-data-source-headers">
@@ -71,31 +87,216 @@ const editName = (name: string) => {
 								</tr>
 							</thead>
 							<tbody>
-								<tr v-for="(k, i) in [...Object.keys(v.headers), '']" :key="i">
+								<tr v-for="(v2, i2) in [...v.headers, { key: '', value: '' }]" :key="i2">
 									<td>
 										<input
 											type="text"
-											:value="k"
-											@change="
-												(v.headers[($event.target as HTMLInputElement).value] = v.headers[k]),
-													delete v.headers[k]
+											:value="v2.key"
+											@input="
+												v.headers[i2] === undefined
+													? (v.headers[i2] = {
+															key: ($event.target as HTMLInputElement).value,
+															value: '',
+													  })
+													: (v2.key = ($event.target as HTMLInputElement).value)
 											"
 										/>
 									</td>
 									<td>
 										<input
 											type="text"
-											:value="v.headers[k]"
-											@change="v.headers[k] = ($event.target as HTMLInputElement).value"
+											:value="v2.value"
+											@input="
+												v.headers[i2] === undefined
+													? (v.headers[i2] = {
+															key: '',
+															value: ($event.target as HTMLInputElement).value,
+													  })
+													: (v2.value = ($event.target as HTMLInputElement).value)
+											"
 										/>
 									</td>
 									<td>
-										<MyButton>删除</MyButton>
+										<MyButton variant="danger">删除</MyButton>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</FormItem>
+					<FormItem label="请求参数" for="setter-data-source-params">
+						<table id="setter-data-source-params">
+							<thead>
+								<tr>
+									<th>键</th>
+									<th>值</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="(v2, i2) in [...v.params, { key: '', value: '' }]" :key="i2">
+									<td>
+										<input
+											type="text"
+											:value="v2.key"
+											@input="
+												v.params[i2] === undefined
+													? (v.params[i2] = {
+															key: ($event.target as HTMLInputElement).value,
+															value: '',
+													  })
+													: (v2.key = ($event.target as HTMLInputElement).value)
+											"
+										/>
+									</td>
+									<td>
+										<input
+											type="text"
+											:value="v2.value"
+											@input="
+												v.params[i2] === undefined
+													? (v.params[i2] = {
+															key: '',
+															value: ($event.target as HTMLInputElement).value,
+													  })
+													: (v2.value = ($event.target as HTMLInputElement).value)
+											"
+										/>
+									</td>
+									<td>
+										<MyButton variant="danger">删除</MyButton>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</FormItem>
+					<details class="details" open>
+						<summary>请求体</summary>
+						<fieldset>
+							<FormItem label="请求方法" for="setter-data-source-body-type">
+								<select
+									id="setter-data-source-body-type"
+									:value="v.body.type"
+									@input="
+										v.body.type = ($event.target as HTMLSelectElement).value as DataSourceBodyType
+									"
+								>
+									<option value="none">none</option>
+									<option value="form-data">form-data</option>
+									<option value="x-www-form-urlencoded">x-www-form-urlencoded</option>
+									<option value="raw">raw</option>
+								</select>
+							</FormItem>
+							<FormItem
+								v-if="v.body.type === 'form-data'"
+								label="form-data"
+								for="setter-data-source-form-data-params"
+							>
+								<table id="setter-data-source-form-data-params">
+									<thead>
+										<tr>
+											<th>键</th>
+											<th>值</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr
+											v-for="(v2, i2) in [...v.body.formDataParams, { key: '', value: '' }]"
+											:key="i2"
+										>
+											<td>
+												<input
+													type="text"
+													:value="v2.key"
+													@input="
+														v.body.formDataParams[i2] === undefined
+															? (v.body.formDataParams[i2] = {
+																	key: ($event.target as HTMLInputElement).value,
+																	value: '',
+															  })
+															: (v2.key = ($event.target as HTMLInputElement).value)
+													"
+												/>
+											</td>
+											<td>
+												<input
+													type="text"
+													:value="v2.value"
+													@input="
+														v.body.formDataParams[i2] === undefined
+															? (v.body.formDataParams[i2] = {
+																	key: '',
+																	value: ($event.target as HTMLInputElement).value,
+															  })
+															: (v2.value = ($event.target as HTMLInputElement).value)
+													"
+												/>
+											</td>
+											<td>
+												<MyButton variant="danger">删除</MyButton>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</FormItem>
+							<FormItem
+								v-if="v.body.type === 'x-www-form-urlencoded'"
+								label="form-data"
+								for="setter-data-source-x-www-form-urlencoded-params"
+							>
+								<table id="setter-data-source-x-www-form-urlencoded-params">
+									<thead>
+										<tr>
+											<th>键</th>
+											<th>值</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr
+											v-for="(v2, i2) in [
+												...v.body.xWwwFormUrlencodedParams,
+												{ key: '', value: '' },
+											]"
+											:key="i2"
+										>
+											<td>
+												<input
+													type="text"
+													:value="v2.key"
+													@input="
+														v.body.xWwwFormUrlencodedParams[i2] === undefined
+															? (v.body.xWwwFormUrlencodedParams[i2] = {
+																	key: ($event.target as HTMLInputElement).value,
+																	value: '',
+															  })
+															: (v2.key = ($event.target as HTMLInputElement).value)
+													"
+												/>
+											</td>
+											<td>
+												<input
+													type="text"
+													:value="v2.value"
+													@input="
+														v.body.xWwwFormUrlencodedParams[i2] === undefined
+															? (v.body.xWwwFormUrlencodedParams[i2] = {
+																	key: '',
+																	value: ($event.target as HTMLInputElement).value,
+															  })
+															: (v2.value = ($event.target as HTMLInputElement).value)
+													"
+												/>
+											</td>
+											<td>
+												<MyButton variant="danger">删除</MyButton>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</FormItem>
+						</fieldset>
+					</details>
 					<MyButton variant="danger" @click="props.component.dataSources.splice(i, 1)">删除</MyButton>
 				</fieldset>
 			</details>
