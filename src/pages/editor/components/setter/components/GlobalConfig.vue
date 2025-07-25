@@ -11,6 +11,7 @@ const dragger = useDragger();
 
 <template>
 	<form class="form" @submit.prevent>
+		<h1>全局</h1>
 		<fieldset>
 			<legend>画布</legend>
 			<FormItem label="X坐标" for="setter-layout-left">

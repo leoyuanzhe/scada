@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
-	<details class="config" open>
+	<details class="details" open>
 		<summary>基础</summary>
 		<fieldset>
 			<PropFormItem label="文本" prop-key="text" input-type="text" :component="props.component" />

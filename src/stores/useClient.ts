@@ -3,6 +3,7 @@ import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
+import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 
@@ -228,9 +229,11 @@ export const useClient = defineStore("client", {
 		// 启用触发操作
 		enableOperate() {
 			const schemaStore = useSchema();
+			const dragger = useDragger();
 			this.enabledOperate = true;
 			schemaStore.deactivateAllComponent();
 			schemaStore.targetComponentId = "";
+			dragger.computedSelector();
 		},
 		// 禁用触发操作
 		disableOperate() {

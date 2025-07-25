@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<Props>(), {});
 </script>
 
 <template>
-	<details class="config" open>
+	<details class="details" open>
 		<summary>基础</summary>
 		<fieldset>
 			<PropFormItem label="背景颜色" prop-key="backgroundColor" input-type="color" :component="props.component" />

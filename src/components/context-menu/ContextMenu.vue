@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, useTemplateRef } from "vue";
+import { computed, useTemplateRef } from "vue";
 import type { MenuPosition, MenuItem } from "./types/ContextMenu";
 import ContextMenuItem from "./components/RecursiveComponent.vue";
 
@@ -13,17 +13,21 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
 const oContextMenu = useTemplateRef("oContextMenu");
-const adjustPosition = reactive({ left: props.position.left, top: props.position.top });
-const onToggle = (e: ToggleEvent) => {
-	emits("toggle", e);
+const adjustPosition = computed(() => {
+	let left = props.position.left;
+	let top = props.position.top;
 	if (oContextMenu.value) {
 		if (props.position.left + oContextMenu.value.offsetWidth > innerWidth) {
-			adjustPosition.left = innerWidth - oContextMenu.value.offsetWidth;
+			left = innerWidth - oContextMenu.value.offsetWidth;
 		}
 		if (props.position.top + oContextMenu.value.offsetHeight > innerHeight) {
-			adjustPosition.top = innerHeight - oContextMenu.value.offsetHeight;
+			top = innerHeight - oContextMenu.value.offsetHeight;
 		}
 	}
+	return { left, top };
+});
+const onToggle = (e: ToggleEvent) => {
+	emits("toggle", e);
 };
 defineExpose({
 	showPopover: () => oContextMenu.value?.showPopover(),

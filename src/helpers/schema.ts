@@ -23,6 +23,7 @@ export const assetTransferComponent = (asset: Asset): Component => {
 		layout: cloneAsset.material.layout,
 		props: cloneAsset.material.props,
 		state: cloneAsset.material.state,
+		dataSources: cloneAsset.material.dataSources,
 		actions: cloneAsset.material.actions,
 		emits: cloneAsset.material.emits,
 		components: cloneAsset.material.components,
@@ -83,20 +84,21 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(
 	});
 };
 // 获取表达式结果
-function getExpressionResult(this: Component | Schema, expression: string, payload: any) {
+function getExpressionResult(this: Component | Schema, expression: string | undefined, payload: any) {
 	const schemaStore = useSchema();
 	try {
+		const fn = new Function(
+			"state",
+			"$state",
+			"parent",
+			"root",
+			"current",
+			"schema",
+			"payload",
+			"return " + expression
+		);
 		return {
-			result: new Function(
-				"state",
-				"$state",
-				"parent",
-				"root",
-				"current",
-				"schema",
-				"payload",
-				"return " + expression
-			).call(
+			result: fn.call(
 				this,
 				this.state,
 				schemaStore.state,
@@ -110,6 +112,36 @@ function getExpressionResult(this: Component | Schema, expression: string, paylo
 	} catch (error: any) {
 		return { error };
 	}
+}
+// 初始化状态
+export function initState(this: Component | Schema) {
+	const payload = {};
+	watchEffect(() => {
+		for (let key in this.stateExpression) {
+			delete this.state[key];
+			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
+			if (error) {
+				this.state[key] = null;
+				console.error(error);
+				continue;
+			}
+			this.state[key] = result;
+		}
+	});
+}
+// 初始化属性
+export function initProps(this: Component) {
+	const payload = {};
+	watchEffect(() => {
+		for (let key in this.propsExpression) {
+			const { result, error } = getExpressionResult.call(this, this.propsExpression[key], payload);
+			if (error) {
+				console.error(error);
+				continue;
+			}
+			this.props[key] = result;
+		}
+	});
 }
 // 获取动作处理结果
 export async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {
@@ -142,36 +174,28 @@ export async function getActionHandlerResult(this: Component | Schema, handler: 
 		return { error };
 	}
 }
-// 初始化状态
-export function initState(this: Component | Schema) {
-	const payload = {};
-	watchEffect(() => {
-		for (let key in this.stateExpression) {
-			delete this.state[key];
-			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
-			if (error) {
-				this.state[key] = null;
-				console.error(error);
-				continue;
-			}
-			this.state[key] = result;
+// 触发事件
+export const triggerEmit = async (emit: EmitEvent, component: Component, payload: any, event?: any) => {
+	switch (emit.executeType) {
+		case "concurrent": {
+			await Promise.all(
+				emit.actionsName.map((actionName) => {
+					const action = component.actions.find((v) => v.name === actionName);
+					if (action) return triggerAction(action, component, payload, event);
+					else return Promise.resolve();
+				})
+			);
+			break;
 		}
-	});
-}
-// 初始化属性
-export function initProps(this: Component) {
-	const payload = {};
-	watchEffect(() => {
-		for (let key in this.propsExpression) {
-			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
-			if (error) {
-				console.error(error);
-				continue;
+		case "sequential": {
+			for (let i = 0; i < emit.actionsName.length; i++) {
+				const action = component.actions.find((v) => v.name === emit.actionsName[i]);
+				if (action) await triggerAction(action, component, payload, event);
 			}
-			this.props[key] = result;
+			break;
 		}
-	});
-}
+	}
+};
 // 触发动作
 export const triggerAction = async (action: Action, component: Component, payload: any, event?: any) => {
 	const clientStore = useClient();
@@ -246,28 +270,6 @@ export const triggerAction = async (action: Action, component: Component, payloa
 			if (afterError) throw new Error(afterError);
 		} catch (error: any) {
 			console.error(error);
-		}
-	}
-};
-// 触发事件
-export const triggerEmit = async (emit: EmitEvent, component: Component, payload: any, event?: any) => {
-	switch (emit.executeType) {
-		case "concurrent": {
-			await Promise.all(
-				emit.actionsName.map((actionName) => {
-					const action = component.actions.find((v) => v.name === actionName);
-					if (action) return triggerAction(action, component, payload, event);
-					else return Promise.resolve();
-				})
-			);
-			break;
-		}
-		case "sequential": {
-			for (let i = 0; i < emit.actionsName.length; i++) {
-				const action = component.actions.find((v) => v.name === emit.actionsName[i]);
-				if (action) await triggerAction(action, component, payload, event);
-			}
-			break;
 		}
 	}
 };

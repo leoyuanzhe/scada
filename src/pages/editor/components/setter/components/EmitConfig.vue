@@ -89,7 +89,8 @@ function checkParams(action: Action) {
 <template>
 	<form class="form" @submit.prevent>
 		<h1>动作</h1>
-		<details v-for="(v, i) in props.component.actions" :key="v.name" class="config">
+		<MyButton variant="success" @click="addAction()">添加动作</MyButton>
+		<details v-for="(v, i) in props.component.actions" :key="v.name" open class="details">
 			<summary>
 				<span>{{ v.name }}</span>
 			</summary>
@@ -233,11 +234,10 @@ function checkParams(action: Action) {
 				<MyButton variant="danger" @click="props.component.actions.splice(i, 1)">删除</MyButton>
 			</fieldset>
 		</details>
-		<MyButton variant="success" @click="addAction()">添加动作</MyButton>
 	</form>
 	<form class="form" @submit.prevent>
 		<h1>事件</h1>
-		<details v-for="k in Object.keys(props.component.emits)" :key="k" class="config">
+		<details v-for="k in Object.keys(props.component.emits)" :key="k" open class="details">
 			<summary>{{ emit_dict[k] ?? k }}</summary>
 			<fieldset>
 				<FormItem label="类型" for="setter-emit-execute-type">
