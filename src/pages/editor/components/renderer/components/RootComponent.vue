@@ -9,7 +9,7 @@ const schemaStore = useSchema();
 
 <template>
 	<div
-		class="canvas"
+		class="root-component"
 		:style="{
 			left: clientStore.canvas.left + 'px',
 			top: clientStore.canvas.top + 'px',
@@ -25,7 +25,7 @@ const schemaStore = useSchema();
 </template>
 
 <style scoped lang="scss">
-.canvas {
+.root-component {
 	position: absolute;
 	transform-origin: 0 0;
 }

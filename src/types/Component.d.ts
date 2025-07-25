@@ -1,13 +1,19 @@
+export type DataSourceMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
+export type DataSourceBodyType = "none" | "form-data" | "x-www-form-urlencoded" | "raw";
+export type DataSourceBodyRowType = "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
+export type DataSourceParam = { key: string; value: string };
 export type DataSource = {
 	name: string;
 	url: RequestInfo | URL;
-	method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
-	params: Record<string, string>;
-	headers: Record<string, string>;
+	method: DataSourceMethod;
+	headers: DataSourceParam[];
+	params: DataSourceParam[];
 	body: {
-		type: "none" | "form-data" | "x-www-form-urlencoded" | "raw";
-		contentType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
-		content: string;
+		type: DataSourceBodyType;
+		formDataParams: DataSourceParam[];
+		xWwwFormUrlencodedParams: DataSourceParam[];
+		rowType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
+		rawContent: string;
 	};
 };
 type BasicAction = {
