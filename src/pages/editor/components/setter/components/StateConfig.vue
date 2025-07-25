@@ -34,6 +34,7 @@ const editKey = (key: string) => {
 	<form class="form" @submit.prevent>
 		<h1 @click="props.component.state.state1 = '2'">状态</h1>
 		<fieldset>
+			<MyButton variant="success" @click="addState()">添加</MyButton>
 			<FormItem
 				v-for="k in Object.keys(props.component.stateExpression)"
 				:key="k"
@@ -47,7 +48,6 @@ const editKey = (key: string) => {
 			>
 				<input :id="'setter-state-' + k" readonly :value="props.component.stateExpression[k]" />
 			</FormItem>
-			<MyButton variant="success" @click="addState()">添加</MyButton>
 		</fieldset>
 	</form>
 </template>

@@ -35,6 +35,14 @@ function init() {
 		schemaStore.createRootComponent(c);
 		schemaStore.current = schemaStore.components[0].id;
 	}
+	const t1 = Text();
+	const t2 = Text();
+	t1.title = "t1";
+	t1.layout.top = 300;
+	t2.title = "t2";
+	t2.layout.top = 400;
+	schemaStore.createComponent(t1);
+	schemaStore.createComponent(t2);
 }
 </script>
 

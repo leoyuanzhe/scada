@@ -29,6 +29,7 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		color: "#ffffff",
 	},
 	state: {},
+	dataSources: [],
 	actions: [],
 	emits: {
 		click: { executeType: "concurrent", actionsName: [] },

@@ -1,6 +1,14 @@
 export type DataSource = {
 	name: string;
-	type: "json";
+	url: RequestInfo | URL;
+	method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
+	params: Record<string, string>;
+	headers: Record<string, string>;
+	body: {
+		type: "none" | "form-data" | "x-www-form-urlencoded" | "raw";
+		contentType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
+		content: string;
+	};
 };
 type BasicAction = {
 	name: string;
@@ -70,6 +78,7 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	};
 	props: Props;
 	state: Record<keyof Component["stateExpression"], any>;
+	dataSources: DataSource[];
 	actions: Action[];
 	emits: Record<EmitKey | "mounted" | "beforeUnmount", EmitEvent>;
 	components: Component[];

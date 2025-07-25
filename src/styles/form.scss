@@ -24,7 +24,7 @@ form.form {
 		}
 	}
 }
-details.config {
+details.details {
 	padding: 10px;
 	display: flex;
 	flex-direction: column;
@@ -63,8 +63,9 @@ details.config {
 	input {
 		&:not([type]),
 		&[type="text"],
+		&[type="password"],
 		&[type="number"],
-		&[type="select"],
+		&[type="url"],
 		&[type="color"] {
 			box-sizing: border-box;
 			padding: 0 6px;
@@ -137,6 +138,18 @@ details.config {
 				font-size: 14px;
 				@include text-ellipsis();
 			}
+		}
+	}
+	table {
+		width: 100%;
+		height: 30px;
+		th,
+		td {
+			padding: 0 10px;
+			min-height: 30px;
+			line-height: 30px;
+			border: 1px solid #ccc;
+			white-space: nowrap;
 		}
 	}
 }
