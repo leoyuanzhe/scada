@@ -1,10 +1,11 @@
 import { watchEffect } from "vue";
 import type { Asset } from "@/types/Asset";
 import type { Schema } from "@/types/Schema";
-import type { Action, Component, EmitEvent } from "@/types/Component";
+import type { Action, Component, DataSource, EmitEvent } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { deepClone } from "@/utils/conversion";
+import { delay } from "@/utils/tool";
 import CodeEditor from "@/components/code-editor";
 
 // 资产转组件
@@ -83,7 +84,7 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(
 			.catch(() => {});
 	});
 };
-// 获取表达式结果
+// 获取表达式器结果
 function getExpressionResult(this: Component | Schema, expression: string | undefined, payload: any) {
 	const schemaStore = useSchema();
 	try {
@@ -114,37 +115,189 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 	}
 }
 // 初始化状态
-export function initState(this: Component | Schema) {
+export function initState(component: Component | Schema) {
 	const payload = {};
 	watchEffect(() => {
-		for (let key in this.stateExpression) {
-			delete this.state[key];
-			const { result, error } = getExpressionResult.call(this, this.stateExpression[key], payload);
+		for (let key in component.stateExpression) {
+			delete component.state[key];
+			const { result, error } = getExpressionResult.call(component, component.stateExpression[key], payload);
 			if (error) {
-				this.state[key] = null;
+				component.state[key] = null;
 				console.error(error);
 				continue;
 			}
-			this.state[key] = result;
+			component.state[key] = result;
 		}
 	});
 }
 // 初始化属性
-export function initProps(this: Component) {
+export function initProps(component: Component) {
 	const payload = {};
 	watchEffect(() => {
-		for (let key in this.propsExpression) {
-			const { result, error } = getExpressionResult.call(this, this.propsExpression[key], payload);
+		for (let key in component.propsExpression) {
+			const { result, error } = getExpressionResult.call(component, component.propsExpression[key], payload);
 			if (error) {
 				console.error(error);
 				continue;
 			}
-			this.props[key] = result;
+			component.props[key] = result;
 		}
 	});
 }
-// 获取动作处理结果
-export async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {
+// 获取数据源处理器结果
+async function getDataSourceHandlerResult(
+	this: Component | Schema,
+	response: DataSource["response"],
+	handler: string,
+	payload: any
+) {
+	const schemaStore = useSchema();
+	try {
+		return {
+			result: await new Function(
+				"response",
+				"state",
+				"$state",
+				"parent",
+				"root",
+				"current",
+				"schema",
+				"payload",
+				handler
+			).call(
+				this,
+				response,
+				this.state,
+				schemaStore.state,
+				"id" in this ? schemaStore.findParent(this.id).parent : null,
+				"id" in this ? schemaStore.findRoot(this) : null,
+				schemaStore.currentComponent,
+				schemaStore.$state,
+				payload
+			),
+		};
+	} catch (error: any) {
+		return { error };
+	}
+}
+// 初始化数据源
+export async function initDataSources(component: Component) {
+	const payload = {};
+	for (let dataSource of component.dataSources) {
+		if (dataSource.autoRequest) await requestDataSource(component, dataSource, payload);
+	}
+}
+// 请求数据源
+export async function requestDataSource(component: Component, dataSource: DataSource, payload: any) {
+	try {
+		const { error: beforeError, result: beforeResult } = await getDataSourceHandlerResult.call(
+			component,
+			dataSource.response,
+			dataSource.beforeHandler,
+			payload
+		);
+		if (beforeError) throw new Error(beforeError);
+		if (!beforeResult)
+			throw new Error(`"${component.title}" "${dataSource.name}" before handler trigger disrupted.`);
+		await fetch(getUrl(), {
+			method: dataSource.method,
+			headers: getHeaders(),
+			body: getBody(),
+		})
+			.then(async (res) => {
+				dataSource.response.status = res.status;
+				dataSource.response.statusText = res.statusText;
+				dataSource.response.headers = res.headers;
+				dataSource.response.data =
+					dataSource.response.type === "Text"
+						? await res.text()
+						: dataSource.response.type === "JSON"
+						? await res.json()
+						: dataSource.response.type === "Blob"
+						? await res.blob()
+						: dataSource.response.type === "ArrayBuffer"
+						? await res.arrayBuffer()
+						: dataSource.response.type === "FormData"
+						? await res.formData()
+						: res;
+				if (!res.ok) {
+					throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+				}
+			})
+			.catch((error) => {
+				throw new Error(error);
+			});
+		const { error: afterError } = await getDataSourceHandlerResult.call(
+			component,
+			dataSource.response,
+			dataSource.afterHandler,
+			payload
+		);
+		if (afterError) throw new Error(afterError);
+		function getUrl() {
+			const urlSP = new URLSearchParams(
+				dataSource.params.reduce((pre, cur) => {
+					pre[cur.key] = cur.value;
+					return pre;
+				}, {} as Record<string, string>)
+			);
+			return dataSource.url + urlSP.toString();
+		}
+		function getHeaders() {
+			const headers = new Headers();
+			if (dataSource.body.type === "form-data") {
+				headers.append("Content-Type", "multipart/form-data");
+			} else if (dataSource.body.type === "x-www-form-urlencoded") {
+				headers.append("Content-Type", "application/x-www-form-urlencoded");
+			} else if (dataSource.body.type === "raw") {
+				headers.append(
+					"Content-Type",
+					dataSource.body.rawType === "JavaScript"
+						? "application/javascript"
+						: dataSource.body.rawType === "JSON"
+						? "application/json"
+						: dataSource.body.rawType === "HTML"
+						? "text/html"
+						: dataSource.body.rawType === "XML"
+						? "application/xml"
+						: "text/plain"
+				);
+			}
+			dataSource.headers.forEach((v) => {
+				headers.append(v.key, v.value);
+			});
+			return headers;
+		}
+		function getBody() {
+			return dataSource.body.type === "form-data"
+				? getFormDataBody()
+				: dataSource.body.type === "x-www-form-urlencoded"
+				? getXWwwFormUrlencodedBody()
+				: dataSource.body.type === "raw"
+				? dataSource.body.rawContent
+				: null;
+		}
+		function getFormDataBody() {
+			const formData = new FormData();
+			dataSource.body.formDataParams.forEach((v) => {
+				formData.append(v.key, v.value);
+			});
+			return formData;
+		}
+		function getXWwwFormUrlencodedBody() {
+			return new URLSearchParams(
+				dataSource.body.xWwwFormUrlencodedParams.reduce((pre, cur) => {
+					pre[cur.key] = cur.value;
+					return pre;
+				}, {} as Record<string, string>)
+			);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+// 获取事件处理器结果
+async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {
 	const schemaStore = useSchema();
 	try {
 		return {
@@ -176,6 +329,7 @@ export async function getActionHandlerResult(this: Component | Schema, handler: 
 }
 // 触发事件
 export const triggerEmit = async (emit: EmitEvent, component: Component, payload: any, event?: any) => {
+	await delay(emit.timeout);
 	switch (emit.executeType) {
 		case "concurrent": {
 			await Promise.all(
@@ -213,11 +367,11 @@ export const triggerAction = async (action: Action, component: Component, payloa
 				throw new Error(`"${component.title}" "${action.name}" before handler trigger disrupted.`);
 			switch (action.type) {
 				case "changeVisible": {
-					action.params.targetComponentsId.forEach((componentId) => {
+					action.changeVisibleParams.targetComponentsId.forEach((componentId) => {
 						const targetComponent = schemaStore.findComponent(componentId);
 						if (targetComponent) {
-							if (action.params.visible === "show") targetComponent.hidden = false;
-							else if (action.params.visible === "hide") targetComponent.hidden = true;
+							if (action.changeVisibleParams.visible === "show") targetComponent.hidden = false;
+							else if (action.changeVisibleParams.visible === "hide") targetComponent.hidden = true;
 							else
 								targetComponent.hidden
 									? (targetComponent.hidden = false)
@@ -227,34 +381,38 @@ export const triggerAction = async (action: Action, component: Component, payloa
 					break;
 				}
 				case "changeProp": {
-					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
+					const targetComponent = schemaStore.findComponent(action.changePropParams.targetComponentId);
 					if (targetComponent) {
 						const { result, error } = getExpressionResult.call(
 							component,
-							action.params.expression,
+							action.changePropParams.expression,
 							payload
 						);
 						if (error) throw new Error(`"${component.title}" "${action.name}" change prop error.`);
-						targetComponent.propsExpression[action.params.key] = result;
+						targetComponent.propsExpression[action.changePropParams.key] = result;
 					}
 					break;
 				}
 				case "changeState": {
-					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
+					const targetComponent = schemaStore.findComponent(action.changeStateParams.targetComponentId);
 					if (targetComponent) {
 						const { result, error } = getExpressionResult.call(
 							component,
-							action.params.expression,
+							action.changeStateParams.expression,
 							payload
 						);
-						if (!error) targetComponent.stateExpression[action.params.key] = result;
+						if (!error) targetComponent.stateExpression[action.changeStateParams.key] = result;
 						else throw new Error(`"${component.title}" "${action.name}" change state error.`);
 					}
 					break;
 				}
 				case "triggerOtherAction": {
-					const targetComponent = schemaStore.findComponent(action.params.targetComponentId);
-					const targetAction = targetComponent?.actions.find((v) => v.name === action.params.name);
+					const targetComponent = schemaStore.findComponent(
+						action.triggerOtherActionParams.targetComponentId
+					);
+					const targetAction = targetComponent?.actions.find(
+						(v) => v.name === action.triggerOtherActionParams.name
+					);
 					if (targetComponent && targetAction) {
 						await triggerAction(targetAction, targetComponent, payload, event);
 					}

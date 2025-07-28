@@ -20,7 +20,24 @@ const addAction = () => {
 			props.component.actions.push({
 				name,
 				type: "none",
-				params: {},
+				changeVisibleParams: {
+					targetComponentsId: [],
+					visible: "toggle",
+				},
+				changePropParams: {
+					targetComponentId: "",
+					key: "",
+					expression: "",
+				},
+				changeStateParams: {
+					targetComponentId: "",
+					key: "",
+					expression: "",
+				},
+				triggerOtherActionParams: {
+					targetComponentId: "",
+					name: "",
+				},
 				beforeHandler: "return true;",
 				afterHandler: "",
 			});
@@ -44,46 +61,7 @@ const editName = (name: string) => {
 const changeType = (e: Event, action: Action) => {
 	const value = (e.target as HTMLSelectElement).value as Action["type"];
 	action.type = value;
-	checkParams(action);
 };
-function checkParams(action: Action) {
-	switch (action.type) {
-		case "none": {
-			action.params = {};
-			break;
-		}
-		case "changeVisible": {
-			action.params = {
-				targetComponentsId: [],
-				visible: "hide",
-			};
-			break;
-		}
-		case "changeProp": {
-			action.params = {
-				targetComponentId: "",
-				key: "",
-				expression: "",
-			};
-			break;
-		}
-		case "changeState": {
-			action.params = {
-				targetComponentId: "",
-				key: "",
-				expression: "",
-			};
-			break;
-		}
-		case "triggerOtherAction": {
-			action.params = {
-				targetComponentId: "",
-				name: "",
-			};
-			break;
-		}
-	}
-}
 </script>
 
 <template>
@@ -113,14 +91,18 @@ function checkParams(action: Action) {
 				</FormItem>
 				<template v-if="v.type === 'changeVisible'">
 					<FormItem label="选择组件" for="change-visible-target-components-id">
-						<select id="change-visible-target-components-id" multiple v-model="v.params.targetComponentsId">
+						<select
+							id="change-visible-target-components-id"
+							multiple
+							v-model="v.changeVisibleParams.targetComponentsId"
+						>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
 							</option>
 						</select>
 					</FormItem>
 					<FormItem label="选择可见性" for="change-visible-visible">
-						<select id="change-visible-visible" v-model="v.params.visible">
+						<select id="change-visible-visible" v-model="v.changeVisibleParams.visible">
 							<option value="show">显示</option>
 							<option value="hide">隐藏</option>
 							<option value="toggle">切换</option>
@@ -129,7 +111,7 @@ function checkParams(action: Action) {
 				</template>
 				<template v-if="v.type === 'changeProp'">
 					<FormItem label="选择组件" for="change-prop-target-components-id">
-						<select id="change-prop-target-components-id" v-model="v.params.targetComponentId">
+						<select id="change-prop-target-components-id" v-model="v.changePropParams.targetComponentId">
 							<option :value="schemaStore.currentComponent?.id">
 								{{ schemaStore.currentComponent?.title }}
 							</option>
@@ -139,17 +121,18 @@ function checkParams(action: Action) {
 						</select>
 					</FormItem>
 					<FormItem label="选择属性" for="change-prop-key">
-						<select id="change-prop-key" v-model="v.params.key">
+						<select id="change-prop-key" v-model="v.changePropParams.key">
 							<option
 								v-for="k in Object.keys(
-									schemaStore.findComponent(v.params.targetComponentId)?.props || {}
+									schemaStore.findComponent(v.changePropParams.targetComponentId)?.props || {}
 								)"
 								:key="k"
 								:value="k"
 							>
 								{{
-									prop_dict[schemaStore.findComponent(v.params.targetComponentId)?.key || ""]?.[k] ||
-									k
+									prop_dict[
+										schemaStore.findComponent(v.changePropParams.targetComponentId)?.key || ""
+									]?.[k] || k
 								}}
 							</option>
 						</select>
@@ -157,14 +140,19 @@ function checkParams(action: Action) {
 					<FormItem
 						label="新属性值"
 						for="change-prop-expression"
-						:icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]"
+						:icons="[{ href: '#code', onClick: () => editObjectValue(v.changePropParams, 'expression') }]"
 					>
-						<input id="change-prop-expression" type="text" readonly :value="v.params.expression" />
+						<input
+							id="change-prop-expression"
+							type="text"
+							readonly
+							:value="v.changePropParams.expression"
+						/>
 					</FormItem>
 				</template>
 				<template v-if="v.type === 'changeState'">
 					<FormItem label="选择组件" for="change-state-target-component-id">
-						<select id="change-state-target-component-id" v-model="v.params.targetComponentId">
+						<select id="change-state-target-component-id" v-model="v.changeStateParams.targetComponentId">
 							<option :value="schemaStore.currentComponent?.id">
 								{{ schemaStore.currentComponent?.title }}
 							</option>
@@ -174,10 +162,11 @@ function checkParams(action: Action) {
 						</select>
 					</FormItem>
 					<FormItem label="选择键" for="change-state-key">
-						<select id="change-state-key" v-model="v.params.key">
+						<select id="change-state-key" v-model="v.changeStateParams.key">
 							<option
 								v-for="k in Object.keys(
-									schemaStore.findComponent(v.params.targetComponentId)?.stateExpression || {}
+									schemaStore.findComponent(v.changeStateParams.targetComponentId)?.stateExpression ||
+										{}
 								)"
 								:key="k"
 								:value="k"
@@ -189,14 +178,22 @@ function checkParams(action: Action) {
 					<FormItem
 						label="新值"
 						for="change-state-expression"
-						:icons="[{ href: '#code', onClick: () => editObjectValue(v.params, 'expression') }]"
+						:icons="[{ href: '#code', onClick: () => editObjectValue(v.changeStateParams, 'expression') }]"
 					>
-						<input id="change-state-expression" type="text" readonly :value="v.params.expression" />
+						<input
+							id="change-state-expression"
+							type="text"
+							readonly
+							:value="v.changeStateParams.expression"
+						/>
 					</FormItem>
 				</template>
 				<template v-if="v.type === 'triggerOtherAction'">
 					<FormItem label="选择组件" for="trigger-other-target-component-id">
-						<select id="trigger-other-target-component-id" v-model="v.params.targetComponentId">
+						<select
+							id="trigger-other-target-component-id"
+							v-model="v.triggerOtherActionParams.targetComponentId"
+						>
 							<option :value="schemaStore.currentComponent?.id">
 								{{ schemaStore.currentComponent?.title }}
 							</option>
@@ -206,9 +203,10 @@ function checkParams(action: Action) {
 						</select>
 					</FormItem>
 					<FormItem label="选择事件" for="trigger-other-name">
-						<select id="trigger-other-name" v-model="v.params.name">
+						<select id="trigger-other-name" v-model="v.triggerOtherActionParams.name">
 							<option
-								v-for="v2 in schemaStore.findComponent(v.params.targetComponentId)?.actions || []"
+								v-for="v2 in schemaStore.findComponent(v.triggerOtherActionParams.targetComponentId)
+									?.actions || []"
 								:key="v2.name"
 								:value="v2.name"
 							>

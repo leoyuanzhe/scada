@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
 	<article class="form-item">
-		<label :for="props.for">{{ props.label }}</label>
+		<label v-show="props.label" :for="props.for">{{ props.label }}</label>
 		<div class="control">
 			<slot></slot>
 		</div>
