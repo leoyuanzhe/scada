@@ -66,7 +66,7 @@ export const useSchema = defineStore("schema", {
 			if (route.query.id) {
 				this.current = route.query.id as string;
 			}
-			initState.call(this.$state);
+			initState(this.$state);
 		},
 		isRoot(componentId: string) {
 			return this.currentComponent?.id === componentId;

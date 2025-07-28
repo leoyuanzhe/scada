@@ -9,8 +9,8 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {});
 const payload = { text: "" };
-initState.call(props.component);
-initProps.call(props.component);
+initState(props.component);
+initProps(props.component);
 onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
 onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));
 </script>

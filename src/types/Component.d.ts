@@ -4,6 +4,7 @@ export type DataSourceBodyRowType = "Text" | "JavaScript" | "JSON" | "HTML" | "X
 export type DataSourceParam = { key: string; value: string };
 export type DataSource = {
 	name: string;
+	autoRequest: boolean;
 	url: RequestInfo | URL;
 	method: DataSourceMethod;
 	headers: DataSourceParam[];
@@ -12,57 +13,50 @@ export type DataSource = {
 		type: DataSourceBodyType;
 		formDataParams: DataSourceParam[];
 		xWwwFormUrlencodedParams: DataSourceParam[];
-		rowType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
+		rawType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
 		rawContent: string;
 	};
-};
-type BasicAction = {
-	name: string;
+	response: {
+		type: "none" | "Text" | "JSON" | "Blob" | "ArrayBuffer" | "FormData";
+		status: number | null;
+		statusText: string | null;
+		headers: Headers | null;
+		data: any;
+	};
 	beforeHandler: string;
 	afterHandler: string;
 };
-// 无动作
-export type NoneAction = BasicAction & {
-	type: "none";
-	params: {};
-};
-// 改变组件显示状态动作
-export type ChangeVisibleAction = BasicAction & {
-	type: "changeVisible";
-	params: {
+export type Action = {
+	name: string;
+	type: "none" | "changeVisible" | "changeProp" | "changeState" | "triggerOtherAction";
+	// 改变组件显示状态动作
+	changeVisibleParams: {
 		targetComponentsId: string[];
 		visible: "show" | "hide" | "toggle";
 	};
-};
-// 改变组件属性动作
-export type ChangePropAction = BasicAction & {
-	type: "changeProp";
-	params: {
+	// 改变组件属性动作
+	changePropParams: {
 		targetComponentId: string;
 		key: string;
 		expression: string;
 	};
-};
-// 改变组件状态动作
-export type ChangeStateAction = BasicAction & {
-	type: "changeState";
-	params: {
+	// 改变组件状态动作
+	changeStateParams: {
 		targetComponentId: string;
 		key: string;
 		expression: any;
 	};
-};
-// 触发其它动作
-export type TriggerOtherAction = BasicAction & {
-	type: "triggerOtherAction";
-	params: {
+	// 触发其它动作
+	triggerOtherActionParams: {
 		targetComponentId: string;
 		name: string;
 	};
+	beforeHandler: string;
+	afterHandler: string;
 };
-export type Action = NoneAction | ChangeVisibleAction | ChangePropAction | ChangeStateAction | TriggerOtherAction;
 export type EmitEvent = {
 	executeType: "sequential" | "concurrent";
+	timeout: number;
 	actionsName: string[];
 };
 export interface Component<Props = Record<string, any>, EmitKey = string> {

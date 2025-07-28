@@ -11,6 +11,7 @@ const addDataSource = () => {
 		if (!props.component.dataSources.some((v) => v.name == name))
 			props.component.dataSources.push({
 				name,
+				autoRequest: true,
 				url: "",
 				method: "GET",
 				headers: [],
@@ -19,9 +20,18 @@ const addDataSource = () => {
 					type: "none",
 					formDataParams: [],
 					xWwwFormUrlencodedParams: [],
-					rowType: "Text",
+					rawType: "Text",
 					rawContent: "",
 				},
+				response: {
+					type: "JSON",
+					status: null,
+					statusText: null,
+					headers: null,
+					data: null,
+				},
+				beforeHandler: "return true",
+				afterHandler: "",
 			});
 		else fn(depth + 1);
 	}
@@ -186,11 +196,7 @@ const editName = (name: string) => {
 									<option value="raw">raw</option>
 								</select>
 							</FormItem>
-							<FormItem
-								v-if="v.body.type === 'form-data'"
-								label="form-data"
-								for="setter-data-source-form-data-params"
-							>
+							<FormItem v-if="v.body.type === 'form-data'" for="setter-data-source-form-data-params">
 								<table id="setter-data-source-form-data-params">
 									<thead>
 										<tr>
@@ -241,7 +247,6 @@ const editName = (name: string) => {
 							</FormItem>
 							<FormItem
 								v-if="v.body.type === 'x-www-form-urlencoded'"
-								label="form-data"
 								for="setter-data-source-x-www-form-urlencoded-params"
 							>
 								<table id="setter-data-source-x-www-form-urlencoded-params">
@@ -295,6 +300,30 @@ const editName = (name: string) => {
 									</tbody>
 								</table>
 							</FormItem>
+							<template v-if="v.body.type === 'raw'">
+								<FormItem for="setter-data-source-raw-type">
+									<select
+										id="setter-data-source-raw-type"
+										:value="v.body.rawType"
+										@input="
+											v.method = ($event.target as HTMLSelectElement).value as DataSourceMethod
+										"
+									>
+										<option value="Text">Text</option>
+										<option value="JavaScript">JavaScript</option>
+										<option value="JSON">JSON</option>
+										<option value="HTML">HTML</option>
+										<option value="XML">XML</option>
+									</select>
+								</FormItem>
+								<FormItem for="setter-data-source-raw-content">
+									<textarea
+										id="setter-data-source-raw-content"
+										:value="v.body.rawContent"
+										@input="v.body.rawContent = ($event.target as HTMLTextAreaElement).value"
+									></textarea>
+								</FormItem>
+							</template>
 						</fieldset>
 					</details>
 					<MyButton variant="danger" @click="props.component.dataSources.splice(i, 1)">删除</MyButton>
