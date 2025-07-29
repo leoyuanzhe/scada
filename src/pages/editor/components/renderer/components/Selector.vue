@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { computed } from "vue";
+import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 
+const clientStore = useClient();
 const schemaStore = useSchema();
 const dragger = useDragger();
 const showDirection = computed(
@@ -15,6 +17,7 @@ const showDirection = computed(
 
 <template>
 	<div
+		v-if="!clientStore.previewing"
 		v-show="dragger.selector.left || dragger.selector.top || dragger.selector.width || dragger.selector.height"
 		class="selector"
 		:style="{

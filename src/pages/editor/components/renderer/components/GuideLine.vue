@@ -35,7 +35,7 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 </script>
 
 <template>
-	<template v-if="clientStore.guide.enable">
+	<template v-if="clientStore.guide.enable && !clientStore.previewing">
 		<div
 			v-for="(v, i) in clientStore.guide.line.v"
 			:key="i"

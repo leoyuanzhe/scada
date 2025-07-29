@@ -15,6 +15,8 @@ export const useClient = defineStore("client", {
 			typing: false,
 			enabledOperate: false,
 			copiedComponents: null as Component[] | null,
+			innerWidth: 0,
+			innerHeight: 0,
 			canvas: {
 				left: 30,
 				top: 30,
@@ -52,6 +54,12 @@ export const useClient = defineStore("client", {
 	},
 	actions: {
 		init() {
+			this.innerWidth = window.innerWidth;
+			this.innerHeight = window.innerHeight;
+			window.addEventListener("resize", () => {
+				this.innerWidth = window.innerWidth;
+				this.innerHeight = window.innerHeight;
+			});
 			let oldSchema = null as Schema | null;
 			document.addEventListener("focusin", () => {
 				this.typing = true;
@@ -60,7 +68,7 @@ export const useClient = defineStore("client", {
 				this.typing = false;
 			});
 			document.addEventListener("keydown", (e) => {
-				if (!this.typing && !getSelection()?.toString()) {
+				if (!this.typing && !this.enabledOperate && !this.previewing && !getSelection()?.toString()) {
 					const commandStore = useCommand();
 					this.keyboard.pressingKey = "";
 					const key = e.key.toLowerCase();
@@ -142,6 +150,10 @@ export const useClient = defineStore("client", {
 						case "ctrl+i":
 							e.preventDefault();
 							commandStore.import();
+							break;
+						case "ctrl+p":
+							e.preventDefault();
+							commandStore.preview();
 							break;
 						case "ctrl+z":
 							e.preventDefault();

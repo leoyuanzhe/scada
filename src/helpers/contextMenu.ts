@@ -25,6 +25,15 @@ export const openFileMenu = (position: MenuPosition) => {
 				commandStore.import();
 			},
 		},
+		{ type: "divider" },
+		{
+			label: "预览",
+			remark: "Ctrl + P",
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.preview();
+			},
+		},
 	]);
 };
 // 打开设置菜单

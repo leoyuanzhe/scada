@@ -18,6 +18,8 @@ onMounted(() => {
 			() => clientStore.canvas.scale,
 			() => clientStore.canvas.left,
 			() => clientStore.canvas.top,
+			() => clientStore.innerWidth,
+			() => clientStore.innerHeight,
 		],
 		() => {
 			nextTick(() => {
@@ -27,10 +29,6 @@ onMounted(() => {
 		},
 		{ immediate: true }
 	);
-	window.addEventListener("resize", () => {
-		ruler.drawRulerV();
-		ruler.drawRulerH();
-	});
 });
 const hMouseDown = (e: MouseEvent) => {
 	const startTop = e.offsetY;
@@ -69,8 +67,18 @@ const vMouseDown = (e: MouseEvent) => {
 </script>
 
 <template>
-	<canvas ref="oRulerH" v-if="clientStore.ruler.show" class="ruler-h" @mousedown.stop="hMouseDown($event)"></canvas>
-	<canvas ref="oRulerV" v-if="clientStore.ruler.show" class="ruler-v" @mousedown.stop="vMouseDown($event)"></canvas>
+	<canvas
+		ref="oRulerH"
+		v-if="clientStore.ruler.show && !clientStore.previewing"
+		class="ruler-h"
+		@mousedown.stop="hMouseDown($event)"
+	></canvas>
+	<canvas
+		ref="oRulerV"
+		v-if="clientStore.ruler.show && !clientStore.previewing"
+		class="ruler-v"
+		@mousedown.stop="vMouseDown($event)"
+	></canvas>
 </template>
 
 <style lang="scss" scoped>
