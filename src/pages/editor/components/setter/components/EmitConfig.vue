@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Schema } from "@/types/Schema";
 import type { Component, Action } from "@/types/Component";
 import { useSchema } from "@/stores/useSchema";
 import FormItem from "@/components/form-item/FormItem.vue";
@@ -8,7 +9,7 @@ import emit_dict from "@/assets/data/emit_dict.json";
 import prop_dict from "@/assets/data/prop_dict.json";
 
 interface Props {
-	component: Component;
+	component: Schema | Component;
 }
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
@@ -265,7 +266,7 @@ const changeType = (e: Event, action: Action) => {
 			</fieldset>
 		</details>
 	</form>
-	<form class="form" @submit.prevent>
+	<form v-if="!schemaStore.isSchema(props.component)" class="form" @submit.prevent>
 		<h1>事件</h1>
 		<details v-for="k in Object.keys(props.component.emits)" :key="k" open class="details">
 			<summary>{{ emit_dict[k] ?? k }}</summary>

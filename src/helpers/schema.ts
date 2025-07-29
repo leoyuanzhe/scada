@@ -103,8 +103,8 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 				this,
 				this.state,
 				schemaStore.state,
-				"id" in this ? schemaStore.findParent(this.id).parent : null,
-				"id" in this ? schemaStore.findRoot(this) : null,
+				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
 				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
@@ -171,8 +171,8 @@ async function getDataSourceHandlerResult(
 				response.data,
 				this.state,
 				schemaStore.state,
-				"id" in this ? schemaStore.findParent(this.id).parent : null,
-				"id" in this ? schemaStore.findRoot(this) : null,
+				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
 				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
@@ -190,7 +190,7 @@ export async function initDataSources(component: Component) {
 	}
 }
 // 请求数据源
-export async function requestDataSource(dataSource: DataSource, component: Component, payload: any) {
+export async function requestDataSource(dataSource: DataSource, component: Schema | Component, payload: any) {
 	try {
 		const { error: beforeError, result: beforeResult } = await getDataSourceHandlerResult.call(
 			component,
@@ -317,8 +317,8 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				this,
 				this.state,
 				schemaStore.state,
-				"id" in this ? schemaStore.findParent(this.id).parent : null,
-				"id" in this ? schemaStore.findRoot(this) : null,
+				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
 				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload,

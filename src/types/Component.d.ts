@@ -1,3 +1,5 @@
+import type { ComponentKey } from "./ComponentKey";
+
 export type DataSourceRequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
 export type DataSourceRequestBodyType = "none" | "form-data" | "x-www-form-urlencoded" | "raw";
 export type DataSourceRequestBodyRawType = "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
@@ -70,7 +72,7 @@ export type EmitEvent = {
 export interface Component<Props = Record<string, any>, EmitKey = string> {
 	version: string;
 	id: string;
-	key: string;
+	key: ComponentKey;
 	title: string;
 	actived: boolean;
 	nestable: boolean;
