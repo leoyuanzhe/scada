@@ -1,5 +1,5 @@
 import type { SchemaKey } from "./ComponentKey";
-import type { Action, Component, DataSource } from "./Component";
+import type { Action, Component, DataSource, Watcher } from "./Component";
 
 export interface Schema {
 	id: "schema";
@@ -8,6 +8,7 @@ export interface Schema {
 	currentRootId: string;
 	targetComponentId: string;
 	state: Record<keyof Schema["stateExpression"], any>;
+	watchers: Watcher[];
 	dataSources: DataSource[];
 	actions: Action[];
 	components: Component[];

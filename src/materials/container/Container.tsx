@@ -26,6 +26,7 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	},
 	props,
 	state: {},
+	watchers: [],
 	dataSources: [],
 	actions: [],
 	emits: {

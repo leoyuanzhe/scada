@@ -5,6 +5,7 @@ import GlobalConfig from "./components/GlobalConfig.vue";
 import LayoutConfig from "./components/LayoutConfig.vue";
 import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/StateConfig.vue";
+import WatcherConfig from "./components/WatcherConfig.vue";
 import DataSourceConfig from "./components/DataSourceConfig.vue";
 import EmitConfig from "./components/EmitConfig.vue";
 import type { Schema } from "@/types/Schema";
@@ -19,7 +20,7 @@ interface Emits {
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
-const current = ref<"global" | "layout" | "prop" | "state" | "dataSource" | "emit">("layout");
+const current = ref<"global" | "layout" | "prop" | "state" | "watcher" | "dataSource" | "emit">("layout");
 const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);
@@ -56,6 +57,7 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 				属性
 			</button>
 			<button :class="{ actived: current === 'state' }" @click="current = 'state'">状态</button>
+			<button :class="{ actived: current === 'watcher' }" @click="current = 'watcher'">监听</button>
 			<button :class="{ actived: current === 'dataSource' }" @click="current = 'dataSource'">数据</button>
 			<button :class="{ actived: current === 'emit' }" @click="current = 'emit'">事件</button>
 		</menu>
@@ -70,6 +72,7 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 				:component="targetComponentV2"
 			/>
 			<StateConfig v-if="current === 'state'" :component="targetComponentV2" />
+			<WatcherConfig v-if="current === 'watcher'" :component="targetComponentV2" />
 			<DataSourceConfig v-if="current === 'dataSource'" :component="targetComponentV2" />
 			<EmitConfig v-if="current === 'emit'" :component="targetComponentV2" />
 		</div>

@@ -1,7 +1,7 @@
-import { watchEffect } from "vue";
+import { watch, watchEffect } from "vue";
 import type { Asset } from "@/types/Asset";
 import type { Schema } from "@/types/Schema";
-import type { Action, Component, DataSource, EmitEvent } from "@/types/Component";
+import type { Action, Component, DataSource, EmitEvent, Watcher } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { deepClone } from "@/utils/conversion";
@@ -24,6 +24,7 @@ export const assetTransferComponent = (asset: Asset): Component => {
 		layout: cloneAsset.material.layout,
 		props: cloneAsset.material.props,
 		state: cloneAsset.material.state,
+		watchers: cloneAsset.material.watchers,
 		dataSources: cloneAsset.material.dataSources,
 		actions: cloneAsset.material.actions,
 		emits: cloneAsset.material.emits,
@@ -141,6 +142,38 @@ export function initProps(component: Component) {
 				continue;
 			}
 			component.props[key] = result;
+		}
+	});
+}
+// 获取监听处理器结果
+function getWatcherTargetHandlerResult(this: Component | Schema, handler: string) {
+	const schemaStore = useSchema();
+	try {
+		return {
+			result: new Function("state", "$state", "parent", "root", "currentRoot", "schema", handler).call(
+				this,
+				this.state,
+				schemaStore.state,
+				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
+				schemaStore.currentRootComponent,
+				schemaStore.$state
+			),
+		};
+	} catch (error: any) {
+		return { error };
+	}
+}
+// 初始化监听器
+export function initWatchers(component: Component) {
+	const payload = {};
+	component.watchers.forEach((watcher) => {
+		try {
+			const { error, result } = getWatcherTargetHandlerResult.call(component, watcher.sourceHandler);
+			if (error) throw new Error(error);
+			watch(result, () => triggerEmit(watcher, component, payload));
+		} catch (error) {
+			console.error(error);
 		}
 	});
 }
@@ -330,7 +363,7 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 	}
 }
 // 触发事件
-export const triggerEmit = async (emit: EmitEvent, component: Component, payload: any, event?: any) => {
+export const triggerEmit = async (emit: Watcher | EmitEvent, component: Component, payload: any, event?: any) => {
 	await delay(emit.timeout);
 	switch (emit.executeType) {
 		case "concurrent": {

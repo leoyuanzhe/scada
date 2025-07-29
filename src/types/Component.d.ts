@@ -1,5 +1,14 @@
 import type { ComponentKey } from "./ComponentKey";
 
+export type Watcher = {
+	name: string;
+	sourceHandler: string;
+	executeType: "sequential" | "concurrent";
+	timeout: number;
+	deep: boolean;
+	immediate: boolean;
+	actionsName: string[];
+};
 export type DataSourceRequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
 export type DataSourceRequestBodyType = "none" | "form-data" | "x-www-form-urlencoded" | "raw";
 export type DataSourceRequestBodyRawType = "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
@@ -88,6 +97,7 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	};
 	props: Props;
 	state: Record<keyof Component["stateExpression"], any>;
+	watchers: Watcher[];
 	dataSources: DataSource[];
 	actions: Action[];
 	emits: Record<EmitKey | "mounted" | "beforeUnmount", EmitEvent>;

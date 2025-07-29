@@ -43,6 +43,8 @@ const props = withDefaults(defineProps<Props>(), {
 	}
 	.control {
 		flex: 1;
+		min-height: 30px;
+		display: flex;
 	}
 	> button {
 		flex-shrink: 0;

@@ -18,6 +18,7 @@ export const useSchema = defineStore("schema", {
 			currentRootId: "",
 			targetComponentId: "",
 			state: {},
+			watchers: [],
 			dataSources: [],
 			actions: [],
 			components: [],
