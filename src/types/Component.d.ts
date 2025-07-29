@@ -1,23 +1,26 @@
-export type DataSourceMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
-export type DataSourceBodyType = "none" | "form-data" | "x-www-form-urlencoded" | "raw";
-export type DataSourceBodyRowType = "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
-export type DataSourceParam = { key: string; value: string };
+export type DataSourceRequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
+export type DataSourceRequestBodyType = "none" | "form-data" | "x-www-form-urlencoded" | "raw";
+export type DataSourceRequestBodyRawType = "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
+export type DataSourceRequestParam = { key: string; value: string };
+export type DataSourceResponseType = "none" | "Text" | "JSON" | "Blob" | "ArrayBuffer" | "FormData";
 export type DataSource = {
 	name: string;
 	autoRequest: boolean;
-	url: RequestInfo | URL;
-	method: DataSourceMethod;
-	headers: DataSourceParam[];
-	params: DataSourceParam[];
-	body: {
-		type: DataSourceBodyType;
-		formDataParams: DataSourceParam[];
-		xWwwFormUrlencodedParams: DataSourceParam[];
-		rawType: "Text" | "JavaScript" | "JSON" | "HTML" | "XML";
-		rawContent: string;
+	responseType: DataSourceResponseType;
+	request: {
+		url: RequestInfo | URL;
+		method: DataSourceMethod;
+		headers: DataSourceParam[];
+		params: DataSourceParam[];
+		body: {
+			type: DataSourceBodyType;
+			formDataParams: DataSourceParam[];
+			xWwwFormUrlencodedParams: DataSourceParam[];
+			rawType: DataSourceRequestBodyRawType;
+			rawContent: string;
+		};
 	};
 	response: {
-		type: "none" | "Text" | "JSON" | "Blob" | "ArrayBuffer" | "FormData";
 		status: number | null;
 		statusText: string | null;
 		headers: Headers | null;
@@ -28,25 +31,30 @@ export type DataSource = {
 };
 export type Action = {
 	name: string;
-	type: "none" | "changeVisible" | "changeProp" | "changeState" | "triggerOtherAction";
-	// 改变组件显示状态动作
+	type: "none" | "changeVisible" | "changeProp" | "changeState" | "request" | "triggerOtherAction";
+	// 改变组件显示状态
 	changeVisibleParams: {
 		targetComponentsId: string[];
 		visible: "show" | "hide" | "toggle";
 	};
-	// 改变组件属性动作
+	// 改变组件属性
 	changePropParams: {
 		targetComponentId: string;
 		key: string;
 		expression: string;
 	};
-	// 改变组件状态动作
+	// 改变组件状态
 	changeStateParams: {
 		targetComponentId: string;
 		key: string;
 		expression: any;
 	};
-	// 触发其它动作
+	// 发起请求
+	requestParams: {
+		targetComponentId: string;
+		name: string;
+	};
+	// 触发其它
 	triggerOtherActionParams: {
 		targetComponentId: string;
 		name: string;

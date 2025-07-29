@@ -93,7 +93,7 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 			"$state",
 			"parent",
 			"root",
-			"current",
+			"currentRoot",
 			"schema",
 			"payload",
 			"return " + expression
@@ -105,7 +105,7 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 				schemaStore.state,
 				"id" in this ? schemaStore.findParent(this.id).parent : null,
 				"id" in this ? schemaStore.findRoot(this) : null,
-				schemaStore.currentComponent,
+				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
 			),
@@ -156,22 +156,24 @@ async function getDataSourceHandlerResult(
 		return {
 			result: await new Function(
 				"response",
+				"data",
 				"state",
 				"$state",
 				"parent",
 				"root",
-				"current",
+				"currentRoot",
 				"schema",
 				"payload",
 				handler
 			).call(
 				this,
 				response,
+				response.data,
 				this.state,
 				schemaStore.state,
 				"id" in this ? schemaStore.findParent(this.id).parent : null,
 				"id" in this ? schemaStore.findRoot(this) : null,
-				schemaStore.currentComponent,
+				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
 			),
@@ -200,7 +202,7 @@ export async function requestDataSource(component: Component, dataSource: DataSo
 		if (!beforeResult)
 			throw new Error(`"${component.title}" "${dataSource.name}" before handler trigger disrupted.`);
 		await fetch(getUrl(), {
-			method: dataSource.method,
+			method: dataSource.request.method,
 			headers: getHeaders(),
 			body: getBody(),
 		})
@@ -209,15 +211,15 @@ export async function requestDataSource(component: Component, dataSource: DataSo
 				dataSource.response.statusText = res.statusText;
 				dataSource.response.headers = res.headers;
 				dataSource.response.data =
-					dataSource.response.type === "Text"
+					dataSource.responseType === "Text"
 						? await res.text()
-						: dataSource.response.type === "JSON"
+						: dataSource.responseType === "JSON"
 						? await res.json()
-						: dataSource.response.type === "Blob"
+						: dataSource.responseType === "Blob"
 						? await res.blob()
-						: dataSource.response.type === "ArrayBuffer"
+						: dataSource.responseType === "ArrayBuffer"
 						? await res.arrayBuffer()
-						: dataSource.response.type === "FormData"
+						: dataSource.responseType === "FormData"
 						? await res.formData()
 						: res;
 				if (!res.ok) {
@@ -236,57 +238,57 @@ export async function requestDataSource(component: Component, dataSource: DataSo
 		if (afterError) throw new Error(afterError);
 		function getUrl() {
 			const urlSP = new URLSearchParams(
-				dataSource.params.reduce((pre, cur) => {
+				dataSource.request.params.reduce((pre, cur) => {
 					pre[cur.key] = cur.value;
 					return pre;
 				}, {} as Record<string, string>)
 			);
-			return dataSource.url + urlSP.toString();
+			return dataSource.request.url + urlSP.toString();
 		}
 		function getHeaders() {
 			const headers = new Headers();
-			if (dataSource.body.type === "form-data") {
+			if (dataSource.request.body.type === "form-data") {
 				headers.append("Content-Type", "multipart/form-data");
-			} else if (dataSource.body.type === "x-www-form-urlencoded") {
+			} else if (dataSource.request.body.type === "x-www-form-urlencoded") {
 				headers.append("Content-Type", "application/x-www-form-urlencoded");
-			} else if (dataSource.body.type === "raw") {
+			} else if (dataSource.request.body.type === "raw") {
 				headers.append(
 					"Content-Type",
-					dataSource.body.rawType === "JavaScript"
+					dataSource.request.body.rawType === "JavaScript"
 						? "application/javascript"
-						: dataSource.body.rawType === "JSON"
+						: dataSource.request.body.rawType === "JSON"
 						? "application/json"
-						: dataSource.body.rawType === "HTML"
+						: dataSource.request.body.rawType === "HTML"
 						? "text/html"
-						: dataSource.body.rawType === "XML"
+						: dataSource.request.body.rawType === "XML"
 						? "application/xml"
 						: "text/plain"
 				);
 			}
-			dataSource.headers.forEach((v) => {
+			dataSource.request.headers.forEach((v) => {
 				headers.append(v.key, v.value);
 			});
 			return headers;
 		}
 		function getBody() {
-			return dataSource.body.type === "form-data"
+			return dataSource.request.body.type === "form-data"
 				? getFormDataBody()
-				: dataSource.body.type === "x-www-form-urlencoded"
+				: dataSource.request.body.type === "x-www-form-urlencoded"
 				? getXWwwFormUrlencodedBody()
-				: dataSource.body.type === "raw"
-				? dataSource.body.rawContent
+				: dataSource.request.body.type === "raw"
+				? dataSource.request.body.rawContent
 				: null;
 		}
 		function getFormDataBody() {
 			const formData = new FormData();
-			dataSource.body.formDataParams.forEach((v) => {
+			dataSource.request.body.formDataParams.forEach((v) => {
 				formData.append(v.key, v.value);
 			});
 			return formData;
 		}
 		function getXWwwFormUrlencodedBody() {
 			return new URLSearchParams(
-				dataSource.body.xWwwFormUrlencodedParams.reduce((pre, cur) => {
+				dataSource.request.body.xWwwFormUrlencodedParams.reduce((pre, cur) => {
 					pre[cur.key] = cur.value;
 					return pre;
 				}, {} as Record<string, string>)
@@ -306,7 +308,7 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				"$state",
 				"parent",
 				"root",
-				"current",
+				"currentRoot",
 				"schema",
 				"payload",
 				"event",
@@ -317,7 +319,7 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				schemaStore.state,
 				"id" in this ? schemaStore.findParent(this.id).parent : null,
 				"id" in this ? schemaStore.findRoot(this) : null,
-				schemaStore.currentComponent,
+				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload,
 				event

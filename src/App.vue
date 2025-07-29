@@ -33,7 +33,7 @@ function init() {
 		container.components.push(t2);
 		c.components.push(container);
 		schemaStore.createRootComponent(c);
-		schemaStore.current = schemaStore.components[0].id;
+		schemaStore.currentRootId = schemaStore.components[0].id;
 	}
 	const t1 = Text();
 	const t2 = Text();

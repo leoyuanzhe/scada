@@ -221,7 +221,10 @@ export const useClient = defineStore("client", {
 				this.canvas.left = 30;
 				this.canvas.top = 30;
 				this.canvas.scale = Math.max(
-					Math.min((this.oRenderer.offsetWidth - 40) / (schemaStore.currentComponent?.layout?.width ?? 0), 5),
+					Math.min(
+						(this.oRenderer.offsetWidth - 40) / (schemaStore.currentRootComponent?.layout?.width ?? 0),
+						5
+					),
 					0.1
 				);
 			}

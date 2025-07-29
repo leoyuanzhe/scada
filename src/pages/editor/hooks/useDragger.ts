@@ -250,8 +250,8 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 				? {
 						v: [
 							getActualLeft(0),
-							getActualLeft((schemaStore.currentComponent?.layout?.width ?? 0) / 2),
-							getActualLeft(schemaStore.currentComponent?.layout?.width ?? 0),
+							getActualLeft((schemaStore.currentRootComponent?.layout?.width ?? 0) / 2),
+							getActualLeft(schemaStore.currentRootComponent?.layout?.width ?? 0),
 							...schemaStore.unactivedMoveableFlatedComponents
 								.filter((v) => {
 									return schemaStore.activedMoveableFlatedComponents.some(
@@ -267,8 +267,8 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 						],
 						h: [
 							getActualTop(0),
-							getActualTop((schemaStore.currentComponent?.layout?.height ?? 0) / 2),
-							getActualTop(schemaStore.currentComponent?.layout?.height ?? 0),
+							getActualTop((schemaStore.currentRootComponent?.layout?.height ?? 0) / 2),
+							getActualTop(schemaStore.currentRootComponent?.layout?.height ?? 0),
 							...schemaStore.unactivedMoveableFlatedComponents
 								.filter((v) => {
 									return schemaStore.activedMoveableFlatedComponents.some(

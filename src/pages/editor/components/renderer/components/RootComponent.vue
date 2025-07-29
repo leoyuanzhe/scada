@@ -13,13 +13,17 @@ const schemaStore = useSchema();
 		:style="{
 			left: clientStore.canvas.left + 'px',
 			top: clientStore.canvas.top + 'px',
-			width: schemaStore.currentComponent?.layout?.width + 'px',
-			height: schemaStore.currentComponent?.layout?.height + 'px',
+			width: schemaStore.currentRootComponent?.layout?.width + 'px',
+			height: schemaStore.currentRootComponent?.layout?.height + 'px',
 			transform: 'scale(' + clientStore.canvas.scale + ')',
 		}"
 	>
-		<ComponentCreator v-if="schemaStore.currentComponent" :component="schemaStore.currentComponent">
-			<ComponentCreator v-for="v in schemaStore.currentComponent?.components ?? []" :key="v.id" :component="v" />
+		<ComponentCreator v-if="schemaStore.currentRootComponent" :component="schemaStore.currentRootComponent">
+			<ComponentCreator
+				v-for="v in schemaStore.currentRootComponent?.components ?? []"
+				:key="v.id"
+				:component="v"
+			/>
 		</ComponentCreator>
 	</div>
 </template>

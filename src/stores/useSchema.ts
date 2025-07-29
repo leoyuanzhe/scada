@@ -13,7 +13,7 @@ export const useSchema = defineStore("schema", {
 	state() {
 		return {
 			title: "大屏",
-			current: "",
+			currentRootId: "",
 			targetComponentId: "",
 			state: {},
 			dataSources: [],
@@ -27,20 +27,20 @@ export const useSchema = defineStore("schema", {
 		targetComponent(): Component | null {
 			return this.flatedComponents.find((item) => item.id === this.targetComponentId) ?? null;
 		},
-		// 当前组件
-		currentComponent(): Component | null {
-			return this.components.find((v) => v.id === this.current) ?? null;
+		// 当前根组件
+		currentRootComponent(): Component | null {
+			return this.components.find((v) => v.id === this.currentRootId) ?? null;
 		},
 		// 所有组件（不包括根组件）
 		flatedComponents(): Component[] {
-			return this.currentComponent?.components.flatMap(flat) ?? [];
+			return this.currentRootComponent?.components.flatMap(flat) ?? [];
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
 		},
 		// 有布局属性的在根节点下的组件
 		moveableComponents(): ComponentWithLayout[] {
-			return (this.currentComponent?.components.filter((v) => v.layout) as ComponentWithLayout[]) ?? [];
+			return (this.currentRootComponent?.components.filter((v) => v.layout) as ComponentWithLayout[]) ?? [];
 		},
 		// 所有可移动的下的未隐藏的未锁定的根组件下的组件
 		moveableVisibleUnlockedComponents(): ComponentWithLayout[] {
@@ -64,12 +64,12 @@ export const useSchema = defineStore("schema", {
 		init() {
 			const route = useRoute();
 			if (route.query.id) {
-				this.current = route.query.id as string;
+				this.currentRootId = route.query.id as string;
 			}
 			initState(this.$state);
 		},
 		isRoot(componentId: string) {
-			return this.currentComponent?.id === componentId;
+			return this.currentRootComponent?.id === componentId;
 		},
 		isContains(parent: Component, componentId: string) {
 			return parent.components.flatMap(flat).some((v) => v.id === componentId);
@@ -82,7 +82,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 找到组件（包括根组件）
 		findComponent(componentId: string) {
-			return [this.currentComponent, ...this.flatedComponents].find((v) => v?.id === componentId) || null;
+			return [this.currentRootComponent, ...this.flatedComponents].find((v) => v?.id === componentId) || null;
 		},
 		// 找到组件的父元素
 		findParent<T extends { parent: Component | null; index: number; isRoot: boolean }>(componentId: string): T {
@@ -97,8 +97,8 @@ export const useSchema = defineStore("schema", {
 				}
 				return { parent: null, index: -1, isRoot: false } as T;
 			};
-			return this.currentComponent
-				? findInComponents(this.currentComponent, this.currentComponent.components, true)
+			return this.currentRootComponent
+				? findInComponents(this.currentRootComponent, this.currentRootComponent.components, true)
 				: ({ parent: null, index: -1, isRoot: false } as T);
 		},
 		// 找到组件的根组件
@@ -119,7 +119,7 @@ export const useSchema = defineStore("schema", {
 		// 创建组件
 		createComponent<T extends Component>(component: T, parent?: Component | null): T {
 			component.id = generateId();
-			parent ? parent.components.push(component) : this.currentComponent?.components.push(component);
+			parent ? parent.components.push(component) : this.currentRootComponent?.components.push(component);
 			return component;
 		},
 		// 创建分组
@@ -306,7 +306,7 @@ export const useSchema = defineStore("schema", {
 			const component = this.findComponent(componentId);
 			if (component) {
 				const { left, top } = dragger.getOffsetFromRoot(component);
-				this.currentComponent?.components.push(
+				this.currentRootComponent?.components.push(
 					...component.components.splice(0).map((v) => {
 						if (v.layout) {
 							v.layout.left += left;
@@ -320,7 +320,9 @@ export const useSchema = defineStore("schema", {
 		},
 		// 取消激活所有组件
 		deactivateAllComponent() {
-			[this.currentComponent, ...this.activedFlatedComponents].forEach((v) => v?.actived && (v.actived = false));
+			[this.currentRootComponent, ...this.activedFlatedComponents].forEach(
+				(v) => v?.actived && (v.actived = false)
+			);
 			this.targetComponentId = "";
 		},
 		recordStack(oldSchema: Schema) {

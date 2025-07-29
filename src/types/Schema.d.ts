@@ -2,7 +2,7 @@ import type { Action, Component, DataSource } from "./Component";
 
 export interface Schema {
 	title: string;
-	current: string;
+	currentRootId: string;
 	targetComponentId: string;
 	state: Record<keyof Schema["stateExpression"], any>;
 	dataSources: DataSource[];
