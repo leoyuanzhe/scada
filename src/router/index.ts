@@ -22,6 +22,15 @@ const router = createRouter({
 			children: [],
 		},
 		{
+			name: "预览",
+			path: "/preview",
+			component: () => import("@/pages/preview/Preview.vue"),
+			meta: {
+				access: [],
+			},
+			children: [],
+		},
+		{
 			name: "404",
 			path: "/:patchMatch(.*)*",
 			component: () => import("@/pages/not-found/NotFound.vue"),

@@ -98,6 +98,8 @@ export const useCommand = defineStore("command", {
 			};
 			input.click();
 		},
+		// 预览
+		preview() {},
 		// 切换触发操作
 		toggleOperate(enabled?: boolean) {
 			const clientStore = useClient();

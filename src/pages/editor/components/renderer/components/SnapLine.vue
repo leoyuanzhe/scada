@@ -1,17 +1,19 @@
 <script lang="ts" setup>
+import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 
+const clientStore = useClient();
 const dragger = useDragger();
 </script>
 
 <template>
 	<div
-		v-if="dragger.snapLine.h !== null"
+		v-if="dragger.snapLine.h !== null && !clientStore.previewing"
 		class="snap-line-h"
 		:style="{ top: dragger.getActualTop(dragger.snapLine.h) + 'px' }"
 	></div>
 	<div
-		v-if="dragger.snapLine.v !== null"
+		v-if="dragger.snapLine.v !== null && !clientStore.previewing"
 		class="snap-line-v"
 		:style="{ left: dragger.getActualLeft(dragger.snapLine.v) + 'px' }"
 	></div>

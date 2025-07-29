@@ -15,7 +15,7 @@ function scaleSize(size: number): number {
 
 <template>
 	<div
-		v-if="clientStore.grid.enable"
+		v-if="clientStore.grid.enable && !clientStore.previewing"
 		class="grid-line"
 		:style="{
 			backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
