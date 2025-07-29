@@ -10,7 +10,7 @@ import EmitConfig from "./components/EmitConfig.vue";
 
 const schemaStore = useSchema();
 const current = ref<"global" | "layout" | "prop" | "state" | "dataSource" | "emit">("layout");
-const targetComponentV2 = computed(() => schemaStore.targetComponent ?? schemaStore.currentComponent);
+const targetComponentV2 = computed(() => schemaStore.targetComponent ?? schemaStore.currentRootComponent);
 </script>
 
 <template>

@@ -34,6 +34,10 @@ const addAction = () => {
 					key: "",
 					expression: "",
 				},
+				requestParams: {
+					targetComponentId: "",
+					name: "",
+				},
 				triggerOtherActionParams: {
 					targetComponentId: "",
 					name: "",
@@ -112,8 +116,8 @@ const changeType = (e: Event, action: Action) => {
 				<template v-if="v.type === 'changeProp'">
 					<FormItem label="选择组件" for="change-prop-target-components-id">
 						<select id="change-prop-target-components-id" v-model="v.changePropParams.targetComponentId">
-							<option :value="schemaStore.currentComponent?.id">
-								{{ schemaStore.currentComponent?.title }}
+							<option :value="schemaStore.currentRootComponent?.id">
+								{{ schemaStore.currentRootComponent?.title }}
 							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
@@ -153,8 +157,8 @@ const changeType = (e: Event, action: Action) => {
 				<template v-if="v.type === 'changeState'">
 					<FormItem label="选择组件" for="change-state-target-component-id">
 						<select id="change-state-target-component-id" v-model="v.changeStateParams.targetComponentId">
-							<option :value="schemaStore.currentComponent?.id">
-								{{ schemaStore.currentComponent?.title }}
+							<option :value="schemaStore.currentRootComponent?.id">
+								{{ schemaStore.currentRootComponent?.title }}
 							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
@@ -188,22 +192,46 @@ const changeType = (e: Event, action: Action) => {
 						/>
 					</FormItem>
 				</template>
-				<template v-if="v.type === 'triggerOtherAction'">
-					<FormItem label="选择组件" for="trigger-other-target-component-id">
-						<select
-							id="trigger-other-target-component-id"
-							v-model="v.triggerOtherActionParams.targetComponentId"
-						>
-							<option :value="schemaStore.currentComponent?.id">
-								{{ schemaStore.currentComponent?.title }}
+				<template v-if="v.type === 'request'">
+					<FormItem label="选择组件" for="request-target-component-id">
+						<select id="request-target-component-id" v-model="v.requestParams.targetComponentId">
+							<option :value="schemaStore.currentRootComponent?.id">
+								{{ schemaStore.currentRootComponent?.title }}
 							</option>
 							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
 								{{ v2.title }}
 							</option>
 						</select>
 					</FormItem>
-					<FormItem label="选择事件" for="trigger-other-name">
-						<select id="trigger-other-name" v-model="v.triggerOtherActionParams.name">
+					<FormItem label="选择事件" for="request-name">
+						<select id="request-name" v-model="v.requestParams.name">
+							<option
+								v-for="v2 in schemaStore.findComponent(v.requestParams.targetComponentId)?.actions ||
+								[]"
+								:key="v2.name"
+								:value="v2.name"
+							>
+								{{ v2.name }}
+							</option>
+						</select>
+					</FormItem>
+				</template>
+				<template v-if="v.type === 'triggerOtherAction'">
+					<FormItem label="选择组件" for="trigger-other-action-target-component-id">
+						<select
+							id="trigger-other-action-target-component-id"
+							v-model="v.triggerOtherActionParams.targetComponentId"
+						>
+							<option :value="schemaStore.currentRootComponent?.id">
+								{{ schemaStore.currentRootComponent?.title }}
+							</option>
+							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
+								{{ v2.title }}
+							</option>
+						</select>
+					</FormItem>
+					<FormItem label="选择事件" for="trigger-other-action-name">
+						<select id="trigger-other-action-name" v-model="v.triggerOtherActionParams.name">
 							<option
 								v-for="v2 in schemaStore.findComponent(v.triggerOtherActionParams.targetComponentId)
 									?.actions || []"
