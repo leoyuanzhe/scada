@@ -12,6 +12,7 @@ import { Container } from "@/materials/container/Container";
 export const useSchema = defineStore("schema", {
 	state() {
 		return {
+			id: "schema",
 			key: "schema",
 			title: "大屏",
 			currentRootId: "",
@@ -87,6 +88,13 @@ export const useSchema = defineStore("schema", {
 		// 找到组件（包括根组件）
 		findComponent(componentId: string) {
 			return [this.currentRootComponent, ...this.flatedComponents].find((v) => v?.id === componentId) || null;
+		},
+		// 找到组件（包括全局组件）
+		findComponentWithSchema(componentId: string) {
+			return (
+				[this.$state, this.currentRootComponent, ...this.flatedComponents].find((v) => v?.id === componentId) ||
+				null
+			);
 		},
 		// 找到组件的父元素
 		findParent<T extends { parent: Component | null; index: number; isRoot: boolean }>(componentId: string): T {
@@ -343,6 +351,21 @@ export const useSchema = defineStore("schema", {
 					dragger.computedSelector();
 				},
 			});
+		},
+		// 清除组件的加载数据
+		clearComponent(component: Schema | Component) {
+			[component, ...component.components.flatMap(flat)].forEach((component) => {
+				for (let k in component.state) delete component.state[k];
+				component.dataSources.forEach((v) => {
+					v.response.status = null;
+					v.response.statusText = null;
+					v.response.headers = null;
+					v.response.data = null;
+				});
+			});
+			function flat(component: Schema | Component): (Schema | Component)[] {
+				return [component, ...component.components.flatMap(flat)];
+			}
 		},
 	},
 });

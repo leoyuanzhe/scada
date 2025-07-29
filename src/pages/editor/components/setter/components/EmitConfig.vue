@@ -159,6 +159,9 @@ const changeType = (e: Event, action: Action) => {
 				<template v-if="v.type === 'changeState'">
 					<FormItem label="选择组件" for="change-state-target-component-id">
 						<select id="change-state-target-component-id" v-model="v.changeStateParams.targetComponentId">
+							<option :value="schemaStore.id">
+								{{ schemaStore.title }}
+							</option>
 							<option :value="schemaStore.currentRootComponent?.id">
 								{{ schemaStore.currentRootComponent?.title }}
 							</option>
@@ -171,8 +174,8 @@ const changeType = (e: Event, action: Action) => {
 						<select id="change-state-key" v-model="v.changeStateParams.key">
 							<option
 								v-for="k in Object.keys(
-									schemaStore.findComponent(v.changeStateParams.targetComponentId)?.stateExpression ||
-										{}
+									schemaStore.findComponentWithSchema(v.changeStateParams.targetComponentId)
+										?.stateExpression || {}
 								)"
 								:key="k"
 								:value="k"
@@ -200,6 +203,9 @@ const changeType = (e: Event, action: Action) => {
 							id="request-data-source-target-component-id"
 							v-model="v.requestDataSourceParams.targetComponentId"
 						>
+							<option :value="schemaStore.id">
+								{{ schemaStore.title }}
+							</option>
 							<option :value="schemaStore.currentRootComponent?.id">
 								{{ schemaStore.currentRootComponent?.title }}
 							</option>
@@ -208,11 +214,12 @@ const changeType = (e: Event, action: Action) => {
 							</option>
 						</select>
 					</FormItem>
-					<FormItem label="选择事件" for="request-data-source-name">
+					<FormItem label="选择数据源" for="request-data-source-name">
 						<select id="request-data-source-name" v-model="v.requestDataSourceParams.name">
 							<option
-								v-for="v2 in schemaStore.findComponent(v.requestDataSourceParams.targetComponentId)
-									?.actions || []"
+								v-for="v2 in schemaStore.findComponentWithSchema(
+									v.requestDataSourceParams.targetComponentId
+								)?.actions || []"
 								:key="v2.name"
 								:value="v2.name"
 							>
@@ -227,6 +234,9 @@ const changeType = (e: Event, action: Action) => {
 							id="trigger-other-action-target-component-id"
 							v-model="v.triggerOtherActionParams.targetComponentId"
 						>
+							<option :value="schemaStore.id">
+								{{ schemaStore.title }}
+							</option>
 							<option :value="schemaStore.currentRootComponent?.id">
 								{{ schemaStore.currentRootComponent?.title }}
 							</option>
@@ -238,8 +248,9 @@ const changeType = (e: Event, action: Action) => {
 					<FormItem label="选择事件" for="trigger-other-action-name">
 						<select id="trigger-other-action-name" v-model="v.triggerOtherActionParams.name">
 							<option
-								v-for="v2 in schemaStore.findComponent(v.triggerOtherActionParams.targetComponentId)
-									?.actions || []"
+								v-for="v2 in schemaStore.findComponentWithSchema(
+									v.triggerOtherActionParams.targetComponentId
+								)?.actions || []"
 								:key="v2.name"
 								:value="v2.name"
 							>
