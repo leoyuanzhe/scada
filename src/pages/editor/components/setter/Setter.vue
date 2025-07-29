@@ -7,6 +7,8 @@ import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/StateConfig.vue";
 import DataSourceConfig from "./components/DataSourceConfig.vue";
 import EmitConfig from "./components/EmitConfig.vue";
+import type { Schema } from "@/types/Schema";
+import type { Component } from "@/types/Component";
 
 interface Props {
 	width: number;
@@ -18,7 +20,7 @@ const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
 const current = ref<"global" | "layout" | "prop" | "state" | "dataSource" | "emit">("layout");
-const targetComponentV2 = computed(() => schemaStore.targetComponent ?? schemaStore.currentRootComponent);
+const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);
 	document.body.addEventListener("mouseup", onMouseUp);
@@ -39,8 +41,20 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 	<div class="setter">
 		<menu>
 			<button :class="{ actived: current === 'global' }" @click="current = 'global'">全局</button>
-			<button :class="{ actived: current === 'layout' }" @click="current = 'layout'">布局</button>
-			<button :class="{ actived: current === 'prop' }" @click="current = 'prop'">属性</button>
+			<button
+				v-if="!schemaStore.isSchema(targetComponentV2) && targetComponentV2.layout"
+				:class="{ actived: current === 'layout' }"
+				@click="current = 'layout'"
+			>
+				布局
+			</button>
+			<button
+				v-if="!schemaStore.isSchema(targetComponentV2)"
+				:class="{ actived: current === 'prop' }"
+				@click="current = 'prop'"
+			>
+				属性
+			</button>
 			<button :class="{ actived: current === 'state' }" @click="current = 'state'">状态</button>
 			<button :class="{ actived: current === 'dataSource' }" @click="current = 'dataSource'">数据</button>
 			<button :class="{ actived: current === 'emit' }" @click="current = 'emit'">事件</button>
@@ -48,13 +62,16 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 		<div class="container">
 			<GlobalConfig v-if="current === 'global'" :component="targetComponentV2" />
 			<LayoutConfig
-				v-if="current === 'layout' && targetComponentV2?.layout && targetComponentV2"
+				v-if="current === 'layout' && !schemaStore.isSchema(targetComponentV2) && targetComponentV2.layout"
 				:component="targetComponentV2"
 			/>
-			<PropConfig v-if="current === 'prop' && targetComponentV2" :component="targetComponentV2" />
-			<StateConfig v-if="current === 'state' && targetComponentV2" :component="targetComponentV2" />
-			<DataSourceConfig v-if="current === 'dataSource' && targetComponentV2" :component="targetComponentV2" />
-			<EmitConfig v-if="current === 'emit' && targetComponentV2" :component="targetComponentV2" />
+			<PropConfig
+				v-if="current === 'prop' && !schemaStore.isSchema(targetComponentV2)"
+				:component="targetComponentV2"
+			/>
+			<StateConfig v-if="current === 'state'" :component="targetComponentV2" />
+			<DataSourceConfig v-if="current === 'dataSource'" :component="targetComponentV2" />
+			<EmitConfig v-if="current === 'emit'" :component="targetComponentV2" />
 		</div>
 		<div class="resizer" @mousedown="resizerOnMouseDown($event)"></div>
 	</div>

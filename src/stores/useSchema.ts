@@ -12,6 +12,7 @@ import { Container } from "@/materials/container/Container";
 export const useSchema = defineStore("schema", {
 	state() {
 		return {
+			key: "schema",
 			title: "大屏",
 			currentRootId: "",
 			targetComponentId: "",
@@ -70,6 +71,9 @@ export const useSchema = defineStore("schema", {
 		},
 		isRoot(componentId: string) {
 			return this.currentRootComponent?.id === componentId;
+		},
+		isSchema(component: Schema | Component) {
+			return component.key === "schema";
 		},
 		isContains(parent: Component, componentId: string) {
 			return parent.components.flatMap(flat).some((v) => v.id === componentId);

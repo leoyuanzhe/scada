@@ -1,6 +1,8 @@
+import type { SchemaKey } from "./ComponentKey";
 import type { Action, Component, DataSource } from "./Component";
 
 export interface Schema {
+	key: SchemaKey;
 	title: string;
 	currentRootId: string;
 	targetComponentId: string;

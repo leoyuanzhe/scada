@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Schema } from "@/types/Schema";
 import type {
 	Component,
 	DataSource,
@@ -11,7 +12,7 @@ import FormItem from "@/components/form-item/FormItem.vue";
 import MyButton from "@/components/my-button/MyButton.vue";
 import { editObjectValue, requestDataSource } from "@/helpers/schema";
 
-const props = withDefaults(defineProps<{ component: Component }>(), {});
+const props = withDefaults(defineProps<{ component: Schema | Component }>(), {});
 const addDataSource = () => {
 	fn(0);
 	function fn(depth: number) {

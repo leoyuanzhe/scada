@@ -29,8 +29,8 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	dataSources: [],
 	actions: [],
 	emits: {
-		mounted: { executeType: "concurrent", actionsName: [] },
-		beforeUnmount: { executeType: "concurrent", actionsName: [] },
+		mounted: { executeType: "concurrent", actionsName: [], timeout: 0 },
+		beforeUnmount: { executeType: "concurrent", actionsName: [], timeout: 0 },
 	},
 	propsExpression: {},
 	stateExpression: {},
