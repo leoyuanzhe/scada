@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
@@ -58,14 +59,16 @@ export const useCommand = defineStore("command", {
 		},
 		// 导出
 		async export() {
-			const schemaStore = useSchema();
 			try {
-				const json = JSON.stringify(schemaStore.$state);
+				const schemaStore = useSchema();
+				const clonedSchema = deepClone(schemaStore.$state as Schema);
+				schemaStore.clearComponent(clonedSchema);
+				const json = JSON.stringify(clonedSchema);
 				const blob = new Blob([json], { type: "application/json" });
 				const url = URL.createObjectURL(blob);
 				const a = document.createElement("a");
 				a.href = url;
-				a.download = schemaStore.title + ".json";
+				a.download = clonedSchema.title + ".json";
 				a.click();
 				URL.revokeObjectURL(url);
 			} catch (error: any) {

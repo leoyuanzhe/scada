@@ -353,7 +353,7 @@ export const triggerEmit = async (emit: EmitEvent, component: Component, payload
 	}
 };
 // 触发动作
-export const triggerAction = async (action: Action, component: Component, payload: any, event?: any) => {
+export const triggerAction = async (action: Action, component: Schema | Component, payload: any, event?: any) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
 	if (clientStore.enabledOperate) {
@@ -391,25 +391,31 @@ export const triggerAction = async (action: Action, component: Component, payloa
 							payload
 						);
 						if (error) throw new Error(`"${component.title}" "${action.name}" change prop error.`);
-						targetComponent.propsExpression[action.changePropParams.key] = result;
+						targetComponent.props[action.changePropParams.key] = result;
 					}
 					break;
 				}
 				case "changeState": {
-					const targetComponent = schemaStore.findComponent(action.changeStateParams.targetComponentId);
+					const targetComponent = schemaStore.findComponentWithSchema(
+						action.changeStateParams.targetComponentId
+					);
 					if (targetComponent) {
 						const { result, error } = getExpressionResult.call(
 							component,
 							action.changeStateParams.expression,
 							payload
 						);
-						if (!error) targetComponent.stateExpression[action.changeStateParams.key] = result;
-						else throw new Error(`"${component.title}" "${action.name}" change state error.`);
+						if (!error) {
+							delete targetComponent.stateExpression[action.changeStateParams.key];
+							targetComponent.state[action.changeStateParams.key] = result;
+						} else throw new Error(`"${component.title}" "${action.name}" change state error.`);
 					}
 					break;
 				}
 				case "requestDataSource": {
-					const targetComponent = schemaStore.findComponent(action.requestDataSourceParams.targetComponentId);
+					const targetComponent = schemaStore.findComponentWithSchema(
+						action.requestDataSourceParams.targetComponentId
+					);
 					const targetDataSource = targetComponent?.dataSources.find(
 						(v) => v.name === action.requestDataSourceParams.name
 					);
@@ -419,7 +425,7 @@ export const triggerAction = async (action: Action, component: Component, payloa
 					break;
 				}
 				case "triggerOtherAction": {
-					const targetComponent = schemaStore.findComponent(
+					const targetComponent = schemaStore.findComponentWithSchema(
 						action.triggerOtherActionParams.targetComponentId
 					);
 					const targetAction = targetComponent?.actions.find(

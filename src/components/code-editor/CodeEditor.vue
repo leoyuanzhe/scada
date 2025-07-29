@@ -53,8 +53,8 @@ defineExpose({
 	row-gap: 20px;
 	textarea {
 		padding: 10px;
-		width: 400px;
-		height: 300px;
+		width: 800px;
+		height: 600px;
 		resize: none;
 		background-color: #000;
 		border-radius: 10px;
