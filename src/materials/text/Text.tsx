@@ -29,6 +29,7 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		color: "#ffffff",
 	},
 	state: {},
+	watchers: [],
 	dataSources: [],
 	actions: [],
 	emits: {

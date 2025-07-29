@@ -35,7 +35,7 @@ const editKey = (key: string) => {
 	<form class="form" @submit.prevent>
 		<h1 @click="props.component.state.state1 = '2'">状态</h1>
 		<fieldset>
-			<MyButton variant="success" @click="addState()">添加</MyButton>
+			<MyButton variant="success" @click="addState()">添加状态</MyButton>
 			<FormItem
 				v-for="k in Object.keys(props.component.stateExpression)"
 				:key="k"
