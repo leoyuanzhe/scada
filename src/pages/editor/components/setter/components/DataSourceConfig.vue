@@ -407,7 +407,7 @@ const getResponseDataShow = (dataSource: DataSource) => {
 						<textarea readonly v-model="v.afterHandler"></textarea>
 					</FormItem>
 					<div class="button-group">
-						<MyButton variant="success" @click="requestDataSource(props.component, v, {})">请求</MyButton>
+						<MyButton variant="success" @click="requestDataSource(v, props.component, {})">请求</MyButton>
 						<MyButton variant="danger" @click="props.component.dataSources.splice(i, 1)">删除</MyButton>
 					</div>
 				</fieldset>

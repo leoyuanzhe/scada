@@ -186,11 +186,11 @@ async function getDataSourceHandlerResult(
 export async function initDataSources(component: Component) {
 	const payload = {};
 	for (let dataSource of component.dataSources) {
-		if (dataSource.autoRequest) await requestDataSource(component, dataSource, payload);
+		if (dataSource.autoRequest) await requestDataSource(dataSource, component, payload);
 	}
 }
 // 请求数据源
-export async function requestDataSource(component: Component, dataSource: DataSource, payload: any) {
+export async function requestDataSource(dataSource: DataSource, component: Component, payload: any) {
 	try {
 		const { error: beforeError, result: beforeResult } = await getDataSourceHandlerResult.call(
 			component,
@@ -405,6 +405,16 @@ export const triggerAction = async (action: Action, component: Component, payloa
 						);
 						if (!error) targetComponent.stateExpression[action.changeStateParams.key] = result;
 						else throw new Error(`"${component.title}" "${action.name}" change state error.`);
+					}
+					break;
+				}
+				case "requestDataSource": {
+					const targetComponent = schemaStore.findComponent(action.requestDataSourceParams.targetComponentId);
+					const targetDataSource = targetComponent?.dataSources.find(
+						(v) => v.name === action.requestDataSourceParams.name
+					);
+					if (targetComponent && targetDataSource) {
+						await requestDataSource(targetDataSource, targetComponent, payload);
 					}
 					break;
 				}

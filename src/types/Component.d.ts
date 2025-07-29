@@ -31,7 +31,7 @@ export type DataSource = {
 };
 export type Action = {
 	name: string;
-	type: "none" | "changeVisible" | "changeProp" | "changeState" | "request" | "triggerOtherAction";
+	type: "none" | "changeVisible" | "changeProp" | "changeState" | "requestDataSource" | "triggerOtherAction";
 	// 改变组件显示状态
 	changeVisibleParams: {
 		targetComponentsId: string[];
@@ -49,8 +49,8 @@ export type Action = {
 		key: string;
 		expression: any;
 	};
-	// 发起请求
-	requestParams: {
+	// 请求数据源
+	requestDataSourceParams: {
 		targetComponentId: string;
 		name: string;
 	};
