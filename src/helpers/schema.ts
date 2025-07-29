@@ -239,7 +239,7 @@ export async function requestDataSource(dataSource: DataSource, component: Compo
 		function getUrl() {
 			const urlSP = new URLSearchParams(
 				dataSource.request.params.reduce((pre, cur) => {
-					pre[cur.key] = cur.value;
+					pre[cur.key] = getExpressionResult.call(component, cur.value, payload).result;
 					return pre;
 				}, {} as Record<string, string>)
 			);
@@ -266,7 +266,7 @@ export async function requestDataSource(dataSource: DataSource, component: Compo
 				);
 			}
 			dataSource.request.headers.forEach((v) => {
-				headers.append(v.key, v.value);
+				headers.append(v.key, getExpressionResult.call(component, v.value, payload).result.toString());
 			});
 			return headers;
 		}
@@ -282,14 +282,14 @@ export async function requestDataSource(dataSource: DataSource, component: Compo
 		function getFormDataBody() {
 			const formData = new FormData();
 			dataSource.request.body.formDataParams.forEach((v) => {
-				formData.append(v.key, v.value);
+				formData.append(v.key, getExpressionResult.call(component, v.value, payload).result);
 			});
 			return formData;
 		}
 		function getXWwwFormUrlencodedBody() {
 			return new URLSearchParams(
 				dataSource.request.body.xWwwFormUrlencodedParams.reduce((pre, cur) => {
-					pre[cur.key] = cur.value;
+					pre[cur.key] = getExpressionResult.call(component, cur.value, payload).result.toString();
 					return pre;
 				}, {} as Record<string, string>)
 			);
