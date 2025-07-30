@@ -1,4 +1,3 @@
-import { useRoute } from "vue-router";
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
@@ -8,23 +7,11 @@ import { initState } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
+import defaultSchema from "@/assets/data/defaultSchema.json";
 
 export const useSchema = defineStore("schema", {
 	state() {
-		return {
-			id: "schema",
-			key: "schema",
-			title: "大屏",
-			fitMode: "contain",
-			currentRootId: "",
-			targetComponentId: "",
-			state: {},
-			watchers: [],
-			dataSources: [],
-			actions: [],
-			components: [],
-			stateExpression: {},
-		} as Schema;
+		return deepClone(defaultSchema as Schema);
 	},
 	getters: {
 		// 目标组件
@@ -73,9 +60,12 @@ export const useSchema = defineStore("schema", {
 	actions: {
 		// 初始化
 		init() {
-			const route = useRoute();
-			if (route.query.id) {
-				this.currentRootId = route.query.id as string;
+			try {
+				const json = JSON.parse(localStorage.getItem("schema") || "null") ?? deepClone(defaultSchema);
+				this.setSchema(json);
+			} catch (error) {
+				alert("Schema加载失败");
+				console.error(error);
 			}
 			initState(this.$state);
 		},

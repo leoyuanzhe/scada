@@ -18,7 +18,9 @@ export const useCommand = defineStore("command", {
 			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.deactivateAllComponent();
 			const tempComponent = schemaStore.createRootComponent(component);
-			if (!schemaStore.currentRootId) schemaStore.currentRootId = tempComponent.id;
+			if (!schemaStore.currentRootId) {
+				schemaStore.currentRootId = tempComponent.id;
+			}
 			dragger.computedSelector();
 			schemaStore.recordStack(oldSchema);
 		},

@@ -1,0 +1,14 @@
+{
+	"id": "schema",
+	"key": "schema",
+	"title": "大屏",
+	"fitMode": "contain",
+	"currentRootId": "",
+	"targetComponentId": "",
+	"state": {},
+	"watchers": [],
+	"dataSources": [],
+	"actions": [],
+	"components": [],
+	"stateExpression": {}
+}

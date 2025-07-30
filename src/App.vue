@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router";
 import { useClient } from "./stores/useClient";
 import { useMaterial } from "./stores/useMaterial";
 import { useAsset } from "./stores/useAsset";
@@ -7,14 +8,21 @@ import { Container } from "./materials/container/Container";
 import { Text } from "./materials/text/Text";
 import { assetTransferComponent } from "./helpers/schema";
 
+const route = useRoute();
 const clientStore = useClient();
 const materialStore = useMaterial();
 const assetStore = useAsset();
 const schemaStore = useSchema();
-clientStore.init();
-materialStore.init();
-assetStore.init();
-schemaStore.init();
+init();
+function init() {
+	if (route.query.id) {
+		schemaStore.currentRootId = route.query.id as string;
+	}
+	clientStore.init();
+	materialStore.init();
+	assetStore.init();
+	schemaStore.init();
+}
 // defaultMock();
 function defaultMock() {
 	clientStore.canvas.scale = 0.8;
