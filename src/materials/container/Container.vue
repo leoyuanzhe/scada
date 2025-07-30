@@ -27,9 +27,4 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 	</div>
 </template>
 
-<style scoped lang="scss">
-.container {
-	width: 100%;
-	height: 100%;
-}
-</style>
+<style scoped lang="scss"></style>

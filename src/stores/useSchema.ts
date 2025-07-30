@@ -15,6 +15,7 @@ export const useSchema = defineStore("schema", {
 			id: "schema",
 			key: "schema",
 			title: "大屏",
+			fitMode: "contain",
 			currentRootId: "",
 			targetComponentId: "",
 			state: {},

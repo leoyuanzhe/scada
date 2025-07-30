@@ -15,19 +15,27 @@ const styleV2 = computed<StyleValue>(() => {
 	};
 	if (clientStore.previewing) {
 		if (schemaStore.currentRootComponent?.layout) {
-			// res.transform =
-			// 	"scale(" +
-			// 	clientStore.innerWidth / schemaStore.currentRootComponent.layout.width +
-			// 	", " +
-			// 	clientStore.innerHeight / schemaStore.currentRootComponent.layout.height +
-			// 	")";
-			let ratio = clientStore.innerWidth / schemaStore.currentRootComponent.layout.width;
-			res.top = "50%";
-			res.left = "50%";
-			if (clientStore.innerHeight < schemaStore.currentRootComponent.layout.height * ratio) {
-				ratio = clientStore.innerHeight / schemaStore.currentRootComponent.layout.height;
+			switch (schemaStore.fitMode) {
+				case "contain": {
+					let ratio = clientStore.innerWidth / schemaStore.currentRootComponent.layout.width;
+					res.top = "50%";
+					res.left = "50%";
+					if (clientStore.innerHeight < schemaStore.currentRootComponent.layout.height * ratio) {
+						ratio = clientStore.innerHeight / schemaStore.currentRootComponent.layout.height;
+					}
+					res.transform = "scale(" + ratio + ") translateY(-50%) translateX(-50%)";
+					break;
+				}
+				case "fill": {
+					res.transform =
+						"scale(" +
+						clientStore.innerWidth / schemaStore.currentRootComponent.layout.width +
+						", " +
+						clientStore.innerHeight / schemaStore.currentRootComponent.layout.height +
+						")";
+					break;
+				}
 			}
-			res.transform = "scale(" + ratio + ") translateY(-50%) translateX(-50%)";
 		}
 	} else {
 		res.transform = "scale(" + clientStore.canvas.scale + ")";

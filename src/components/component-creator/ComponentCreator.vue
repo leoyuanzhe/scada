@@ -33,7 +33,8 @@ const styleV2 = computed(() => {
 </script>
 
 <template>
-	<div
+	<Component
+		:is="RenderComponent"
 		:class="{
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
@@ -49,9 +50,7 @@ const styleV2 = computed(() => {
 		@dragenter.stop="dragger.componentOnDragEnter(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
-	>
-		<Component :is="RenderComponent" />
-	</div>
+	/>
 </template>
 
 <style lang="scss" scoped>
