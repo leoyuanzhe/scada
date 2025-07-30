@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import Renderer from "../editor/components/renderer/Renderer.vue";
+import Renderer from "@/components/renderer/Renderer.vue";
 
 const clientStore = useClient();
 const schemaStore = useSchema();
