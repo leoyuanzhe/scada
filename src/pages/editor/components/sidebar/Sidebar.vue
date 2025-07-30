@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Asset from "./components/asset/Asset.vue";
 import Layer from "./components/layer/Layer.vue";
+import Asset from "./components/Asset.vue";
 
 const current = ref<"asset" | "layer">("layer");
 </script>
@@ -9,12 +9,12 @@ const current = ref<"asset" | "layer">("layer");
 <template>
 	<div class="sidebar">
 		<menu>
-			<button :class="{ actived: current === 'asset' }" @click="current = 'asset'">资产</button>
 			<button :class="{ actived: current === 'layer' }" @click="current = 'layer'">图层</button>
+			<button :class="{ actived: current === 'asset' }" @click="current = 'asset'">资产</button>
 		</menu>
 		<div class="container">
-			<Asset v-if="current === 'asset'" />
 			<Layer v-if="current === 'layer'" />
+			<Asset v-if="current === 'asset'" />
 		</div>
 	</div>
 </template>

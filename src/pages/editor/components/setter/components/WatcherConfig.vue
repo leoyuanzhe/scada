@@ -65,7 +65,6 @@ const editName = (name: string) => {
 				>
 					<textarea id="setter-watcher-source-handler" readonly :value="v.sourceHandler"></textarea>
 				</FormItem>
-				{{ v.deep }}
 				<FormItem label="深度监听" for="setter-watcher-deep">
 					<input
 						id="setter-watcher-deep"
