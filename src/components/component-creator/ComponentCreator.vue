@@ -27,8 +27,8 @@ const RenderComponent = () =>
 		:class="{
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
-			actived: props.component.actived,
-			target: props.component.id === schemaStore.targetComponentId,
+			actived: !clientStore.previewing && props.component.actived,
+			target: !clientStore.previewing && props.component.id === schemaStore.targetComponentId,
 			locked: !clientStore.previewing && props.component.locked,
 			action: clientStore.enabledOperate,
 		}"

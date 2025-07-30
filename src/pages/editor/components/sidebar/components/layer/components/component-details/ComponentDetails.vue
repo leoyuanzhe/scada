@@ -18,15 +18,15 @@ const props = withDefaults(defineProps<Props>(), {});
 			'component-details': true,
 			actived: props.component.actived,
 			target: props.component.id === schemaStore.targetComponentId,
-			before: props.component.id === dragger.layer.dragOverComponentId && dragger.layer.position === 'before',
-			after: props.component.id === dragger.layer.dragOverComponentId && dragger.layer.position === 'after',
+			before: props.component.id === dragger.layer.dragOverComponent?.id && dragger.layer.position === 'before',
+			after: props.component.id === dragger.layer.dragOverComponent?.id && dragger.layer.position === 'after',
 		}"
 		open
 		draggable="true"
 		@mousedown.stop="dragger.focusComponent($event, props.component)"
 		@dragstart.stop="dragger.layerOnDragStart(props.component)"
 		@dragover.prevent="dragger.layerOnDragOver($event, component)"
-		@drop.stop="dragger.layerOnDrop(component)"
+		@drop.stop="dragger.layerOnDrop()"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<summary
