@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { useClient } from "@/stores/useClient";
+import { useSchema } from "@/stores/useSchema";
 import Renderer from "../editor/components/renderer/Renderer.vue";
 
 const clientStore = useClient();
-clientStore.previewing = true;
-clientStore.enableOperate();
+const schemaStore = useSchema();
+init();
+function init() {
+	clientStore.previewing = true;
+	clientStore.enableOperate();
+	try {
+		const json = JSON.parse(localStorage.getItem("schema") || "{}");
+		schemaStore.setSchema(json);
+	} catch (error) {
+		alert("预览大屏失败");
+		console.error(error);
+	}
+}
 </script>
 
 <template>

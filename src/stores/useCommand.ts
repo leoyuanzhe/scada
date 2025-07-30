@@ -99,7 +99,14 @@ export const useCommand = defineStore("command", {
 			input.click();
 		},
 		// 预览
-		preview() {},
+		preview() {
+			const schemaStore = useSchema();
+			const clonedSchema = deepClone(schemaStore.$state as Schema);
+			schemaStore.clearComponent(clonedSchema);
+			const json = JSON.stringify(clonedSchema);
+			localStorage.setItem("schema", json);
+			window.open("/preview", "_blank");
+		},
 		// 切换触发操作
 		toggleOperate(enabled?: boolean) {
 			const clientStore = useClient();

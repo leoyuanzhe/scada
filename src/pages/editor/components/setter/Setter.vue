@@ -20,7 +20,7 @@ interface Emits {
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
-const current = ref<"global" | "layout" | "prop" | "state" | "watcher" | "dataSource" | "emit">("layout");
+const current = ref<"global" | "layout" | "prop" | "state" | "watcher" | "dataSource" | "emit">("global");
 const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);

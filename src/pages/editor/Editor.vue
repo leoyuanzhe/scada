@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useRuler } from "./hooks/useRuler";
-import MenuBar from "./components/menu-bar/MenuBar.vue";
+import MenuBar from "./components/MenuBar.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "./components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
