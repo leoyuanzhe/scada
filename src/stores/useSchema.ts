@@ -29,15 +29,22 @@ export const useSchema = defineStore("schema", {
 	getters: {
 		// 目标组件
 		targetComponent(): Component | null {
-			return this.flatedComponents.find((item) => item.id === this.targetComponentId) ?? null;
+			return this.allFlatedComponents.find((item) => item.id === this.targetComponentId) ?? null;
 		},
 		// 当前根组件
 		currentRootComponent(): Component | null {
 			return this.components.find((v) => v.id === this.currentRootId) ?? null;
 		},
-		// 所有组件（不包括根组件）
+		// 当前根组件的所有组件
 		flatedComponents(): Component[] {
 			return this.currentRootComponent?.components.flatMap(flat) ?? [];
+			function flat(component: Component): Component[] {
+				return [component, ...component.components.flatMap(flat)];
+			}
+		},
+		// 所有组件
+		allFlatedComponents(): Component[] {
+			return this.components.flatMap(flat);
 			function flat(component: Component): Component[] {
 				return [component, ...component.components.flatMap(flat)];
 			}
@@ -334,9 +341,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 取消激活所有组件
 		deactivateAllComponent() {
-			[this.currentRootComponent, ...this.activedFlatedComponents].forEach(
-				(v) => v?.actived && (v.actived = false)
-			);
+			[...this.components, ...this.activedFlatedComponents].forEach((v) => v?.actived && (v.actived = false));
 			this.targetComponentId = "";
 		},
 		recordStack(oldSchema: Schema) {

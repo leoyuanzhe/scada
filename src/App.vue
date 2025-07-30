@@ -11,16 +11,16 @@ const clientStore = useClient();
 const materialStore = useMaterial();
 const assetStore = useAsset();
 const schemaStore = useSchema();
-init();
-function init() {
+clientStore.init();
+materialStore.init();
+assetStore.init();
+schemaStore.init();
+// defaultMock();
+function defaultMock() {
 	clientStore.canvas.scale = 0.8;
 	schemaStore.stateExpression = {
 		a: "1",
 	};
-	clientStore.init();
-	materialStore.init();
-	assetStore.init();
-	schemaStore.init();
 	const m = assetStore.assets.find((v) => v.title === "模版1");
 	if (m) {
 		const c = assetTransferComponent(m);

@@ -38,6 +38,7 @@ export const useAsset = defineStore("asset", {
 				cover: "",
 				material: Text(),
 			});
+			console.log(this.assets);
 		},
 	},
 });

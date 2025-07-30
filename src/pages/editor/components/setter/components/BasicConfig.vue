@@ -10,11 +10,22 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 <template>
 	<form class="form" @submit.prevent>
 		<h1>基本</h1>
+		<fieldset>
+			<legend>布局</legend>
+			<FormItem label="X坐标" for="setter-basic-title">
+				<input
+					id="setter-basic-title"
+					type="text"
+					:value="(props.component as ComponentWithLayout).title"
+					@input="(props.component as ComponentWithLayout).title = ($event.target as HTMLInputElement).value"
+				/>
+			</FormItem>
+		</fieldset>
 		<fieldset v-if="props.component.layout">
 			<legend>布局</legend>
-			<FormItem label="X坐标" for="setter-layout-left">
+			<FormItem label="X坐标" for="setter-basic-layout-left">
 				<input
-					id="setter-layout-left"
+					id="setter-basic-layout-left"
 					type="number"
 					:value="(props.component as ComponentWithLayout).layout.left"
 					@input="
@@ -25,9 +36,9 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
-			<FormItem label="Y坐标" for="setter-layout-top">
+			<FormItem label="Y坐标" for="setter-basic-layout-top">
 				<input
-					id="setter-layout-top"
+					id="setter-basic-layout-top"
 					type="number"
 					:value="(props.component as ComponentWithLayout).layout.top"
 					@input="
@@ -38,9 +49,9 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
-			<FormItem label="宽度" for="setter-layout-width">
+			<FormItem label="宽度" for="setter-basic-layout-width">
 				<input
-					id="setter-layout-width"
+					id="setter-basic-layout-width"
 					type="number"
 					:value="props.component.layout.width"
 					@input="
@@ -49,9 +60,9 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
-			<FormItem label="高度" for="setter-layout-height">
+			<FormItem label="高度" for="setter-basic-layout-height">
 				<input
-					id="setter-layout-height"
+					id="setter-basic-layout-height"
 					type="number"
 					:value="props.component.layout.height"
 					@input="
