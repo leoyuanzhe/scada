@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FitMode } from "@/types/Schema";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
@@ -52,6 +53,19 @@ const dragger = useDragger();
 			</FormItem>
 		</fieldset>
 		<fieldset>
+			<legend>预览</legend>
+			<FormItem label="适配方式" for="setter-fit-mode">
+				<select
+					id="setter-fit-mode"
+					:value="schemaStore.fitMode"
+					@input="schemaStore.fitMode = ($event.target as HTMLInputElement).value as FitMode"
+				>
+					<option value="contain">包含</option>
+					<option value="fill">填充</option>
+				</select>
+			</FormItem>
+		</fieldset>
+		<fieldset>
 			<legend>网格</legend>
 			<FormItem label="启用" for="setter-grid-enable">
 				<input
@@ -92,8 +106,8 @@ const dragger = useDragger();
 			</FormItem>
 		</fieldset>
 		<fieldset>
-			<legend>操作</legend>
-			<FormItem label="启用" for="setter-operate-enable">
+			<legend>其它</legend>
+			<FormItem label="启用操作" for="setter-operate-enable">
 				<input
 					id="setter-operate-enable"
 					type="checkbox"
