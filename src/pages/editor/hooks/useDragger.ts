@@ -208,11 +208,13 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 							}
 						});
 					}
+					if (schemaStore.activedFlatedComponents[0]) {
+						schemaStore.targetComponentId = schemaStore.activedFlatedComponents[0].id;
+					}
 					computedSelector();
 					document.body.removeEventListener("mousemove", mouseMove);
 					document.body.removeEventListener("mouseup", mouseUp);
 				}
-			} else {
 			}
 		}
 	}
