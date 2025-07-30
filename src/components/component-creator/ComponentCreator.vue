@@ -6,7 +6,6 @@ import { useMaterial } from "@/stores/useMaterial";
 import { useSchema } from "@/stores/useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
-import { computed } from "vue";
 
 interface Props {
 	component: Component;
@@ -20,16 +19,6 @@ const RenderComponent = () =>
 	(materialStore.materials.find((v) => v.key == props.component.key) as ReturnType<Material["render"]>)?.render(
 		props.component
 	);
-const styleV2 = computed(() => {
-	if (props.component.layout)
-		return {
-			left: props.component.layout.left + "px",
-			top: props.component.layout.top + "px",
-			width: props.component.layout.width + "px",
-			height: props.component.layout.height + "px",
-		};
-	else return {};
-});
 </script>
 
 <template>
@@ -44,7 +33,16 @@ const styleV2 = computed(() => {
 			action: clientStore.enabledOperate,
 		}"
 		v-show="!props.component.hidden"
-		:style="styleV2"
+		:style="
+			props.component.layout
+				? {
+						left: props.component.layout.left + 'px',
+						top: props.component.layout.top + 'px',
+						width: props.component.layout.width + 'px',
+						height: props.component.layout.height + 'px',
+				  }
+				: {}
+		"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent.stop
 		@dragenter.stop="dragger.componentOnDragEnter(component)"
