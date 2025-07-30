@@ -171,7 +171,7 @@ export const useSchema = defineStore("schema", {
 			return null;
 		},
 		// 删除组件
-		deleteComponent(componentId: string) {
+		deleteComponent(componentId: string, beforeCheckCallBack?: Function) {
 			const dragger = useDragger();
 			const { parent, index } = this.findParent(componentId);
 			// 检查子组件，没有子组件就删除，有子组件适应位置
@@ -215,6 +215,7 @@ export const useSchema = defineStore("schema", {
 			};
 			if (parent && index !== -1) {
 				const component = parent.components.splice(index, 1)[0];
+				beforeCheckCallBack?.();
 				checkChildren(parent);
 				return component;
 			}
@@ -223,7 +224,7 @@ export const useSchema = defineStore("schema", {
 		joinGroup(component: Component, newParent: Component) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
-			if (component.id !== newParent.id) {
+			if (component.id !== newParent.id && !this.isContains(newParent, component.id)) {
 				const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 				this.deleteComponent(component.id);
 				if (component.layout) {
@@ -265,24 +266,21 @@ export const useSchema = defineStore("schema", {
 		},
 		// 插入到组件之前
 		insertBefore(component: Component, targetId: string) {
-			this.deleteComponent(component.id);
-			if (this.isRoot(targetId)) {
-				const index = this.components.findIndex((v) => v.id === targetId);
-				if (index !== -1) this.components.splice(index, 0, component);
-			} else {
-				const { parent, index } = this.findParent(targetId);
-				if (parent) parent.components.splice(index, 0, component);
+			console.log("aaa", component, targetId);
+			if (component.id !== targetId && !this.isRoot(targetId)) {
+				this.deleteComponent(component.id, () => {
+					const { parent, index } = this.findParent(targetId);
+					if (parent) parent.components.splice(index, 0, component);
+				});
 			}
 		},
 		// 插入到组件之后
 		insertAfter(component: Component, targetId: string) {
-			this.deleteComponent(component.id);
-			if (this.isRoot(targetId)) {
-				const index = this.components.findIndex((v) => v.id === targetId);
-				if (index !== -1) this.components.splice(index + 1, 0, component);
-			} else {
-				const { parent, index } = this.findParent(targetId);
-				if (parent) parent.components.splice(index + 1, 0, component);
+			if (component.id !== targetId && !this.isRoot(targetId)) {
+				this.deleteComponent(component.id, () => {
+					const { parent, index } = this.findParent(targetId);
+					if (parent) parent.components.splice(index + 1, 0, component);
+				});
 			}
 		},
 		// 移出分组

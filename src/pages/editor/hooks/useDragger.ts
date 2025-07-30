@@ -24,7 +24,7 @@ const snapLine = reactive({
 const layer = reactive({
 	dragging: false,
 	dragStartComponent: null as Component | null,
-	dragOverComponentId: null as string | null,
+	dragOverComponent: null as Component | null,
 	position: null as "before" | "after" | null,
 });
 const assetOnDragStart = (e: DragEvent, asset: Asset) => {
@@ -54,38 +54,38 @@ const layerOnDragOver = (e: DragEvent, component: Component) => {
 	) {
 		e.stopPropagation();
 		schemaStore.deactivateAllComponent();
-		component.actived = true;
-		if (e.offsetY <= 5) {
-			// 组件的上边
-			layer.dragOverComponentId = component.id;
-			layer.position = "before";
-		} else if (e.offsetY >= (e.target as HTMLDetailsElement).offsetHeight + 5) {
-			// 组件的下边
-			layer.dragOverComponentId = component.id;
-			layer.position = "after";
-		} else if (component.nestable) {
-			layer.dragOverComponentId = null;
+		if (schemaStore.isRoot(component.id)) {
 			layer.position = null;
-		} else if (e.offsetY < (e.target as HTMLDetailsElement).offsetHeight / 2) {
-			layer.dragOverComponentId = component.id;
+			layer.dragOverComponent = component;
+			component.actived = true;
+		} else if (e.offsetY <= 5) {
+			// 组件的上边
 			layer.position = "before";
-		} else {
-			layer.dragOverComponentId = component.id;
+			layer.dragOverComponent = component;
+			component.actived = true;
+		} else if (e.offsetY >= (e.target as HTMLDetailsElement).offsetHeight - 5) {
+			// 组件的下边
 			layer.position = "after";
+			layer.dragOverComponent = component;
+			component.actived = true;
+		} else if (component.nestable) {
+			layer.position = null;
+			layer.dragOverComponent = component;
+			component.actived = true;
 		}
 	}
 };
-const layerOnDrop = (component: Component) => {
+const layerOnDrop = () => {
 	const schemaStore = useSchema();
 	const commandStore = useCommand();
 	const dragger = useDragger();
 	if (layer.dragStartComponent) {
-		if (layer.position === null && component.nestable) {
-			commandStore.joinGroup(layer.dragStartComponent.id, component.id);
+		if (layer.position === null && layer.dragOverComponent!.nestable) {
+			commandStore.joinGroup(layer.dragStartComponent.id, layer.dragOverComponent!.id);
 		} else if (layer.position === "before") {
-			commandStore.insertBefore(layer.dragStartComponent.id, component.id);
+			commandStore.insertBefore(layer.dragStartComponent.id, layer.dragOverComponent!.id);
 		} else if (layer.position === "after") {
-			commandStore.insertAfter(layer.dragStartComponent.id, component.id);
+			commandStore.insertAfter(layer.dragStartComponent.id, layer.dragOverComponent!.id);
 		}
 		schemaStore.deactivateAllComponent();
 		schemaStore.targetComponentId = layer.dragStartComponent.id;
@@ -93,7 +93,7 @@ const layerOnDrop = (component: Component) => {
 		dragger.computedSelector();
 	}
 	layer.dragStartComponent = null;
-	layer.dragOverComponentId = null;
+	layer.dragOverComponent = null;
 	layer.position = null;
 	layer.dragging = false;
 };
