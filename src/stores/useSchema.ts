@@ -3,7 +3,7 @@ import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 import { useUndoStack } from "./useUndoStack";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { initState } from "@/helpers/schema";
+import { getFlatedComponents, initState } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
@@ -24,17 +24,11 @@ export const useSchema = defineStore("schema", {
 		},
 		// 当前根组件的所有组件
 		flatedComponents(): Component[] {
-			return this.currentRootComponent?.components.flatMap(flat) ?? [];
-			function flat(component: Component): Component[] {
-				return [component, ...component.components.flatMap(flat)];
-			}
+			return this.currentRootComponent?.components.flatMap(getFlatedComponents) ?? [];
 		},
 		// 所有组件
 		allFlatedComponents(): Component[] {
-			return this.components.flatMap(flat);
-			function flat(component: Component): Component[] {
-				return [component, ...component.components.flatMap(flat)];
-			}
+			return this.components.flatMap(getFlatedComponents);
 		},
 		// 有布局属性的在根节点下的组件
 		moveableComponents(): ComponentWithLayout[] {
@@ -76,10 +70,7 @@ export const useSchema = defineStore("schema", {
 			return component.key === "schema";
 		},
 		isContains(parent: Component, componentId: string) {
-			return parent.components.flatMap(flat).some((v) => v.id === componentId);
-			function flat(component: Component): Component[] {
-				return [component, ...component.components.flatMap(flat)];
-			}
+			return parent.components.flatMap(getFlatedComponents).some((v) => v.id === componentId);
 		},
 		setSchema(schema: Schema) {
 			this.$state = schema;
@@ -214,6 +205,11 @@ export const useSchema = defineStore("schema", {
 				}
 			};
 			if (parent && index !== -1) {
+				if (parent.components[index].layout) {
+					const { left, top } = dragger.getOffsetFromRoot(parent.components[index]);
+					parent.components[index].layout.left = left;
+					parent.components[index].layout.top = top;
+				}
 				const component = parent.components.splice(index, 1)[0];
 				beforeCheckCallBack?.();
 				checkChildren(parent);
@@ -266,7 +262,6 @@ export const useSchema = defineStore("schema", {
 		},
 		// 插入到组件之前
 		insertBefore(component: Component, targetId: string) {
-			console.log("aaa", component, targetId);
 			if (component.id !== targetId && !this.isRoot(targetId)) {
 				this.deleteComponent(component.id, () => {
 					const { parent, index } = this.findParent(targetId);
@@ -349,7 +344,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 清除组件的加载数据
 		clearComponent(component: Schema | Component) {
-			[component, ...component.components.flatMap(flat)].forEach((component) => {
+			[component, ...component.components.flatMap(getFlatedComponents)].forEach((component) => {
 				for (let k in component.state) delete component.state[k];
 				component.dataSources.forEach((v) => {
 					v.response.status = null;
@@ -358,9 +353,6 @@ export const useSchema = defineStore("schema", {
 					v.response.data = null;
 				});
 			});
-			function flat(component: Schema | Component): (Schema | Component)[] {
-				return [component, ...component.components.flatMap(flat)];
-			}
 		},
 	},
 });

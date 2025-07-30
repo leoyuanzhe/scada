@@ -37,6 +37,9 @@ export const assetTransferComponent = (asset: Asset): Component => {
 export const generateId = () => {
 	return Math.random().toString(36).substring(2, 7);
 };
+export const getFlatedComponents = <T extends Schema | Component>(component: T): (T | Component)[] => {
+	return [component, ...(component.components.flatMap(getFlatedComponents) as (T | Component)[])];
+};
 // 重置组件的定位和大小
 export const relayoutComponent = (component: Component) => {
 	const schemaStore = useSchema();
