@@ -32,6 +32,7 @@ function init() {
 		container.components.push(t1);
 		container.components.push(t2);
 		c.components.push(container);
+		c.props.backgroundColor = "#333";
 		schemaStore.createRootComponent(c);
 		schemaStore.currentRootId = schemaStore.components[0].id;
 	}
