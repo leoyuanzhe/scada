@@ -2,7 +2,7 @@
 import { computed, ref } from "vue";
 import { useSchema } from "@/stores/useSchema";
 import GlobalConfig from "./components/GlobalConfig.vue";
-import LayoutConfig from "./components/LayoutConfig.vue";
+import BasicConfig from "./components/BasicConfig.vue";
 import PropConfig from "./components/prop-config/PropConfig.vue";
 import StateConfig from "./components/StateConfig.vue";
 import WatcherConfig from "./components/WatcherConfig.vue";
@@ -20,7 +20,7 @@ interface Emits {
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
-const current = ref<"global" | "layout" | "prop" | "state" | "watcher" | "dataSource" | "emit">("global");
+const current = ref<"global" | "basic" | "prop" | "state" | "watcher" | "dataSource" | "emit">("global");
 const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);
@@ -44,10 +44,10 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 			<button :class="{ actived: current === 'global' }" @click="current = 'global'">全局</button>
 			<button
 				v-if="!schemaStore.isSchema(targetComponentV2) && targetComponentV2.layout"
-				:class="{ actived: current === 'layout' }"
-				@click="current = 'layout'"
+				:class="{ actived: current === 'basic' }"
+				@click="current = 'basic'"
 			>
-				布局
+				基础
 			</button>
 			<button
 				v-if="!schemaStore.isSchema(targetComponentV2)"
@@ -63,8 +63,8 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 		</menu>
 		<div class="container">
 			<GlobalConfig v-if="current === 'global'" :component="targetComponentV2" />
-			<LayoutConfig
-				v-if="current === 'layout' && !schemaStore.isSchema(targetComponentV2) && targetComponentV2.layout"
+			<BasicConfig
+				v-if="current === 'basic' && !schemaStore.isSchema(targetComponentV2)"
 				:component="targetComponentV2"
 			/>
 			<PropConfig
