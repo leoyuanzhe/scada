@@ -5,6 +5,8 @@ import { useCommand } from "@/stores/useCommand";
 import { useUndoStack } from "@/stores/useUndoStack";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
 import ContextMenu from "@/components/context-menu";
+import CodeEditor from "@/components/code-editor";
+import { deepClone } from "@/utils/conversion";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
@@ -23,6 +25,25 @@ export const openFileMenu = (position: MenuPosition) => {
 			onClick: () => {
 				const commandStore = useCommand();
 				commandStore.import();
+			},
+		},
+		{
+			label: "编辑Schema",
+			onClick: () => {
+				const schemaStore = useSchema();
+				const oldSchema = deepClone(schemaStore.$state);
+				try {
+					CodeEditor(JSON.stringify(schemaStore.$state, null, 4))
+						.then((value) => {
+							const newSchema = JSON.parse(value);
+							schemaStore.setSchema(newSchema);
+							schemaStore.recordStack(oldSchema);
+						})
+						.catch(() => {});
+				} catch (error) {
+					alert("解析错误");
+					console.error(error);
+				}
 			},
 		},
 		{ type: "divider" },
