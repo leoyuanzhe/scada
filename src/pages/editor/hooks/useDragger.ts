@@ -394,6 +394,9 @@ const componentOnDragEnter = (component: Component) => {
 		component.actived = true;
 	}
 };
+const componentOnDragLeave = (component: Component) => {
+	component.actived = false;
+};
 const componentOnDrop = (e: DragEvent, component: Component) => {
 	const assetStore = useAsset();
 	const commandStore = useCommand();
@@ -615,6 +618,7 @@ export const useDragger = () => ({
 	layerOnDrop,
 	componentOnMouseDown,
 	componentOnDragEnter,
+	componentOnDragLeave,
 	componentOnDrop,
 	selectorDirectionOnMouseDown,
 	computedSelector,

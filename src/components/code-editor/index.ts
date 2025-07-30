@@ -1,7 +1,7 @@
 import { h, nextTick, render } from "vue";
 import CodeEditor from "./CodeEditor.vue";
 
-export default (value?: string): Promise<string | undefined> => {
+export default (value?: string): Promise<string> => {
 	return new Promise((resolve, reject) => {
 		const vNode = h(CodeEditor, {
 			value: value ?? "",

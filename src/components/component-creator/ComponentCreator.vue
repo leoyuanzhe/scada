@@ -46,6 +46,7 @@ const RenderComponent = () =>
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent.stop
 		@dragenter.stop="dragger.componentOnDragEnter(component)"
+		@dragleave.stop="dragger.componentOnDragLeave(component)"
 		@drop.stop="dragger.componentOnDrop($event, component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	/>
