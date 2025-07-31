@@ -196,6 +196,7 @@ export function initWatchers(component: Component) {
 			watch(result, () => triggerEmit(watcher, component, payload), {
 				immediate: watcher.immediate,
 				deep: watcher.deep,
+				once: watcher.once,
 			});
 		} catch (error) {
 			console.error(error);
