@@ -541,12 +541,11 @@ const computedSelector = () => {
 // 聚焦组件
 function focusComponent(e: MouseEvent, component: Component, router?: Router) {
 	const schemaStore = useSchema();
-	if (!schemaStore.isRoot(component.id)) {
-		if (!e.shiftKey && !component.actived) schemaStore.deactivateAllComponent();
-		component.actived = true;
-		schemaStore.targetComponentId = component.id;
-		computedSelector();
-	} else {
+	if (!e.shiftKey && !component.actived) schemaStore.deactivateAllComponent();
+	component.actived = true;
+	schemaStore.targetComponentId = component.id;
+	computedSelector();
+	if (schemaStore.isRoot(component.id)) {
 		router?.push("/editor?id=" + component.id);
 	}
 }
