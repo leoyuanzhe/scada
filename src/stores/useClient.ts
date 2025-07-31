@@ -287,10 +287,9 @@ export const useClient = defineStore("client", {
 					this.copiedComponents.forEach((v) => schemaStore.assignComponentId(v));
 				}
 				deepClone(this.copiedComponents).forEach((component) => {
-					schemaStore.currentRootComponent?.components.push(component);
+					schemaStore.addComponent(component);
 					components.push(component);
 				});
-				console.log(parent);
 				if (parent && parent.nestable) {
 					components.forEach((v) => schemaStore.joinGroup(v, parent));
 				}
