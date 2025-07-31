@@ -40,15 +40,15 @@ export const useSchema = defineStore("schema", {
 		},
 		// 激活的有布局属性的所有的组件
 		activedMoveableFlatedComponents(): ComponentWithLayout[] {
-			return (this.flatedComponents.filter((v) => v.actived && v.layout) as ComponentWithLayout[]) ?? [];
+			return (this.allFlatedComponents.filter((v) => v.actived && v.layout) as ComponentWithLayout[]) ?? [];
 		},
 		// 未激活的有布局属性的所有的组件
 		unactivedMoveableFlatedComponents(): ComponentWithLayout[] {
-			return (this.flatedComponents.filter((v) => !v.actived && v.layout) as ComponentWithLayout[]) ?? [];
+			return (this.allFlatedComponents.filter((v) => !v.actived && v.layout) as ComponentWithLayout[]) ?? [];
 		},
 		// 激活的所有组件
 		activedFlatedComponents(): Component[] {
-			return this.flatedComponents.filter((v) => v.actived);
+			return this.allFlatedComponents.filter((v) => v.actived);
 		},
 	},
 	actions: {
@@ -230,14 +230,17 @@ export const useSchema = defineStore("schema", {
 		joinGroup(component: Component, newParent: Component) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
-			if (component.id !== newParent.id && !newParent.components.some((v) => v.id === component.id)) {
+			if (
+				component.id !== newParent.id &&
+				!newParent.components.some((v) => v.id === component.id) &&
+				!this.isContains(component, newParent.id)
+			) {
 				const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 				this.deleteComponent(component.id);
 				if (component.layout) {
 					component.layout.left = componentLeft;
 					component.layout.top = componentTop;
 					const fn = (parent: Component) => {
-						console.log(parent);
 						const { parent: parentParent } = schemaStore.findParent(parent.id);
 						if (parentParent) {
 							if (!this.isRoot(parentParent.id) && !this.isSchema(parentParent)) fn(parentParent);

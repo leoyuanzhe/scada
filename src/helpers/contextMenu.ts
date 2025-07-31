@@ -306,9 +306,14 @@ export const openComponentMenu = (position: MenuPosition) => {
 		},
 		{
 			label: "加入分组",
-			disabled: !schemaStore.activedFlatedComponents.length,
+			disabled: !schemaStore.targetComponent,
 			list: schemaStore.flatedComponents
-				.filter((v) => v.nestable)
+				.filter(
+					(v) =>
+						v.nestable &&
+						schemaStore.targetComponent &&
+						!schemaStore.isContains(schemaStore.targetComponent, v.id)
+				)
 				.map((v) => ({
 					label: v.title,
 					onClick: () => {
