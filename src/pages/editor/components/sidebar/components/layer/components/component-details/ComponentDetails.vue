@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import { useSchema } from "@/stores/useSchema";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import type { Component } from "@/types/Component";
 import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu";
 
 interface Props {
 	component: Component;
 }
+const router = useRouter();
 const schemaStore = useSchema();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
@@ -23,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		}"
 		open
 		draggable="true"
-		@mousedown.stop="dragger.focusComponent($event, props.component)"
+		@mousedown.stop="dragger.focusComponent($event, props.component, router)"
 		@dragstart.stop="dragger.layerOnDragStart(props.component)"
 		@dragover.prevent="dragger.layerOnDragOver($event, component)"
 		@drop.stop="dragger.layerOnDrop()"

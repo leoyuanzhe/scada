@@ -4,7 +4,7 @@ import type { Component } from "@/types/Component";
 import { useClient } from "./useClient";
 import { useSchema } from "./useSchema";
 import { useUndoStack } from "./useUndoStack";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import { deepClone } from "@/utils/conversion";
 
 export const useCommand = defineStore("command", {
@@ -18,11 +18,9 @@ export const useCommand = defineStore("command", {
 			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.deactivateAllComponent();
 			const tempComponent = schemaStore.createRootComponent(component);
-			if (!schemaStore.currentRootId) {
-				schemaStore.currentRootId = tempComponent.id;
-			}
 			dragger.computedSelector();
 			schemaStore.recordStack(oldSchema);
+			return tempComponent;
 		},
 		createComponent(component: Component, parent?: Component) {
 			const schemaStore = useSchema();

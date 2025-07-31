@@ -3,7 +3,7 @@ import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useCommand } from "@/stores/useCommand";
 import { useUndoStack } from "@/stores/useUndoStack";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import ContextMenu from "@/components/context-menu";
 import CodeEditor from "@/components/code-editor";
 import { deepClone } from "@/utils/conversion";
@@ -320,8 +320,8 @@ export const openComponentMenu = (position: MenuPosition) => {
 		{
 			label: "移出分组",
 			disabled: schemaStore.activedFlatedComponents.every((component) => {
-				const { isRoot } = schemaStore.findParent(component.id);
-				return isRoot;
+				const { parent } = schemaStore.findParent(component.id);
+				return parent && schemaStore.isRoot(parent.id);
 			}),
 			onClick: () => {
 				const commandStore = useCommand();

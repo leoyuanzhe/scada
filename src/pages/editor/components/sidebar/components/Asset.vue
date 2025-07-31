@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAsset } from "@/stores/useAsset";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 
 const assetStore = useAsset();
 const dragger = useDragger();

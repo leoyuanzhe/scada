@@ -3,7 +3,7 @@ import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import { deepClone } from "@/utils/conversion";
 import { getFlatedComponents } from "@/helpers/schema";
 

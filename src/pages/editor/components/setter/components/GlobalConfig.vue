@@ -2,7 +2,7 @@
 import type { FitMode } from "@/types/Schema";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import FormItem from "@/components/form-item/FormItem.vue";
 
 const schemaStore = useSchema();

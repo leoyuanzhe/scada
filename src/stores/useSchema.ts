@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 import { useUndoStack } from "./useUndoStack";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import { getFlatedComponents, initState } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
@@ -64,7 +64,7 @@ export const useSchema = defineStore("schema", {
 			initState(this.$state);
 		},
 		isRoot(componentId: string) {
-			return this.currentRootComponent?.id === componentId;
+			return this.components.some((v) => v.id === componentId);
 		},
 		isSchema(component: Schema | Component) {
 			return component.key === "schema";
@@ -77,7 +77,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 找到组件（包括根组件）
 		findComponent(componentId: string) {
-			return [this.currentRootComponent, ...this.flatedComponents].find((v) => v?.id === componentId) || null;
+			return this.allFlatedComponents.find((v) => v?.id === componentId) || null;
 		},
 		// 找到组件（包括全局组件）
 		findComponentWithSchema(componentId: string) {
@@ -87,30 +87,32 @@ export const useSchema = defineStore("schema", {
 			);
 		},
 		// 找到组件的父元素
-		findParent<T extends { parent: Component | null; index: number; isRoot: boolean }>(componentId: string): T {
-			const findInComponents = (parent: Component, components: Component[], isRoot: boolean): T => {
-				for (let i = 0; i < components.length; i++) {
-					const component = components[i];
-					if (component.id === componentId) return { parent, index: i, isRoot } as T;
+		findParent<T extends { parent: Schema | Component | null; index: number }>(componentId: string): T {
+			const findInComponents = (parent: Schema | Component): T => {
+				for (let i = 0; i < parent.components.length; i++) {
+					const component = parent.components[i];
+					if (component.id === componentId)
+						return {
+							parent,
+							index: i,
+						} as T;
 					if (component.components && component.components.length > 0) {
-						const result = findInComponents(component, component.components, false);
+						const result = findInComponents(component);
 						if (result.parent) return result;
 					}
 				}
-				return { parent: null, index: -1, isRoot: false } as T;
+				return { parent: null, index: -1 } as T;
 			};
-			return this.currentRootComponent
-				? findInComponents(this.currentRootComponent, this.currentRootComponent.components, true)
-				: ({ parent: null, index: -1, isRoot: false } as T);
+			return findInComponents(this.$state);
 		},
 		// 找到组件的根组件
 		findRoot(component: Component): Component {
 			let { parent } = this.findParent(component.id);
-			while (parent && !this.isRoot(parent.id)) {
+			while (parent && !this.isSchema(parent) && !this.isRoot(parent.id)) {
 				component = parent;
 				parent = this.findParent(component.id).parent;
 			}
-			return parent || component;
+			return (parent as Component) || component;
 		},
 		// 分配包括该组件的所有子组件id
 		assignComponentId(component: Component) {
@@ -220,7 +222,7 @@ export const useSchema = defineStore("schema", {
 				}
 				const component = parent.components.splice(index, 1)[0];
 				beforeCheckCallBack?.();
-				checkChildren(parent);
+				if (!this.isSchema(parent)) checkChildren(parent);
 				return component;
 			}
 		},
@@ -235,9 +237,9 @@ export const useSchema = defineStore("schema", {
 					component.layout.left = componentLeft;
 					component.layout.top = componentTop;
 					const fn = (parent: Component) => {
-						const { parent: parentParent, isRoot } = schemaStore.findParent(parent.id);
+						const { parent: parentParent } = schemaStore.findParent(parent.id);
 						if (parentParent) {
-							if (!isRoot) fn(parentParent);
+							if (!this.isRoot(parentParent.id) && !this.isSchema(parentParent)) fn(parentParent);
 							if (parent.layout) {
 								const { left: parentLeft, top: parentTop } = dragger.getOffsetFromRoot(parent);
 								if (componentLeft < parentLeft) {
@@ -262,7 +264,6 @@ export const useSchema = defineStore("schema", {
 							}
 						}
 					};
-					fn(newParent);
 				}
 				this.addComponent(component, newParent);
 				dragger.computedSelector();
@@ -270,7 +271,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 插入到组件之前
 		insertBefore(component: Component, targetId: string) {
-			if (component.id !== targetId && !this.isRoot(targetId)) {
+			if (component.id !== targetId) {
 				this.deleteComponent(component.id, () => {
 					const { parent, index } = this.findParent(targetId);
 					if (parent) parent.components.splice(index, 0, component);
@@ -289,7 +290,7 @@ export const useSchema = defineStore("schema", {
 		// 移出分组
 		moveOut(component: Component) {
 			const { parent } = this.findParent(this.findParent(component.id).parent?.id || "");
-			if (parent && this.findComponent(component.id)) {
+			if (parent && !this.isSchema(parent) && this.findComponent(component.id)) {
 				this.joinGroup(component!, parent);
 			}
 		},

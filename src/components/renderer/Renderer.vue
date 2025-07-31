@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef } from "vue";
+import { useRouter } from "vue-router";
 import { useClient } from "@/stores/useClient";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 import RootComponent from "./components/RootComponent.vue";
 import GridLine from "./components/GridLine.vue";
 import Ruler from "./components/Ruler.vue";
@@ -9,6 +10,7 @@ import GuideLine from "./components/GuideLine.vue";
 import SnapLine from "./components/SnapLine.vue";
 import Selector from "./components/Selector.vue";
 
+const router = useRouter();
 const clientStore = useClient();
 const dragger = useDragger();
 const oRenderer = useTemplateRef("oRenderer");
@@ -29,7 +31,7 @@ onMounted(() => {
 		@wheel="dragger.rendererOnWheel($event)"
 		@mousedown="dragger.rendererOnMouseDown($event)"
 		@dragover.prevent
-		@drop="dragger.rendererOnDrop($event)"
+		@drop="dragger.rendererOnDrop($event, router)"
 	>
 		<RootComponent />
 		<GridLine />

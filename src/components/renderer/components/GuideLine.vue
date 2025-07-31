@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useClient } from "@/stores/useClient";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 
 const clientStore = useClient();
 const dragger = useDragger();
