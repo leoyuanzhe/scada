@@ -1,4 +1,5 @@
 import { reactive } from "vue";
+import type { Router } from "vue-router";
 import type { Asset } from "@/types/Asset";
 import type { Component } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
@@ -54,11 +55,12 @@ const layerOnDragOver = (e: DragEvent, component: Component) => {
 	) {
 		e.stopPropagation();
 		schemaStore.deactivateAllComponent();
-		if (schemaStore.isRoot(component.id)) {
-			layer.position = null;
-			layer.dragOverComponent = component;
-			component.actived = true;
-		} else if (e.offsetY <= 5) {
+		// if (schemaStore.isRoot(component.id)) {
+		// 	layer.position = null;
+		// 	layer.dragOverComponent = component;
+		// 	component.actived = true;
+		// } else
+		if (e.offsetY <= 5) {
 			// 组件的上边
 			layer.position = "before";
 			layer.dragOverComponent = component;
@@ -79,13 +81,13 @@ const layerOnDrop = () => {
 	const schemaStore = useSchema();
 	const commandStore = useCommand();
 	const dragger = useDragger();
-	if (layer.dragStartComponent) {
+	if (layer.dragStartComponent && layer.dragOverComponent) {
 		if (layer.position === null && layer.dragOverComponent!.nestable) {
-			commandStore.joinGroup(layer.dragStartComponent.id, layer.dragOverComponent!.id);
+			commandStore.joinGroup(layer.dragStartComponent.id, layer.dragOverComponent.id);
 		} else if (layer.position === "before") {
-			commandStore.insertBefore(layer.dragStartComponent.id, layer.dragOverComponent!.id);
+			commandStore.insertBefore(layer.dragStartComponent.id, layer.dragOverComponent.id);
 		} else if (layer.position === "after") {
-			commandStore.insertAfter(layer.dragStartComponent.id, layer.dragOverComponent!.id);
+			commandStore.insertAfter(layer.dragStartComponent.id, layer.dragOverComponent.id);
 		}
 		schemaStore.deactivateAllComponent();
 		schemaStore.targetComponentId = layer.dragStartComponent.id;
@@ -219,8 +221,9 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 		}
 	}
 };
-const rendererOnDrop = (e: DragEvent) => {
+const rendererOnDrop = (e: DragEvent, router: Router) => {
 	const assetStore = useAsset();
+	const schemaStore = useSchema();
 	const commandStore = useCommand();
 	const assetId = e.dataTransfer?.getData("assetId");
 	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
@@ -231,6 +234,8 @@ const rendererOnDrop = (e: DragEvent) => {
 			newComponent.layout.top = 0;
 		}
 		commandStore.createRootComponent(newComponent);
+		schemaStore.deactivateAllComponent();
+		router.replace("/editor?id=" + newComponent.id);
 	}
 };
 const componentOnMouseDown = (e: MouseEvent, component: Component) => {
@@ -387,10 +392,11 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 		}
 	}
 };
-const componentOnDragEnter = (component: Component) => {
-	const schemaStore = useSchema();
-	schemaStore.deactivateAllComponent();
+const componentOnDragOver = (e: DragEvent, component: Component) => {
 	if (component.nestable) {
+		e.stopPropagation();
+		const schemaStore = useSchema();
+		schemaStore.deactivateAllComponent();
 		component.actived = true;
 	}
 };
@@ -398,10 +404,11 @@ const componentOnDragLeave = (component: Component) => {
 	component.actived = false;
 };
 const componentOnDrop = (e: DragEvent, component: Component) => {
-	const assetStore = useAsset();
-	const commandStore = useCommand();
-	const schemaStore = useSchema();
 	if (component.nestable) {
+		e.stopPropagation();
+		const assetStore = useAsset();
+		const commandStore = useCommand();
+		const schemaStore = useSchema();
 		const { left, top } = getOffsetFromRoot(component);
 		const assetId = e.dataTransfer?.getData("assetId");
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
@@ -532,12 +539,16 @@ const computedSelector = () => {
 	}
 };
 // 聚焦组件
-function focusComponent(e: MouseEvent, component: Component) {
+function focusComponent(e: MouseEvent, component: Component, router?: Router) {
 	const schemaStore = useSchema();
-	if (!e.shiftKey && !component.actived) schemaStore.deactivateAllComponent();
-	component.actived = true;
-	schemaStore.targetComponentId = component.id;
-	computedSelector();
+	if (!schemaStore.isRoot(component.id)) {
+		if (!e.shiftKey && !component.actived) schemaStore.deactivateAllComponent();
+		component.actived = true;
+		schemaStore.targetComponentId = component.id;
+		computedSelector();
+	} else {
+		router?.push("/editor?id=" + component.id);
+	}
 }
 // 获取组件相对于父组件的父组件的偏移
 function getOffsetFromParentParent(component: Component): { left: number; top: number } {
@@ -545,7 +556,7 @@ function getOffsetFromParentParent(component: Component): { left: number; top: n
 	let left = component?.layout?.left ?? 0;
 	let top = component?.layout?.top ?? 0;
 	const { parent } = schemaStore.findParent(component.id);
-	if (parent?.layout) {
+	if (parent && !schemaStore.isSchema(parent) && parent.layout) {
 		left += parent.layout.left;
 		top += parent.layout.top;
 	}
@@ -558,7 +569,7 @@ function getOffsetFromRoot(component: Component): { left: number; top: number } 
 	let top = component?.layout?.top ?? 0;
 	const fn = (component: Component) => {
 		const { parent } = schemaStore.findParent(component.id);
-		if (parent && parent.layout) {
+		if (parent && !schemaStore.isSchema(parent) && parent.layout) {
 			left += parent.layout.left;
 			top += parent.layout.top;
 			fn(parent);
@@ -617,7 +628,7 @@ export const useDragger = () => ({
 	layerOnDragOver,
 	layerOnDrop,
 	componentOnMouseDown,
-	componentOnDragEnter,
+	componentOnDragOver,
 	componentOnDragLeave,
 	componentOnDrop,
 	selectorDirectionOnMouseDown,

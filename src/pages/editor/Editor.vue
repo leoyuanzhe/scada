@@ -1,15 +1,26 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import { useRuler } from "./hooks/useRuler";
+import { reactive, watch } from "vue";
+import { useRoute } from "vue-router";
+import { useSchema } from "@/stores/useSchema";
+import { useRuler } from "@/hooks/useRuler";
 import MenuBar from "./components/MenuBar.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "@/components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
 
+const route = useRoute();
+const schemaStore = useSchema();
 const ruler = useRuler();
 const layout = reactive({
 	setterWidth: 400,
 });
+watch(
+	() => route.query.id,
+	(id) => {
+		if (id) schemaStore.currentRootId = id as string;
+	},
+	{ immediate: true }
+);
 const onUpdateSetterWidth = (e: number) => {
 	layout.setterWidth = e;
 	ruler.drawRulerH();

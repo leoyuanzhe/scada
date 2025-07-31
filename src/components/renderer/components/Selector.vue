@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
+import { useDragger } from "@/hooks/useDragger";
 
 const clientStore = useClient();
 const schemaStore = useSchema();

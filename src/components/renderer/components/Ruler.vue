@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { nextTick, onMounted, useTemplateRef, watch } from "vue";
 import { useClient } from "@/stores/useClient";
-import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { useRuler } from "@/pages/editor/hooks/useRuler";
+import { useDragger } from "@/hooks/useDragger";
+import { useRuler } from "@/hooks/useRuler";
 
 const clientStore = useClient();
 const dragger = useDragger();
