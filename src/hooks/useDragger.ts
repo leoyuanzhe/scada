@@ -409,7 +409,6 @@ const componentOnDrop = (e: DragEvent, component: Component) => {
 		const assetStore = useAsset();
 		const commandStore = useCommand();
 		const schemaStore = useSchema();
-		const dragger = useDragger();
 		const assetId = e.dataTransfer?.getData("assetId");
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {

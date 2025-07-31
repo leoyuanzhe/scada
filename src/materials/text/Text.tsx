@@ -36,7 +36,7 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		left: 0,
 		top: 0,
 		width: 100,
-		height: 50,
+		height: 30,
 	},
 	props,
 	state: {},
