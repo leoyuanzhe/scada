@@ -4,8 +4,8 @@ import type { Component } from "@/types/Component";
 import { useCommand } from "./useCommand";
 import { useSchema } from "./useSchema";
 import { useDragger } from "@/pages/editor/hooks/useDragger";
-import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
+import { getFlatedComponents } from "@/helpers/schema";
 
 export const useClient = defineStore("client", {
 	state() {
@@ -151,6 +151,10 @@ export const useClient = defineStore("client", {
 							e.preventDefault();
 							commandStore.import();
 							break;
+						case "ctrl+s":
+							e.preventDefault();
+							commandStore.save();
+							break;
 						case "ctrl+p":
 							e.preventDefault();
 							commandStore.preview();
@@ -275,14 +279,22 @@ export const useClient = defineStore("client", {
 			const schemaStore = useSchema();
 			const components: Component[] = [];
 			if (this.copiedComponents) {
+				if (
+					schemaStore.allFlatedComponents.some((v) =>
+						this.copiedComponents!.flatMap((v) => getFlatedComponents(v).map((v) => v.id)).includes(v.id)
+					)
+				) {
+					this.copiedComponents.forEach((v) => schemaStore.assignComponentId(v));
+				}
 				deepClone(this.copiedComponents).forEach((component) => {
-					if (parent && parent.nestable) {
-						component.id = generateId();
-						parent.components.push(component);
-					} else schemaStore.createComponent(component, schemaStore.targetComponent);
+					schemaStore.currentRootComponent?.components.push(component);
 					components.push(component);
 				});
-				this.copyComponents(schemaStore.activedFlatedComponents);
+				console.log(parent);
+				if (parent && parent.nestable) {
+					components.forEach((v) => schemaStore.joinGroup(v, parent));
+				}
+				this.copyComponents(components);
 				return components;
 			}
 		},

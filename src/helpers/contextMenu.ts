@@ -28,6 +28,23 @@ export const openFileMenu = (position: MenuPosition) => {
 			},
 		},
 		{
+			label: "保存",
+			remark: "Ctrl + S",
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.save();
+			},
+		},
+		{
+			label: "预览",
+			remark: "Ctrl + P",
+			onClick: () => {
+				const commandStore = useCommand();
+				commandStore.preview();
+			},
+		},
+		{ type: "divider" },
+		{
 			label: "编辑Schema",
 			onClick: () => {
 				const schemaStore = useSchema();
@@ -44,15 +61,6 @@ export const openFileMenu = (position: MenuPosition) => {
 					alert("解析错误");
 					console.error(error);
 				}
-			},
-		},
-		{ type: "divider" },
-		{
-			label: "预览",
-			remark: "Ctrl + P",
-			onClick: () => {
-				const commandStore = useCommand();
-				commandStore.preview();
 			},
 		},
 	]);
