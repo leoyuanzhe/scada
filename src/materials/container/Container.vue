@@ -2,7 +2,7 @@
 import { onBeforeUnmount, onMounted, watch } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { ContainerProps } from "./Container";
-import { initProps, initState, relayoutComponent, triggerEmit } from "@/helpers/schema";
+import { initComponent, relayoutComponent } from "@/helpers/schema";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 interface Props {
@@ -15,10 +15,7 @@ watch(
 	() => relayoutComponent(props.component),
 	{ immediate: true, deep: true }
 );
-initState(props.component);
-initProps(props.component);
-onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
-onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));
+initComponent(props.component, onMounted, onBeforeUnmount, payload);
 </script>
 
 <template>

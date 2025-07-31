@@ -88,6 +88,14 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(
 			.catch(() => {});
 	});
 };
+export const initComponent = (component: Component, onMounted: Function, onBeforeUnmount: Function, payload = {}) => {
+	initState(component);
+	initProps(component);
+	initDataSources(component);
+	initWatchers(component);
+	onMounted(() => triggerEmit(component.emits.mounted, component, payload));
+	onBeforeUnmount(() => triggerEmit(component.emits.beforeUnmount, component, payload));
+};
 // 获取表达式器结果
 function getExpressionResult(this: Component | Schema, expression: string | undefined, payload: any) {
 	const schemaStore = useSchema();
