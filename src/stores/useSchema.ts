@@ -230,13 +230,14 @@ export const useSchema = defineStore("schema", {
 		joinGroup(component: Component, newParent: Component) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
-			if (component.id !== newParent.id && !this.isContains(newParent, component.id)) {
+			if (component.id !== newParent.id && !newParent.components.some((v) => v.id === component.id)) {
 				const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 				this.deleteComponent(component.id);
 				if (component.layout) {
 					component.layout.left = componentLeft;
 					component.layout.top = componentTop;
 					const fn = (parent: Component) => {
+						console.log(parent);
 						const { parent: parentParent } = schemaStore.findParent(parent.id);
 						if (parentParent) {
 							if (!this.isRoot(parentParent.id) && !this.isSchema(parentParent)) fn(parentParent);
