@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps, TextEmitKey } from "./Text";
-import { initState, initProps, triggerEmit } from "@/helpers/schema";
+import { initState, initProps, triggerEmit, initWatchers } from "@/helpers/schema";
 
 interface Props {
 	component: ComponentWithLayout<TextProps, TextEmitKey>;
@@ -11,6 +11,7 @@ const props = withDefaults(defineProps<Props>(), {});
 const payload = { text: "" };
 initState(props.component);
 initProps(props.component);
+initWatchers(props.component);
 onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
 onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));
 </script>
