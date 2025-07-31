@@ -100,6 +100,14 @@ export const useCommand = defineStore("command", {
 			};
 			input.click();
 		},
+		// 保存
+		save() {
+			const schemaStore = useSchema();
+			const clonedSchema = deepClone(schemaStore.$state as Schema);
+			schemaStore.clearComponent(clonedSchema);
+			const json = JSON.stringify(clonedSchema);
+			localStorage.setItem("schema", json);
+		},
 		// 预览
 		preview() {
 			const schemaStore = useSchema();
@@ -177,8 +185,8 @@ export const useCommand = defineStore("command", {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
-			schemaStore.deactivateAllComponent();
 			const components = clientStore.pasteComponents(schemaStore.targetComponent);
+			schemaStore.deactivateAllComponent();
 			components?.forEach((v) => (v.actived = true));
 			schemaStore.targetComponentId = "";
 			dragger.computedSelector();

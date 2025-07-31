@@ -112,15 +112,19 @@ export const useSchema = defineStore("schema", {
 			}
 			return parent || component;
 		},
+		// 分配包括该组件的所有子组件id
+		assignComponentId(component: Component) {
+			getFlatedComponents(component).forEach((v) => (v.id = generateId()));
+		},
 		// 创建根组件
 		createRootComponent(component: Component) {
-			component.id = generateId();
+			this.assignComponentId(component);
 			this.components.push(component);
 			return component;
 		},
 		// 创建组件
 		createComponent<T extends Component>(component: T, parent?: Component | null): T {
-			component.id = generateId();
+			this.assignComponentId(component);
 			parent ? parent.components.push(component) : this.currentRootComponent?.components.push(component);
 			return component;
 		},

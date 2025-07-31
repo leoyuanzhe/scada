@@ -97,15 +97,23 @@ const changeType = (e: Event, action: Action) => {
 				</FormItem>
 				<template v-if="v.type === 'changeVisible'">
 					<FormItem label="选择组件" for="change-visible-target-components-id">
-						<select
-							id="change-visible-target-components-id"
-							multiple
-							v-model="v.changeVisibleParams.targetComponentsId"
-						>
-							<option v-for="v2 in schemaStore.flatedComponents" :key="v2.id" :value="v2.id">
-								{{ v2.title }}
-							</option>
-						</select>
+						<div id="change-visible-target-components-id" class="checkbox-group">
+							<label v-for="v2 in schemaStore.flatedComponents" :key="v2.id">
+								<input
+									type="checkbox"
+									:checked="v.changeVisibleParams.targetComponentsId.includes(v2.id)"
+									@change="
+										v.changeVisibleParams.targetComponentsId.includes(v2.id)
+											? v.changeVisibleParams.targetComponentsId.splice(
+													v.changeVisibleParams.targetComponentsId.indexOf(v2.id),
+													1
+											  )
+											: v.changeVisibleParams.targetComponentsId.push(v2.id)
+									"
+								/>
+								<span>{{ v2.title }}</span>
+							</label>
+						</div>
 					</FormItem>
 					<FormItem label="选择可见性" for="change-visible-visible">
 						<select id="change-visible-visible" v-model="v.changeVisibleParams.visible">
