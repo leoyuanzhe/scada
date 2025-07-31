@@ -284,7 +284,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 插入到组件之后
 		insertAfter(component: Component, targetId: string) {
-			if (component.id !== targetId && !this.isRoot(targetId)) {
+			if (component.id !== targetId) {
 				this.deleteComponent(component.id, () => {
 					const { parent, index } = this.findParent(targetId);
 					if (parent) parent.components.splice(index + 1, 0, component);
