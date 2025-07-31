@@ -21,6 +21,7 @@ const addWatcher = () => {
 				timeout: 0,
 				deep: false,
 				immediate: false,
+				once: false,
 				actionsName: [],
 			});
 		else fn(depth + 1);
@@ -79,6 +80,14 @@ const editName = (name: string) => {
 						type="checkbox"
 						:checked="v.immediate"
 						@input="v.immediate = ($event.target as HTMLInputElement).checked"
+					/>
+				</FormItem>
+				<FormItem label="是否只触发一次" for="setter-watcher-once">
+					<input
+						id="setter-watcher-once"
+						type="checkbox"
+						:checked="v.once"
+						@input="v.once = ($event.target as HTMLInputElement).checked"
 					/>
 				</FormItem>
 				<FormItem label="选择动作" for="setter-watcher-actions-name">

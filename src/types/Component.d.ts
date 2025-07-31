@@ -7,6 +7,7 @@ export type Watcher = {
 	timeout: number;
 	deep: boolean;
 	immediate: boolean;
+	once: boolean;
 	actionsName: string[];
 };
 export type DataSourceRequestMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "HEAD" | "OPTIONS";
