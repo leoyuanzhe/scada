@@ -14,9 +14,6 @@ const props = withDefaults(defineProps<Props>(), {});
 const setExpression = () => {
 	editObjectValue(props.component.propsExpression as PropsExpression, props.propKey);
 };
-const deleteExpression = () => {
-	delete props.component.propsExpression[props.propKey];
-};
 </script>
 
 <template>
@@ -24,11 +21,10 @@ const deleteExpression = () => {
 		:label="props.label"
 		:for="'setter-' + props.propKey"
 		:icons="[
-			{ href: '#code', onClick: () => setExpression() },
 			{
-				href: props.component.propsExpression[props.propKey] !== undefined ? '#code' : '',
-				variant: 'danger',
-				onClick: () => deleteExpression(),
+				href: '#code',
+				variant: props.component.propsExpression[props.propKey] !== undefined ? 'primary' : 'info',
+				onClick: () => setExpression(),
 			},
 		]"
 	>

@@ -1,11 +1,25 @@
 import type { MaterialWithLayout } from "@/types/Material";
-import TextComponent from "./Text.vue";
 import { generateId } from "@/helpers/schema";
+import { deepClone } from "@/utils/conversion";
+import TextComponent from "./Text.vue";
 
-export interface TextProps {
-	text: string;
-	color: string;
-}
+const props = deepClone({
+	content: "文本",
+	fontColor: "#ffffff",
+	fontSize: 16,
+	fontStyle: "normal" as "normal" | "italic",
+	fontWeight: "normal" as "normal" | "bold",
+	fontFamily: "serif" as "serif",
+	textAlign: "center" as "left" | "center" | "right",
+	textDecorationLine: "none" as "none" | "overline" | "underline" | "line-through",
+	lineHeight: 30,
+	backgroundColor: "transparent",
+	borderWidth: 0,
+	borderColor: "transparent",
+	borderStyle: "solid" as "solid" | "dashed" | "dotted",
+	borderRadius: 0,
+});
+export type TextProps = typeof props;
 export type TextEmitKey = "click" | "dblclick";
 export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	version: "0.0.1",
@@ -24,10 +38,7 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		width: 100,
 		height: 50,
 	},
-	props: {
-		text: "文本",
-		color: "#ffffff",
-	},
+	props,
 	state: {},
 	watchers: [],
 	dataSources: [],

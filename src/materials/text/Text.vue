@@ -1,35 +1,46 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, computed } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { TextProps, TextEmitKey } from "./Text";
-import { initState, initProps, triggerEmit, initWatchers } from "@/helpers/schema";
+import { initComponent, triggerEmit } from "@/helpers/schema";
 
 interface Props {
 	component: ComponentWithLayout<TextProps, TextEmitKey>;
 }
 const props = withDefaults(defineProps<Props>(), {});
-const payload = { text: "" };
-initState(props.component);
-initProps(props.component);
-initWatchers(props.component);
-onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
-onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));
+const styleV2 = computed(() => ({
+	color: props.component.props.fontColor,
+	fontSize: props.component.props.fontSize + "px",
+	fontStyle: props.component.props.fontStyle,
+	fontWeight: props.component.props.fontWeight,
+	fontFamily: props.component.props.fontFamily,
+	textAlign: props.component.props.textAlign,
+	textDecorationLine: props.component.props.textDecorationLine,
+	lineHeight: props.component.props.lineHeight,
+	backgroundColor: props.component.props.backgroundColor,
+	borderWidth: props.component.props.borderWidth,
+	borderColor: props.component.props.borderColor,
+	borderStyle: props.component.props.borderStyle,
+	borderRadius: props.component.props.borderRadius,
+}));
+const payload = { content: "" };
+initComponent(props.component, onMounted, onBeforeUnmount, payload);
 </script>
 
 <template>
 	<span
 		class="text"
-		:style="{ color: props.component.props.color }"
+		:style="styleV2"
 		@click="
-			(payload.text = props.component.props.text),
+			(payload.content = props.component.props.content),
 				triggerEmit(props.component.emits.click, props.component, payload, $event)
 		"
 		@dblclick="
-			(payload.text = props.component.props.text),
+			(payload.content = props.component.props.content),
 				triggerEmit(props.component.emits.dblclick, props.component, payload, $event)
 		"
 	>
-		{{ props.component.props.text }}
+		{{ props.component.props.content }}
 	</span>
 </template>
 

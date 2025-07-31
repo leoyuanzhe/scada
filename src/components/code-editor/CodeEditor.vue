@@ -8,7 +8,7 @@ interface Props {
 }
 interface Emits {
 	(e: "cancel"): void;
-	(e: "confirm", returnValue: string): void;
+	(e: "confirm", returnValue: string | undefined): void;
 }
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
@@ -38,6 +38,7 @@ defineExpose({
 			<textarea v-model="value"></textarea>
 			<aside>
 				<MyButton @click="close()">取消</MyButton>
+				<MyButton variant="warning" @click="emits('confirm', undefined)">清除</MyButton>
 				<MyButton variant="primary" @click="close(value)">完成</MyButton>
 			</aside>
 		</form>
