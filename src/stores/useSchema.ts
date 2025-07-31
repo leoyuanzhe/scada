@@ -1,3 +1,4 @@
+import { nextTick } from "vue";
 import { defineStore } from "pinia";
 import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
@@ -235,9 +236,9 @@ export const useSchema = defineStore("schema", {
 				!newParent.components.some((v) => v.id === component.id) &&
 				!this.isContains(component, newParent.id)
 			) {
-				const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 				this.deleteComponent(component.id);
 				if (component.layout) {
+					const { left: componentLeft, top: componentTop } = dragger.getOffsetFromRoot(component);
 					component.layout.left = componentLeft;
 					component.layout.top = componentTop;
 					const fn = (parent: Component) => {
@@ -268,9 +269,10 @@ export const useSchema = defineStore("schema", {
 							}
 						}
 					};
+					fn(newParent);
 				}
 				this.addComponent(component, newParent);
-				dragger.computedSelector();
+				nextTick(() => dragger.computedSelector());
 			}
 		},
 		// 插入到组件之前

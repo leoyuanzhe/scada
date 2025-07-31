@@ -409,14 +409,14 @@ const componentOnDrop = (e: DragEvent, component: Component) => {
 		const assetStore = useAsset();
 		const commandStore = useCommand();
 		const schemaStore = useSchema();
-		const { left, top } = getOffsetFromRoot(component);
+		const dragger = useDragger();
 		const assetId = e.dataTransfer?.getData("assetId");
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {
 			const newComponent = assetTransferComponent(asset);
 			if (newComponent.layout) {
-				newComponent.layout.left = left + e.offsetX - (newComponent.layout.width ?? 0) / 2;
-				newComponent.layout.top = top + e.offsetY - (newComponent.layout.height ?? 0) / 2;
+				newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
+				newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
 			}
 			commandStore.createComponent(newComponent);
 			schemaStore.joinGroup(newComponent, component);
