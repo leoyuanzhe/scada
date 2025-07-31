@@ -11,6 +11,12 @@ interface Props {
 	inputType: "text" | "number" | "color";
 }
 const props = withDefaults(defineProps<Props>(), {});
+const setExpression = () => {
+	editObjectValue(props.component.propsExpression as PropsExpression, props.propKey);
+};
+const deleteExpression = () => {
+	delete props.component.propsExpression[props.propKey];
+};
 </script>
 
 <template>
@@ -18,8 +24,12 @@ const props = withDefaults(defineProps<Props>(), {});
 		:label="props.label"
 		:for="'setter-' + props.propKey"
 		:icons="[
-			{ href: '#code', onClick: () => editObjectValue(props.component.propsExpression as PropsExpression, props.propKey) },
-			{ href: props.component.propsExpression[props.propKey] !== undefined ? '#code' : '', variant: 'danger', onClick: () => delete props.component.propsExpression[props.propKey] },
+			{ href: '#code', onClick: () => setExpression() },
+			{
+				href: props.component.propsExpression[props.propKey] !== undefined ? '#code' : '',
+				variant: 'danger',
+				onClick: () => deleteExpression(),
+			},
 		]"
 	>
 		<input

@@ -120,33 +120,52 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 }
 // 初始化状态
 export function initState(component: Component | Schema) {
+	const clientStore = useClient();
 	const payload = {};
-	watchEffect(() => {
+	if (clientStore.previewing) {
 		for (let key in component.stateExpression) {
-			delete component.state[key];
-			const { result, error } = getExpressionResult.call(component, component.stateExpression[key], payload);
-			if (error) {
-				component.state[key] = null;
-				console.error(error);
-				continue;
-			}
-			component.state[key] = result;
+			watchEffect(() => {
+				fn(key);
+			});
 		}
-	});
+	} else {
+		watchEffect(() => {
+			for (let key in component.stateExpression) {
+				fn(key);
+			}
+		});
+	}
+	function fn(key: keyof typeof component.stateExpression) {
+		delete component.state[key];
+		const { result, error } = getExpressionResult.call(component, component.stateExpression[key], payload);
+		if (error) {
+			component.state[key] = null;
+			console.error(error);
+		} else component.state[key] = result;
+	}
 }
 // 初始化属性
 export function initProps(component: Component) {
+	const clientStore = useClient();
 	const payload = {};
-	watchEffect(() => {
+	if (clientStore.previewing) {
 		for (let key in component.propsExpression) {
-			const { result, error } = getExpressionResult.call(component, component.propsExpression[key], payload);
-			if (error) {
-				console.error(error);
-				continue;
-			}
-			component.props[key] = result;
+			watchEffect(() => {
+				fn(key);
+			});
 		}
-	});
+	} else {
+		watchEffect(() => {
+			for (let key in component.propsExpression) {
+				fn(key);
+			}
+		});
+	}
+	function fn(key: keyof typeof component.propsExpression) {
+		const { result, error } = getExpressionResult.call(component, component.propsExpression[key], payload);
+		if (error) console.error(error);
+		else component.props[key] = result;
+	}
 }
 // 获取监听处理器结果
 function getWatcherTargetHandlerResult(this: Component | Schema, handler: string) {
@@ -174,7 +193,10 @@ export function initWatchers(component: Component) {
 		try {
 			const { error, result } = getWatcherTargetHandlerResult.call(component, watcher.sourceHandler);
 			if (error) throw new Error(error);
-			watch(result, () => triggerEmit(watcher, component, payload));
+			watch(result, () => triggerEmit(watcher, component, payload), {
+				immediate: watcher.immediate,
+				deep: watcher.deep,
+			});
 		} catch (error) {
 			console.error(error);
 		}
@@ -442,7 +464,6 @@ export const triggerAction = async (action: Action, component: Schema | Componen
 							payload
 						);
 						if (!error) {
-							delete targetComponent.stateExpression[action.changeStateParams.key];
 							targetComponent.state[action.changeStateParams.key] = result;
 						} else throw new Error(`"${component.title}" "${action.name}" change state error.`);
 					}
