@@ -119,14 +119,18 @@ export const useSchema = defineStore("schema", {
 		// 创建根组件
 		createRootComponent(component: Component) {
 			this.assignComponentId(component);
-			this.components.push(component);
+			this.addComponent(component, this.$state);
 			return component;
 		},
 		// 创建组件
 		createComponent<T extends Component>(component: T, parent?: Component | null): T {
 			this.assignComponentId(component);
-			parent ? parent.components.push(component) : this.currentRootComponent?.components.push(component);
+			this.addComponent(component, parent);
 			return component;
+		},
+		// 添加组件
+		addComponent(component: Component, parent?: Schema | Component | null) {
+			parent ? parent.components.push(component) : this.currentRootComponent?.components.push(component);
 		},
 		// 创建分组
 		createGroup(componentsId: string[]) {
@@ -260,7 +264,7 @@ export const useSchema = defineStore("schema", {
 					};
 					fn(newParent);
 				}
-				newParent.components.push(component);
+				this.addComponent(component, newParent);
 				dragger.computedSelector();
 			}
 		},
