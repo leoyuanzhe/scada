@@ -16,12 +16,12 @@ const styleV2 = computed(() => ({
 	fontFamily: props.component.props.fontFamily,
 	textAlign: props.component.props.textAlign,
 	textDecorationLine: props.component.props.textDecorationLine,
-	lineHeight: props.component.props.lineHeight,
+	lineHeight: props.component.props.lineHeight + "px",
 	backgroundColor: props.component.props.backgroundColor,
-	borderWidth: props.component.props.borderWidth,
+	borderWidth: props.component.props.borderWidth + "px",
 	borderColor: props.component.props.borderColor,
 	borderStyle: props.component.props.borderStyle,
-	borderRadius: props.component.props.borderRadius,
+	borderRadius: props.component.props.borderRadius + "px",
 }));
 const payload = { content: "" };
 initComponent(props.component, onMounted, onBeforeUnmount, payload);
