@@ -269,6 +269,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 									getActualLeft(v.layout.left),
 									getActualLeft(v.layout.left + v.layout.width / 2),
 									getActualLeft(v.layout.left + v.layout.width),
+									...v.layout.snap.v.map((v2) => getActualLeft(v.layout.left + v.layout.width * v2)),
 								]),
 							...clientStore.guide.line.v.map((v) => getActualLeft(v)),
 						],
@@ -286,6 +287,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 									getActualTop(v.layout.top),
 									getActualTop(v.layout.top + v.layout.height / 2),
 									getActualTop(v.layout.top + v.layout.height),
+									...v.layout.snap.h.map((v2) => getActualTop(v.layout.top + v.layout.height * v2)),
 								]),
 							...clientStore.guide.line.h.map((v) => getActualTop(v)),
 						],
@@ -447,7 +449,6 @@ const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r"
 						schemaStore.targetComponent!.layout!.height = startHeight + -moveY;
 					}
 					break;
-
 				case "tr":
 					if (startWidth + moveX > 0) {
 						schemaStore.targetComponent!.layout!.width = startWidth + moveX;
