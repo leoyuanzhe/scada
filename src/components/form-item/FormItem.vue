@@ -1,13 +1,14 @@
 <script lang="ts" setup>
+export type FormItemIcon = {
+	href: string;
+	disabled?: boolean;
+	variant?: "info" | "primary" | "success" | "warning" | "danger";
+	onClick?: () => void;
+};
 interface Props {
 	label?: string;
 	for?: string;
-	icons?: ({
-		href: string;
-		disabled?: boolean;
-		variant?: "info" | "primary" | "success" | "warning" | "danger";
-		onClick?: () => void;
-	} | null)[];
+	icons?: (FormItemIcon | null)[];
 }
 const props = withDefaults(defineProps<Props>(), {
 	id: "",
