@@ -2,7 +2,6 @@
 import type { Component } from "@/types/Component";
 import type { ContainerProps } from "@/materials/container/Container";
 import { generateCodeIcon } from "../helpers/formItem";
-import PropFormItem from "./prop-form-item/PropFormItem.vue";
 
 interface Props {
 	component: Component<ContainerProps>;
@@ -23,7 +22,6 @@ const codeIcon = generateCodeIcon<ContainerProps>(props.component.propsExpressio
 					@input="props.component.props.backgroundColor = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
-			<PropFormItem label="背景颜色" prop-key="backgroundColor" input-type="color" :component="props.component" />
 		</fieldset>
 	</details>
 </template>
