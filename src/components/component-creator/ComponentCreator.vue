@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed, type StyleValue } from "vue";
 import type { Material } from "@/types/Material";
 import type { Component } from "@/types/Component";
 import { useClient } from "@/stores/useClient";
@@ -15,6 +16,22 @@ const materialStore = useMaterial();
 const schemaStore = useSchema();
 const dragger = useDragger();
 const props = withDefaults(defineProps<Props>(), {});
+const styleV2 = computed(() => {
+	const res: StyleValue = {};
+	if (props.component.layout) {
+		res.left = props.component.layout.left + "px";
+		res.top = props.component.layout.top + "px";
+		res.width = props.component.layout.width + "px";
+		res.height = props.component.layout.height + "px";
+	}
+	if (!clientStore.previewing && props.component.actived) {
+		res.boxShadow = "0 0 1px 1px " + clientStore.component.activedColor;
+	}
+	if (!clientStore.previewing && props.component.id === schemaStore.targetComponentId) {
+		res.boxShadow = "0 0 3px 3px " + clientStore.component.activedColor;
+	}
+	return res;
+});
 const RenderComponent = () =>
 	(materialStore.materials.find((v) => v.key == props.component.key) as ReturnType<Material["render"]>)?.render(
 		props.component
@@ -27,22 +44,11 @@ const RenderComponent = () =>
 		:class="{
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
-			actived: !clientStore.previewing && props.component.actived,
-			target: !clientStore.previewing && props.component.id === schemaStore.targetComponentId,
 			locked: !clientStore.previewing && props.component.locked,
 			action: clientStore.enabledOperate,
 		}"
 		v-show="!props.component.hidden"
-		:style="
-			props.component.layout
-				? {
-						left: props.component.layout.left + 'px',
-						top: props.component.layout.top + 'px',
-						width: props.component.layout.width + 'px',
-						height: props.component.layout.height + 'px',
-				  }
-				: {}
-		"
+		:style="styleV2"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent="dragger.componentOnDragOver($event, component)"
 		@drop="dragger.componentOnDrop($event, component)"
@@ -66,12 +72,6 @@ const RenderComponent = () =>
 		&::after {
 			content: none;
 		}
-	}
-	&.actived {
-		box-shadow: 0 0 1px 1px #ff0000;
-	}
-	&.target {
-		box-shadow: 0 0 6px 3px #ff0000;
 	}
 	&.locked {
 		pointer-events: none;

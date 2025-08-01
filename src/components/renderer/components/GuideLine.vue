@@ -40,7 +40,7 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 			v-for="(v, i) in clientStore.guide.line.v"
 			:key="i"
 			class="guide-line-v"
-			:style="{ left: dragger.getActualLeft(v) + 'px' }"
+			:style="{ left: dragger.getActualLeft(v) + 'px', backgroundColor: clientStore.guide.color }"
 			@mousedown.stop="vMouseDown($event, i)"
 			@dblclick="clientStore.guide.line.v.splice(i, 1)"
 		></div>
@@ -48,7 +48,7 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 			v-for="(v, i) in clientStore.guide.line.h"
 			:key="i"
 			class="guide-line-h"
-			:style="{ top: dragger.getActualTop(v) + 'px' }"
+			:style="{ top: dragger.getActualTop(v) + 'px', backgroundColor: clientStore.guide.color }"
 			@mousedown.stop="hMouseDown($event, i)"
 			@dblclick="clientStore.guide.line.h.splice(i, 1)"
 		></div>
@@ -61,7 +61,6 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 	top: 0;
 	width: 1px;
 	height: 100%;
-	background-color: #ff0000;
 	transform: translateX(-50%);
 	cursor: move;
 }
@@ -70,7 +69,6 @@ const hMouseDown = (e: MouseEvent, index: number) => {
 	left: 0;
 	width: 100%;
 	height: 1px;
-	background-color: #ff0000;
 	transform: translateY(-50%);
 	cursor: move;
 }
