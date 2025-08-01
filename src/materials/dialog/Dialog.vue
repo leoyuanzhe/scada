@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount, computed } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
-import type { TextProps, TextEmitKey } from "./Text";
+import type { TextProps, TextEmitKey } from "./Dialog";
 import { initComponent, triggerEmit } from "@/helpers/schema";
 
 interface Props {

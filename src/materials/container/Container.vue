@@ -23,5 +23,3 @@ initComponent(props.component, onMounted, onBeforeUnmount, payload);
 		<ComponentCreator v-for="v in props.component.components" :key="v.id" :component="v" />
 	</div>
 </template>
-
-<style scoped lang="scss"></style>

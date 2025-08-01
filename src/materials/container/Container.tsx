@@ -36,7 +36,5 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	propsExpression: {},
 	stateExpression: {},
 	components: [],
-	render: (component) => {
-		return <ContainerComponent component={component} />;
-	},
+	render: (component) => <ContainerComponent component={component} />,
 });
