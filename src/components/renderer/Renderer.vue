@@ -33,8 +33,8 @@ onMounted(() => {
 		@dragover.prevent
 		@drop="dragger.rendererOnDrop($event, router)"
 	>
-		<RootComponent />
 		<GridLine />
+		<RootComponent />
 		<Ruler />
 		<GuideLine />
 		<SnapLine />

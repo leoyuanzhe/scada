@@ -25,6 +25,8 @@ const showDirection = computed(
 			top: dragger.selector.top + 'px',
 			width: dragger.selector.width + 'px',
 			height: dragger.selector.height + 'px',
+			boxShadow: '0 0 1px 1px ' + clientStore.snap.color,
+			backgroundColor: clientStore.snap.color + '22',
 		}"
 	>
 		<div v-show="showDirection" class="t" @mousedown.stop="dragger.selectorDirectionOnMouseDown($event, 't')"></div>
@@ -58,8 +60,6 @@ const showDirection = computed(
 .selector {
 	position: absolute;
 	z-index: 9;
-	box-shadow: 0 0 1px 1px #ff0000;
-	background-color: #ff000022;
 	pointer-events: none;
 	div {
 		position: absolute;

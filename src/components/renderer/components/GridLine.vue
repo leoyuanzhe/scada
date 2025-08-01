@@ -3,9 +3,13 @@ import { computed } from "vue";
 import { useClient } from "@/stores/useClient";
 
 const clientStore = useClient();
-const gridSize = computed(() => {
+const styleV2 = computed(() => {
 	const size = scaleSize(clientStore.grid.span * clientStore.canvas.scale);
-	return size;
+	return {
+		backgroundImage: `linear-gradient(to right, ${clientStore.grid.color} 1px, transparent 1px), linear-gradient(to bottom, ${clientStore.grid.color} 1px, transparent 1px)`,
+		backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
+		backgroundSize: `${size}px ${size}px`,
+	};
 });
 function scaleSize(size: number): number {
 	size = Math.max(size, 2);
@@ -14,14 +18,7 @@ function scaleSize(size: number): number {
 </script>
 
 <template>
-	<div
-		v-if="clientStore.grid.enable && !clientStore.previewing"
-		class="grid-line"
-		:style="{
-			backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
-			backgroundSize: `${gridSize}px ${gridSize}px`,
-		}"
-	></div>
+	<div v-if="clientStore.grid.enable && !clientStore.previewing" class="grid-line" :style="styleV2"></div>
 </template>
 
 <style lang="scss" scoped>
@@ -29,8 +26,6 @@ function scaleSize(size: number): number {
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	background-image: linear-gradient(to right, #ffffff33 1px, transparent 1px),
-		linear-gradient(to bottom, #ffffff33 1px, transparent 1px);
 	background-repeat: repeat;
 	pointer-events: none;
 }
