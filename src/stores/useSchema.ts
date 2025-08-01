@@ -56,8 +56,10 @@ export const useSchema = defineStore("schema", {
 		// 初始化
 		init() {
 			try {
+				const dragger = useDragger();
 				const json = JSON.parse(localStorage.getItem("schema") || "null") ?? deepClone(defaultSchema);
 				this.setSchema(json);
+				dragger.computedSelector();
 			} catch (error) {
 				alert("Schema加载失败");
 				console.error(error);
@@ -140,30 +142,14 @@ export const useSchema = defineStore("schema", {
 			const parent = this.findParent(componentsId[0]).parent?.id ?? "";
 			if (componentsId.length > 1 && componentsId.every((v) => this.findParent(v).parent?.id === parent)) {
 				const container = this.createComponent(Container());
-				container.layout.left = Infinity;
-				container.layout.top = Infinity;
+				container.layout.left = 0;
+				container.layout.top = 0;
 				container.layout.width = 0;
 				container.layout.height = 0;
 				componentsId.forEach((componentId) => {
 					const component = this.findComponent(componentId);
-					if (component && component.layout) {
-						container.layout.left = Math.min(component.layout.left, container.layout.left);
-						container.layout.top = Math.min(component.layout.top, container.layout.top);
-						container.layout.width = Math.max(
-							component.layout.left + component.layout.width,
-							container.layout.width
-						);
-						container.layout.height = Math.max(
-							component.layout.top + component.layout.height,
-							container.layout.height
-						);
+					if (component) {
 						this.joinGroup(component, container);
-					}
-				});
-				container.components.forEach((component) => {
-					if (component.layout) {
-						component.layout.left -= container.layout.left;
-						component.layout.top -= container.layout.top;
 					}
 				});
 				container.layout.width -= container.layout.left;
