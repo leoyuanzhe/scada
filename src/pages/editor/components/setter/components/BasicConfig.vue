@@ -9,7 +9,6 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 
 <template>
 	<form class="form" @submit.prevent>
-		<h1>基本</h1>
 		<fieldset>
 			<legend>设置</legend>
 			<FormItem label="名称" for="setter-basic-title">
