@@ -20,7 +20,7 @@ interface Emits {
 const schemaStore = useSchema();
 const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
-const current = ref<"global" | "basic" | "prop" | "state" | "watcher" | "dataSource" | "emit">("global");
+const current = ref<"global" | "basic" | "prop" | "state" | "dataSource" | "emit" | "watcher">("global");
 const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);
@@ -57,9 +57,9 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 				属性
 			</button>
 			<button :class="{ actived: current === 'state' }" @click="current = 'state'">状态</button>
-			<button :class="{ actived: current === 'watcher' }" @click="current = 'watcher'">监听</button>
 			<button :class="{ actived: current === 'dataSource' }" @click="current = 'dataSource'">数据</button>
 			<button :class="{ actived: current === 'emit' }" @click="current = 'emit'">事件</button>
+			<button :class="{ actived: current === 'watcher' }" @click="current = 'watcher'">监听</button>
 		</menu>
 		<div class="container">
 			<GlobalConfig v-if="current === 'global'" :component="targetComponentV2" />
