@@ -234,8 +234,8 @@ export const useClient = defineStore("client", {
 				}
 			});
 		},
-		// 计算画布布局
-		computedCanvasLayout() {
+		// 重置渲染器视角
+		resetRendererView() {
 			const schemaStore = useSchema();
 			if (this.oRenderer) {
 				this.canvas.left = 30;

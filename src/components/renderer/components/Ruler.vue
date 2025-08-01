@@ -67,18 +67,13 @@ const vMouseDown = (e: MouseEvent) => {
 </script>
 
 <template>
-	<canvas
-		ref="oRulerH"
-		v-if="clientStore.ruler.show && !clientStore.previewing"
-		class="ruler-h"
-		@mousedown.stop="hMouseDown($event)"
-	></canvas>
-	<canvas
-		ref="oRulerV"
-		v-if="clientStore.ruler.show && !clientStore.previewing"
-		class="ruler-v"
-		@mousedown.stop="vMouseDown($event)"
-	></canvas>
+	<template v-if="clientStore.ruler.show && !clientStore.previewing">
+		<canvas ref="oRulerH" class="ruler-h" @mousedown.stop="hMouseDown($event)"></canvas>
+		<canvas ref="oRulerV" class="ruler-v" @mousedown.stop="vMouseDown($event)"></canvas>
+		<button class="guide-eye" @click="clientStore.guide.enable = !clientStore.guide.enable">
+			<svg class="icon"><use :href="clientStore.guide.enable ? '#eye-slash' : '#eye'" /></svg>
+		</button>
+	</template>
 </template>
 
 <style lang="scss" scoped>
@@ -99,5 +94,15 @@ const vMouseDown = (e: MouseEvent) => {
 	height: 20px;
 	background-color: #444;
 	cursor: crosshair;
+}
+.guide-eye {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 20px;
+	height: 20px;
+	color: #eee;
+	background-color: #444;
+	cursor: pointer;
 }
 </style>

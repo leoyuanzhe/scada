@@ -19,13 +19,6 @@ init();
 function init() {
 	clientStore.previewing = true;
 	clientStore.enableOperate();
-	try {
-		const json = JSON.parse(localStorage.getItem("schema") || "{}");
-		schemaStore.setSchema(json);
-	} catch (error) {
-		alert("预览大屏失败");
-		console.error(error);
-	}
 }
 </script>
 

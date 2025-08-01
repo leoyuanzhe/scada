@@ -57,8 +57,13 @@ export const useSchema = defineStore("schema", {
 		init() {
 			try {
 				const dragger = useDragger();
-				const json = JSON.parse(localStorage.getItem("schema") || "null") ?? deepClone(defaultSchema);
-				this.setSchema(json);
+				const schemaJson = localStorage.getItem("schema");
+				if (schemaJson) {
+					const schema = JSON.parse(schemaJson);
+					this.setSchema(schema);
+				} else {
+					this.setSchema(deepClone(defaultSchema as Schema));
+				}
 				dragger.computedSelector();
 			} catch (error) {
 				alert("Schema加载失败");
