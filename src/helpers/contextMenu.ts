@@ -45,6 +45,14 @@ export const openFileMenu = (position: MenuPosition) => {
 		},
 		{ type: "divider" },
 		{
+			label: "重置视角",
+			remark: "",
+			onClick: () => {
+				const clientStore = useClient();
+				clientStore.resetRendererView();
+			},
+		},
+		{
 			label: "编辑Schema",
 			onClick: () => {
 				const schemaStore = useSchema();
@@ -52,7 +60,7 @@ export const openFileMenu = (position: MenuPosition) => {
 				try {
 					CodeEditor(JSON.stringify(schemaStore.$state, null, 4))
 						.then((value) => {
-							const newSchema = JSON.parse(value);
+							const newSchema = JSON.parse(value!);
 							schemaStore.setSchema(newSchema);
 							schemaStore.recordStack(oldSchema);
 						})

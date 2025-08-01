@@ -87,8 +87,8 @@ export const useCommand = defineStore("command", {
 				reader.onload = () => {
 					try {
 						const oldSchema = deepClone(schemaStore.$state);
-						const json = JSON.parse(reader.result as string);
-						schemaStore.setSchema(json);
+						const schema = JSON.parse(reader.result as string);
+						schemaStore.setSchema(schema);
 						schemaStore.recordStack(oldSchema);
 					} catch (error: any) {
 						throw new Error(error);

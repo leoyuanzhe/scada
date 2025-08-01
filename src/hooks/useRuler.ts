@@ -20,10 +20,10 @@ const drawRulerH = () => {
 				ctx.lineWidth = 0.5;
 				ctx.moveTo(i, 2);
 				ctx.lineTo(i, 20);
-				ctx.strokeStyle = "#cccccc";
+				ctx.strokeStyle = "#eeeeee";
 				ctx.stroke();
 				ctx.font = "10px Arial";
-				ctx.fillStyle = "#cccccc";
+				ctx.fillStyle = "#eeeeee";
 				const value = Math.round((i - rulerStart) / clientStore.canvas.scale);
 				ctx.fillText(value.toString(), i + 5, 10);
 				ctx.restore();
@@ -34,7 +34,7 @@ const drawRulerH = () => {
 					ctx.lineWidth = 0.5;
 					ctx.moveTo(i, 15);
 					ctx.lineTo(i, 20);
-					ctx.strokeStyle = "#cccccc";
+					ctx.strokeStyle = "#eeeeee";
 					ctx.stroke();
 				}
 			}
@@ -58,10 +58,10 @@ const drawRulerV = () => {
 				ctx.lineWidth = 0.5;
 				ctx.moveTo(2, i);
 				ctx.lineTo(20, i);
-				ctx.strokeStyle = "#cccccc";
+				ctx.strokeStyle = "#eeeeee";
 				ctx.stroke();
 				ctx.font = "10px Arial";
-				ctx.fillStyle = "#cccccc";
+				ctx.fillStyle = "#eeeeee";
 				ctx.rotate(Math.PI / 2);
 				const value = Math.round((i - rulerStart) / clientStore.canvas.scale);
 				ctx.fillText(value.toString(), i + 5, -2);
@@ -73,7 +73,7 @@ const drawRulerV = () => {
 					ctx.lineWidth = 0.5;
 					ctx.moveTo(15, i);
 					ctx.lineTo(20, i);
-					ctx.strokeStyle = "#cccccc";
+					ctx.strokeStyle = "#eeeeee";
 					ctx.stroke();
 				}
 			}
