@@ -30,7 +30,7 @@ const current = ref<"asset" | "layer">("layer");
 		row-gap: 10px;
 		background-color: #333;
 		box-shadow: 0 0 3px 1px #666;
-		z-index: 1;
+		z-index: 2;
 		overflow: auto;
 		button {
 			width: 40px;
