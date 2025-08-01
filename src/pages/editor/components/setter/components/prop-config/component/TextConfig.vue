@@ -2,18 +2,18 @@
 import type { TextProps } from "@/materials/text/Text";
 import type { Component } from "@/types/Component";
 import { editObjectValue } from "@/helpers/schema";
-import PropFormItem from "./prop-form-item/PropFormItem.vue";
-import FormItem from "@/components/form-item/FormItem.vue";
+import FormItem, { type FormItemIcon } from "@/components/form-item/FormItem.vue";
 
 interface Props {
 	component: Component<TextProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
-const getExpressionIconVariant = (key: keyof TextProps) => {
-	return props.component.propsExpression.content !== undefined ? "primary" : "info";
-};
-const setExpression = (key: keyof TextProps) => {
-	editObjectValue(props.component.propsExpression as Record<string, any>, key);
+const codeIcon = (key: keyof TextProps): FormItemIcon => {
+	return {
+		href: "#code",
+		variant: props.component.propsExpression.content !== undefined ? "primary" : "info",
+		onClick: () => editObjectValue(props.component.propsExpression as Record<string, any>, key),
+	};
 };
 </script>
 
@@ -21,17 +21,7 @@ const setExpression = (key: keyof TextProps) => {
 	<details class="details" open>
 		<summary>文本</summary>
 		<fieldset>
-			<FormItem
-				label="内容"
-				for="setter-content"
-				:icons="[
-					{
-						href: '#code',
-						variant: getExpressionIconVariant('content'),
-						onClick: () => setExpression('content'),
-					},
-				]"
-			>
+			<FormItem label="内容" for="setter-content" :icons="[codeIcon('content')]">
 				<input
 					id="setter-content"
 					type="text"
@@ -39,8 +29,22 @@ const setExpression = (key: keyof TextProps) => {
 					@input="props.component.props.content = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
-			<PropFormItem label="颜色" prop-key="fontColor" input-type="color" :component="props.component" />
-			<PropFormItem label="颜色" prop-key="fontSize" input-type="color" :component="props.component" />
+			<FormItem label="字体颜色" for="setter-font-color" :icons="[codeIcon('fontColor')]">
+				<input
+					id="setter-font-color"
+					type="color"
+					:value="props.component.props.fontColor"
+					@input="props.component.props.fontColor = ($event.target as HTMLInputElement).value"
+				/>
+			</FormItem>
+			<FormItem label="字体大小" for="setter-font-size" :icons="[codeIcon('fontSize')]">
+				<input
+					id="setter-font-size"
+					type="number"
+					:value="props.component.props.fontSize"
+					@input="props.component.props.fontSize = Number(($event.target as HTMLInputElement).value)"
+				/>
+			</FormItem>
 		</fieldset>
 	</details>
 </template>
