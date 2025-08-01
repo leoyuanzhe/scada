@@ -55,11 +55,6 @@ const layerOnDragOver = (e: DragEvent, component: Component) => {
 	) {
 		e.stopPropagation();
 		schemaStore.deactivateAllComponent();
-		// if (schemaStore.isRoot(component.id)) {
-		// 	layer.position = null;
-		// 	layer.dragOverComponent = component;
-		// 	component.actived = true;
-		// } else
 		if (e.offsetY <= 5) {
 			// 组件的上边
 			layer.position = "before";

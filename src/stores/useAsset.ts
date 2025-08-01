@@ -3,6 +3,8 @@ import type { Asset } from "@/types/Asset";
 import { generateId } from "@/utils/tool";
 import { Container } from "@/materials/container/Container";
 import { Text } from "@/materials/text/Text";
+import containerCover from "@/assets/images/container_cover.png";
+import textCover from "@/assets/images/text_cover.png";
 
 export const useAsset = defineStore("asset", {
 	state() {
@@ -17,6 +19,7 @@ export const useAsset = defineStore("asset", {
 				id: generateId(),
 				title: "模版1",
 				cover: "",
+				categories: ["模版"],
 				material: (() => {
 					const container = Container();
 					container.title = "页面";
@@ -29,13 +32,15 @@ export const useAsset = defineStore("asset", {
 			this.assets.push({
 				id: generateId(),
 				title: "容器",
-				cover: "",
+				categories: ["容器"],
+				cover: containerCover,
 				material: Container(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "文本",
-				cover: "",
+				categories: ["信息"],
+				cover: textCover,
 				material: Text(),
 			});
 		},

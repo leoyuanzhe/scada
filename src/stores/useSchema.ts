@@ -8,7 +8,7 @@ import { getFlatedComponents, initState } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
-import defaultSchema from "@/assets/data/defaultSchema.json";
+import defaultSchema from "@/assets/data/default_schema.json";
 
 export const useSchema = defineStore("schema", {
 	state() {
