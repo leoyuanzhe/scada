@@ -62,6 +62,7 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 			<button :class="{ actived: current === 'watcher' }" @click="current = 'watcher'">监听</button>
 		</menu>
 		<div class="container">
+			<h1>当前组件：{{ targetComponentV2.title }}</h1>
 			<GlobalConfig v-if="current === 'global'" :component="targetComponentV2" />
 			<BasicConfig
 				v-if="current === 'basic' && !schemaStore.isSchema(targetComponentV2)"
@@ -116,6 +117,9 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 		flex-direction: column;
 		row-gap: 10px;
 		overflow: auto;
+		h1 {
+			font-size: 14px;
+		}
 	}
 	.resizer {
 		position: absolute;

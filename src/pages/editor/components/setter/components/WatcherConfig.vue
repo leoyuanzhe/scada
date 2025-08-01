@@ -45,7 +45,6 @@ const editName = (name: string) => {
 
 <template>
 	<form class="form" @submit.prevent>
-		<h1>监听器</h1>
 		<MyButton variant="success" @click="addWatcher()">添加监听器</MyButton>
 		<details v-for="(v, i) in props.component.watchers" :key="v.name" open class="details">
 			<summary>
