@@ -25,18 +25,14 @@ const props = withDefaults(defineProps<Props>(), {});
 		}"
 		open
 		draggable="true"
+		@focusin.stop
 		@mousedown.stop="dragger.focusComponent($event, props.component, router)"
 		@dragstart.stop="dragger.layerOnDragStart(props.component)"
 		@dragover.prevent="dragger.layerOnDragOver($event, component)"
 		@drop.stop="dragger.layerOnDrop()"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
-		<summary
-			:class="{ 'not-nestable': !props.component.nestable, dragging: dragger.layer.dragging }"
-			contenteditable
-			@dragover.prevent
-			@input="props.component.title = ($event.target as HTMLElement).innerText"
-		>
+		<summary :class="{ 'not-nestable': !props.component.nestable }" @dragover.prevent>
 			{{ props.component.title }}
 		</summary>
 		<slot></slot>

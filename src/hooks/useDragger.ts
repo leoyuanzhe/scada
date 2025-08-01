@@ -403,8 +403,8 @@ const componentOnDragOver = (e: DragEvent, component: Component) => {
 const componentOnDragLeave = (component: Component) => {
 	component.actived = false;
 };
-const componentOnDrop = (e: DragEvent, component: Component) => {
-	if (component.nestable) {
+const componentOnDrop = (e: DragEvent, parent: Component) => {
+	if (parent.nestable) {
 		e.stopPropagation();
 		const assetStore = useAsset();
 		const commandStore = useCommand();
@@ -413,12 +413,13 @@ const componentOnDrop = (e: DragEvent, component: Component) => {
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {
 			const newComponent = assetTransferComponent(asset);
+			const { left, top } = getOffsetFromRoot(parent);
 			if (newComponent.layout) {
-				newComponent.layout.left = e.offsetX - (newComponent.layout.width ?? 0) / 2;
-				newComponent.layout.top = e.offsetY - (newComponent.layout.height ?? 0) / 2;
+				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
+				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
 			}
 			commandStore.createComponent(newComponent);
-			schemaStore.joinGroup(newComponent, component);
+			schemaStore.joinGroup(newComponent, parent);
 		}
 	}
 };
