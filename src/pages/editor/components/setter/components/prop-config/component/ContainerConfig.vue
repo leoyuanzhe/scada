@@ -2,6 +2,7 @@
 import type { Component } from "@/types/Component";
 import type { ContainerProps } from "@/materials/container/Container";
 import { generateCodeIcon } from "../helpers/formItem";
+import FormItem from "@/components/form-item/FormItem.vue";
 
 interface Props {
 	component: Component<ContainerProps>;
