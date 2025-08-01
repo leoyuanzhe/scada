@@ -1,7 +1,7 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
-import TextComponent from "./Text.vue";
+import TextComponent from "./Dialog.vue";
 
 const props = deepClone({
 	content: "文本",
