@@ -1,20 +1,14 @@
 <script setup lang="ts">
-import type { TextProps } from "@/materials/text/Text";
 import type { Component } from "@/types/Component";
-import { editObjectValue } from "@/helpers/schema";
-import FormItem, { type FormItemIcon } from "@/components/form-item/FormItem.vue";
+import type { TextProps } from "@/materials/text/Text";
+import { generateCodeIcon } from "../helpers/formItem";
+import FormItem from "@/components/form-item/FormItem.vue";
 
 interface Props {
 	component: Component<TextProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
-const codeIcon = (key: keyof TextProps): FormItemIcon => {
-	return {
-		href: "#code",
-		variant: props.component.propsExpression.content !== undefined ? "primary" : "info",
-		onClick: () => editObjectValue(props.component.propsExpression as Record<string, any>, key),
-	};
-};
+const codeIcon = generateCodeIcon<TextProps>(props.component.propsExpression);
 </script>
 
 <template>
