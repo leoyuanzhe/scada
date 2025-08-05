@@ -72,6 +72,11 @@ const layerOnDragOver = (e: DragEvent, component: Component) => {
 		}
 	}
 };
+const layerOnDragLeave = (component: Component) => {
+	component.actived = false;
+	layer.position = null;
+	layer.dragOverComponent = null;
+};
 const layerOnDrop = () => {
 	const schemaStore = useSchema();
 	const commandStore = useCommand();
@@ -621,6 +626,7 @@ export const useDragger = () => ({
 	rendererOnDrop,
 	layerOnDragStart,
 	layerOnDragOver,
+	layerOnDragLeave,
 	layerOnDrop,
 	componentOnMouseDown,
 	componentOnDragOver,

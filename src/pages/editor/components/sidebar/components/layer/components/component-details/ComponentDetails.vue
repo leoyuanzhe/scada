@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		@mousedown.stop="dragger.focusComponent($event, props.component, router)"
 		@dragstart.stop="dragger.layerOnDragStart(props.component)"
 		@dragover.prevent="dragger.layerOnDragOver($event, component)"
+		@dragleave.stop="dragger.layerOnDragLeave(component)"
 		@drop.stop="dragger.layerOnDrop()"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>

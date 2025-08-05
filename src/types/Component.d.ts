@@ -1,5 +1,20 @@
 import type { ComponentKey } from "./ComponentKey";
 
+export type ComponentizationProp = {
+	key: string;
+	label: string;
+	type:
+		| "text"
+		| "number"
+		| "password"
+		| "color"
+		| "select"
+		| "switch"
+		| "radio-group"
+		| "checkbox-group"
+		| "textarea";
+	options: { label: string; value: string }[];
+};
 export type Watcher = {
 	name: string;
 	sourceHandler: string;
@@ -89,6 +104,13 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	locked: boolean;
 	hidden: boolean;
 	resizable: boolean;
+	autoLayout: boolean;
+	hideChildrenLayer: boolean;
+	// 是否组件化（可以自定义props、emits）
+	componentization: {
+		enable: boolean;
+		props: ComponentizationProp[];
+	};
 	layout?: {
 		snap: { v: number[]; h: number[] };
 		left: number;

@@ -10,7 +10,11 @@ const props = withDefaults(defineProps<Props>(), {});
 
 <template>
 	<ComponentDetails :component="props.component">
-		<RecursiveComponent v-for="v in props.component.components" :key="v.id" :component="v" />
+		<RecursiveComponent
+			v-for="v in props.component.hideChildrenLayer ? [] : props.component.components"
+			:key="v.id"
+			:component="v"
+		/>
 	</ComponentDetails>
 </template>
 
