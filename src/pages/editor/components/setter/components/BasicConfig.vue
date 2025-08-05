@@ -19,6 +19,66 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					@input="(props.component as ComponentWithLayout).title = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
+			<FormItem label="锁定" for="setter-basic-locked">
+				<input
+					id="setter-basic-locked"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).locked"
+					@input="
+						(props.component as ComponentWithLayout).locked = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem label="隐藏" for="setter-basic-hidden">
+				<input
+					id="setter-basic-hidden"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).hidden"
+					@input="
+						(props.component as ComponentWithLayout).hidden = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem v-if="props.component.nestable" label="自动布局" for="setter-basic-auto-layout">
+				<input
+					id="setter-basic-auto-layout"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).autoLayout"
+					@input="
+						(props.component as ComponentWithLayout).autoLayout = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem label="隐藏子图层" for="setter-basic-hide-children-layer">
+				<input
+					id="setter-basic-hide-children-layer"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).hideChildrenLayer"
+					@input="
+						(props.component as ComponentWithLayout).hideChildrenLayer = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem label="组件化" for="setter-basic-componentization">
+				<input
+					id="setter-basic-componentization"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).componentization"
+					@input="
+						(props.component as ComponentWithLayout).componentization = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
 		</fieldset>
 		<fieldset v-if="props.component.layout">
 			<legend>布局</legend>

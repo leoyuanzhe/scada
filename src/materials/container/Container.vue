@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, watch } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
 import type { ContainerProps } from "./Container";
-import { initComponent, relayoutComponent } from "@/helpers/schema";
+import { initComponent } from "@/helpers/schema";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 interface Props {
@@ -10,11 +10,6 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {});
 const payload = {};
-watch(
-	() => props.component.components,
-	() => relayoutComponent(props.component),
-	{ immediate: true, deep: true }
-);
 initComponent(props.component, onMounted, onBeforeUnmount, payload);
 </script>
 

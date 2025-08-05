@@ -21,6 +21,9 @@ export const assetTransferComponent = (asset: Asset): Component => {
 		locked: cloneAsset.material.locked,
 		hidden: cloneAsset.material.hidden,
 		resizable: cloneAsset.material.resizable,
+		hideChildrenLayer: cloneAsset.material.hideChildrenLayer,
+		autoLayout: cloneAsset.material.autoLayout,
+		componentization: cloneAsset.material.componentization,
 		layout: cloneAsset.material.layout,
 		props: cloneAsset.material.props,
 		state: cloneAsset.material.state,
@@ -95,6 +98,13 @@ export const initComponent = (component: Component, onMounted: Function, onBefor
 	initWatchers(component);
 	onMounted(() => triggerEmit(component.emits.mounted, component, payload));
 	onBeforeUnmount(() => triggerEmit(component.emits.beforeUnmount, component, payload));
+	if (component.nestable) {
+		watch(
+			() => component.components,
+			() => component.autoLayout && relayoutComponent(component),
+			{ immediate: true, deep: true }
+		);
+	}
 };
 // 获取表达式器结果
 function getExpressionResult(this: Component | Schema, expression: string | undefined, payload: any) {

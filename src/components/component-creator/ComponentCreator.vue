@@ -51,6 +51,7 @@ const RenderComponent = () =>
 		:style="styleV2"
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent="dragger.componentOnDragOver($event, component)"
+		@dragleave.stop="dragger.componentOnDragLeave(component)"
 		@drop="dragger.componentOnDrop($event, component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	/>
