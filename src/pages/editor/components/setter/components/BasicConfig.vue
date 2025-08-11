@@ -67,13 +67,13 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
-			<FormItem label="组件化" for="setter-basic-componentization">
+			<FormItem label="组件化" for="setter-basic-componentization-enable">
 				<input
-					id="setter-basic-componentization"
+					id="setter-basic-componentization-enable"
 					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).componentization"
+					:checked="(props.component as ComponentWithLayout).componentization.enable"
 					@input="
-						(props.component as ComponentWithLayout).componentization = Boolean(
+						(props.component as ComponentWithLayout).componentization.enable = Boolean(
 							($event.target as HTMLInputElement).checked
 						)
 					"

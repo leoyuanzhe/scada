@@ -13,6 +13,7 @@ export type ComponentizationProp = {
 		| "radio-group"
 		| "checkbox-group"
 		| "textarea";
+	default: any;
 	options: { label: string; value: string }[];
 };
 export type Watcher = {

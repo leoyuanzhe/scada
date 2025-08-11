@@ -39,9 +39,24 @@ export const useSchema = defineStore("schema", {
 		moveableVisibleUnlockedComponents(): ComponentWithLayout[] {
 			return this.moveableComponents.filter((v) => !v.hidden && !v.locked);
 		},
+		// 激活的有布局属性的根组件下的组件
+		activedMoveableComponents(): ComponentWithLayout[] {
+			return (
+				(this.currentRootComponent?.components.filter((v) => v.actived && v.layout) as ComponentWithLayout[]) ??
+				[]
+			);
+		},
 		// 激活的有布局属性的所有的组件
 		activedMoveableFlatedComponents(): ComponentWithLayout[] {
 			return (this.allFlatedComponents.filter((v) => v.actived && v.layout) as ComponentWithLayout[]) ?? [];
+		},
+		// 未激活的有布局属性的根组件下的组件
+		unactivedMoveableComponents(): ComponentWithLayout[] {
+			return (
+				(this.currentRootComponent?.components.filter(
+					(v) => !v.actived && v.layout
+				) as ComponentWithLayout[]) ?? []
+			);
 		},
 		// 未激活的有布局属性的所有的组件
 		unactivedMoveableFlatedComponents(): ComponentWithLayout[] {

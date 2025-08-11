@@ -13,7 +13,18 @@ const dragger = useDragger();
 <template>
 	<form class="form" @submit.prevent>
 		<fieldset>
-			<legend>画布</legend>
+			<legend>设置</legend>
+			<FormItem label="名称" for="setter-setting-title">
+				<input
+					id="setter-setting-title"
+					type="number"
+					:value="schemaStore.title"
+					@input="schemaStore.title = ($event.target as HTMLInputElement).value"
+				/>
+			</FormItem>
+		</fieldset>
+		<fieldset>
+			<legend>布局</legend>
 			<FormItem label="X坐标" for="setter-layout-left">
 				<input
 					id="setter-layout-left"

@@ -1,12 +1,14 @@
 import type { MenuPosition } from "@/components/context-menu/types/ContextMenu";
+import type { Schema } from "@/types/Schema";
 import { useClient } from "@/stores/useClient";
 import { useSchema } from "@/stores/useSchema";
 import { useCommand } from "@/stores/useCommand";
 import { useUndoStack } from "@/stores/useUndoStack";
 import { useDragger } from "@/hooks/useDragger";
+import { deepClone } from "@/utils/conversion";
 import ContextMenu from "@/components/context-menu";
 import CodeEditor from "@/components/code-editor";
-import { deepClone } from "@/utils/conversion";
+import defaultSchema from "@/assets/data/default_schema.json";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
@@ -60,11 +62,17 @@ export const openFileMenu = (position: MenuPosition) => {
 				try {
 					CodeEditor(JSON.stringify(schemaStore.$state, null, 4))
 						.then((value) => {
-							const newSchema = JSON.parse(value!);
-							schemaStore.setSchema(newSchema);
-							schemaStore.recordStack(oldSchema);
+							if (value) {
+								const newSchema = JSON.parse(value!);
+								schemaStore.setSchema(newSchema);
+								schemaStore.recordStack(oldSchema);
+							} else {
+								schemaStore.setSchema(deepClone(defaultSchema as Schema));
+							}
 						})
-						.catch(() => {});
+						.catch((error) => {
+							console.error(error);
+						});
 				} catch (error) {
 					alert("解析错误");
 					console.error(error);
