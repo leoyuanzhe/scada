@@ -259,7 +259,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 							getActualLeft(0),
 							getActualLeft((schemaStore.currentRootComponent?.layout?.width ?? 0) / 2),
 							getActualLeft(schemaStore.currentRootComponent?.layout?.width ?? 0),
-							...schemaStore.unactivedMoveableFlatedComponents
+							...schemaStore.unactivedMoveableComponents
 								.filter((v) => {
 									return schemaStore.activedMoveableFlatedComponents.some(
 										(v2) => !schemaStore.isContains(v2, v.id)
@@ -277,7 +277,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 							getActualTop(0),
 							getActualTop((schemaStore.currentRootComponent?.layout?.height ?? 0) / 2),
 							getActualTop(schemaStore.currentRootComponent?.layout?.height ?? 0),
-							...schemaStore.unactivedMoveableFlatedComponents
+							...schemaStore.unactivedMoveableComponents
 								.filter((v) => {
 									return schemaStore.activedMoveableFlatedComponents.some(
 										(v2) => !schemaStore.isContains(v2, v.id)
@@ -415,10 +415,17 @@ const componentOnDrop = (e: DragEvent, parent: Component) => {
 		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
 		if (asset) {
 			const newComponent = assetTransferComponent(asset);
-			const { left, top } = getOffsetFromRoot(parent);
 			if (newComponent.layout) {
-				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
-				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+				const { left, top } = getOffsetFromRoot(parent);
+				if (parent.nestable && !schemaStore.isSchema(parent) && !parent.components.length && parent.layout) {
+					newComponent.layout.left = 0 + left;
+					newComponent.layout.top = 0 + top;
+					newComponent.layout.width = parent.layout.width;
+					newComponent.layout.height = parent.layout.height;
+				} else {
+					newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
+					newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+				}
 			}
 			commandStore.createComponent(newComponent);
 			schemaStore.joinGroup(newComponent, parent);

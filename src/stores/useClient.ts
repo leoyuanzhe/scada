@@ -71,7 +71,6 @@ export const useClient = defineStore("client", {
 				this.typing = false;
 			});
 			document.addEventListener("keydown", (e) => {
-				console.log(!this.typing, !this.enabledOperate, !this.previewing, !getSelection()?.toString());
 				if (!this.typing && !this.enabledOperate && !this.previewing && !getSelection()?.toString()) {
 					const commandStore = useCommand();
 					this.keyboard.pressingKey = "";
