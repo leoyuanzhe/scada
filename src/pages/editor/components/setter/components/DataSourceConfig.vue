@@ -381,17 +381,17 @@ const getResponseDataShow = (dataSource: DataSource) => {
 				</FormItem>
 				<FormItem
 					label="执行动作前"
-					for="setter-data-source-after-handler"
+					for="setter-data-source-before-handler"
 					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]"
 				>
-					<textarea readonly v-model="v.beforeHandler"></textarea>
+					<textarea id="setter-data-source-before-handler" readonly v-model="v.beforeHandler"></textarea>
 				</FormItem>
 				<FormItem
 					label="执行动作后"
 					for="setter-data-source-after-handler"
 					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]"
 				>
-					<textarea readonly v-model="v.afterHandler"></textarea>
+					<textarea id="setter-data-source-after-handler" readonly v-model="v.afterHandler"></textarea>
 				</FormItem>
 				<div class="button-group">
 					<MyButton variant="success" @click="requestDataSource(v, props.component, {})">请求</MyButton>

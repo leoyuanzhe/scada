@@ -1,66 +1,56 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { Component } from "@/types/Component";
-import type { ContainerProps } from "@/materials/container/Container";
+import { generateCodeIcon } from "../helpers/formItem";
 import FormItem from "@/components/form-item/FormItem.vue";
-import MyButton from "@/components/my-button/MyButton.vue";
-import { editObjectValue } from "@/helpers/schema";
 
 interface Props {
-	component: Component<ContainerProps>;
+	component: Component<any>;
 }
 const props = withDefaults(defineProps<Props>(), {});
+const codeIcon = generateCodeIcon(props.component.propsExpression);
 </script>
 
 <template>
-	<details v-if="props.component.componentization.enable" class="details" open>
-		<summary>自定义属性</summary>
+	<details v-if="props.component.customProps.length" class="details" open>
+		<summary>属性</summary>
 		<fieldset>
-			<MyButton
-				variant="success"
-				@click="
-					props.component.componentization.props.push({
-						key: 'key',
-						label: '标签',
-						type: 'text',
-						options: [],
-						default: '',
-					})
-				"
+			<FormItem
+				v-for="v in props.component.customProps"
+				:key="v.key"
+				:label="v.label"
+				:for="'setter-' + v.key"
+				:icons="[codeIcon(v.key)]"
 			>
-				新增属性
-			</MyButton>
-			<template v-for="(v, i) in props.component.componentization.props" :key="i">
-				<FormItem label="key" :for="'setter-componentization-key' + i">
-					<input
-						:id="'setter-componentization-key' + i"
-						type="text"
-						readonly
-						:value="v.key"
-						@input="v.key = ($event.target as HTMLInputElement).value"
-					/>
-				</FormItem>
-				<FormItem label="标签" :for="'setter-componentization-label' + i">
-					<input
-						:id="'setter-componentization-label' + i"
-						type="text"
-						:value="v.label"
-						@input="v.label = ($event.target as HTMLInputElement).value"
-					/>
-				</FormItem>
-				<FormItem
-					label="默认值"
-					:for="'setter-componentization-default' + i"
-					:icons="[{ href: '#code', variant: 'info', onClick: () => editObjectValue(v, 'default') }]"
+				<input
+					v-if="v.type === 'text'"
+					:id="'setter-' + v.key"
+					type="text"
+					:value="props.component.props[v.key]"
+					@input="props.component.props[v.key] = ($event.target as HTMLInputElement).value"
+				/>
+				<input
+					v-if="v.type === 'number'"
+					:id="'setter-' + v.key"
+					type="number"
+					:value="props.component.props[v.key]"
+					@input="props.component.props[v.key] = Number(($event.target as HTMLInputElement).value)"
+				/>
+				<input
+					v-if="v.type === 'color'"
+					:id="'setter-' + v.key"
+					type="color"
+					:value="props.component.props[v.key]"
+					@input="props.component.props[v.key] = ($event.target as HTMLInputElement).value"
+				/>
+				<select
+					v-if="v.type === 'select'"
+					:id="'setter-' + v.key"
+					:value="props.component.props[v.key]"
+					@input="props.component.props[v.key] = ($event.target as HTMLInputElement).value"
 				>
-					<input
-						:id="'setter-componentization-default' + i"
-						type="text"
-						readonly
-						:value="v.default"
-						@input="v.default = ($event.target as HTMLInputElement).value"
-					/>
-				</FormItem>
-			</template>
+					<option v-for="v2 in v.options" :key="v2.value" :value="v2.value">{{ v2.label }}</option>
+				</select>
+			</FormItem>
 		</fieldset>
 	</details>
 </template>

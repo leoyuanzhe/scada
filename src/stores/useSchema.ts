@@ -62,6 +62,10 @@ export const useSchema = defineStore("schema", {
 		unactivedMoveableFlatedComponents(): ComponentWithLayout[] {
 			return (this.allFlatedComponents.filter((v) => !v.actived && v.layout) as ComponentWithLayout[]) ?? [];
 		},
+		// 激活的根组件下的组件
+		activedComponents(): Component[] {
+			return this.currentRootComponent?.components.filter((v) => v.actived) ?? [];
+		},
 		// 激活的所有组件
 		activedFlatedComponents(): Component[] {
 			return this.allFlatedComponents.filter((v) => v.actived);

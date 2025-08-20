@@ -1,9 +1,9 @@
-import type { Material, MaterialWithLayout } from "./Material";
+import type { Component, ComponentWithLayout } from "./Component";
 
 export interface Asset {
 	id: string;
 	title: string;
 	cover: string;
 	categories: string[];
-	material: Material | MaterialWithLayout;
+	component: Component | ComponentWithLayout;
 }

@@ -1,19 +1,19 @@
 import type { ComponentKey } from "./ComponentKey";
 
-export type ComponentizationProp = {
+export type CustomPropType =
+	| "text"
+	| "number"
+	| "password"
+	| "color"
+	| "select"
+	| "switch"
+	| "radio-group"
+	| "checkbox-group"
+	| "textarea";
+export type CustomProp = {
 	key: string;
 	label: string;
-	type:
-		| "text"
-		| "number"
-		| "password"
-		| "color"
-		| "select"
-		| "switch"
-		| "radio-group"
-		| "checkbox-group"
-		| "textarea";
-	default: any;
+	type: CustomPropType;
 	options: { label: string; value: string }[];
 };
 export type Watcher = {
@@ -107,11 +107,6 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	resizable: boolean;
 	autoLayout: boolean;
 	hideChildrenLayer: boolean;
-	// 是否组件化（可以自定义props、emits）
-	componentization: {
-		enable: boolean;
-		props: ComponentizationProp[];
-	};
 	layout?: {
 		snap: { v: number[]; h: number[] };
 		left: number;
@@ -120,6 +115,7 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 		height: number;
 	};
 	props: Props;
+	customProps: CustomProp[];
 	state: Record<keyof Component["stateExpression"], any>;
 	watchers: Watcher[];
 	dataSources: DataSource[];

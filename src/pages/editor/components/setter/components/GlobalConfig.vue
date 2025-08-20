@@ -14,10 +14,10 @@ const dragger = useDragger();
 	<form class="form" @submit.prevent>
 		<fieldset>
 			<legend>设置</legend>
-			<FormItem label="名称" for="setter-setting-title">
+			<FormItem label="项目名称" for="setter-setting-title">
 				<input
 					id="setter-setting-title"
-					type="number"
+					type="text"
 					:value="schemaStore.title"
 					@input="schemaStore.title = ($event.target as HTMLInputElement).value"
 				/>

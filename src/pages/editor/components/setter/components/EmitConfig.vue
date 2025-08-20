@@ -272,14 +272,14 @@ const changeType = (e: Event, action: Action) => {
 					for="setter-action-before-handler"
 					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]"
 				>
-					<textarea readonly v-model="v.beforeHandler"></textarea>
+					<textarea id="setter-action-before-handler" readonly v-model="v.beforeHandler"></textarea>
 				</FormItem>
 				<FormItem
 					label="执行动作后"
 					for="setter-action-after-handler"
 					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]"
 				>
-					<textarea readonly v-model="v.afterHandler"></textarea>
+					<textarea id="setter-action-after-handler" readonly v-model="v.afterHandler"></textarea>
 				</FormItem>
 				<MyButton variant="danger" @click="props.component.actions.splice(i, 1)">删除</MyButton>
 			</fieldset>
