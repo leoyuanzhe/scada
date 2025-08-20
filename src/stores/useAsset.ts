@@ -20,7 +20,7 @@ export const useAsset = defineStore("asset", {
 				title: "模版1",
 				cover: "",
 				categories: ["模版"],
-				material: (() => {
+				component: (() => {
 					const container = Container();
 					container.title = "页面";
 					container.props.backgroundColor = "#000000";
@@ -34,14 +34,14 @@ export const useAsset = defineStore("asset", {
 				title: "容器",
 				categories: ["容器"],
 				cover: containerCover,
-				material: Container(),
+				component: Container(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "文本",
 				categories: ["信息"],
 				cover: textCover,
-				material: Text(),
+				component: Text(),
 			});
 		},
 	},

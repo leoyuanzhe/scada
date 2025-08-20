@@ -19,7 +19,6 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	resizable: false,
 	autoLayout: true,
 	hideChildrenLayer: false,
-	componentization: { enable: false, props: [] },
 	layout: {
 		snap: { v: [], h: [] },
 		left: 0,
@@ -28,6 +27,7 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 		height: 300,
 	},
 	props,
+	customProps: [],
 	state: {},
 	watchers: [],
 	dataSources: [],

@@ -9,6 +9,8 @@ import { deepClone } from "@/utils/conversion";
 import ContextMenu from "@/components/context-menu";
 import CodeEditor from "@/components/code-editor";
 import defaultSchema from "@/assets/data/default_schema.json";
+import { useAsset } from "@/stores/useAsset";
+import { generateId } from "@/utils/tool";
 
 // 打开文件菜单
 export const openFileMenu = (position: MenuPosition) => {
@@ -369,6 +371,21 @@ export const openComponentMenu = (position: MenuPosition) => {
 					schemaStore.flatChildrenToSchema(component.id);
 				});
 				dragger.computedSelector();
+			},
+		},
+		{ type: "divider" },
+		{
+			label: "制作模版",
+			disabled: schemaStore.activedComponents.length !== 1,
+			onClick: () => {
+				const assetStore = useAsset();
+				assetStore.assets.push({
+					id: generateId(),
+					title: schemaStore.activedComponents[0].title,
+					cover: "",
+					categories: ["模版"],
+					component: deepClone(schemaStore.activedComponents[0]),
+				});
 			},
 		},
 	]);

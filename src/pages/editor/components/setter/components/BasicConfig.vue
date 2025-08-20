@@ -1,10 +1,28 @@
 <script setup lang="ts">
+import type { Component, CustomPropType, ComponentWithLayout } from "@/types/Component";
 import { useDragger } from "@/hooks/useDragger";
-import type { Component, ComponentWithLayout } from "@/types/Component";
 import FormItem from "@/components/form-item/FormItem.vue";
+import MyButton from "@/components/my-button/MyButton.vue";
 
 const dragger = useDragger();
-const props = withDefaults(defineProps<{ component: Component }>(), {});
+const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
+const editKey = (key: string) => {
+	const oldKeys = props.component.customProps.filter((v) => v.key !== key).map((v) => v.key);
+	const newKey = prompt("请输入新的键", key);
+	if (newKey !== null) {
+		try {
+			if (oldKeys.some((k) => k === newKey)) throw new Error("键已存在");
+			const item = props.component.customProps.find((v) => v.key === key);
+			item!.key = newKey;
+			const value = props.component.props[key];
+			delete props.component.props[key];
+			props.component.props[newKey] = value;
+		} catch (error: any) {
+			alert(error.message);
+			editKey(key);
+		}
+	}
+};
 </script>
 
 <template>
@@ -67,18 +85,6 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
-			<FormItem label="组件化" for="setter-basic-componentization-enable">
-				<input
-					id="setter-basic-componentization-enable"
-					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).componentization.enable"
-					@input="
-						(props.component as ComponentWithLayout).componentization.enable = Boolean(
-							($event.target as HTMLInputElement).checked
-						)
-					"
-				/>
-			</FormItem>
 		</fieldset>
 		<fieldset v-if="props.component.layout">
 			<legend>布局</legend>
@@ -130,6 +136,60 @@ const props = withDefaults(defineProps<{ component: Component }>(), {});
 					"
 				/>
 			</FormItem>
+		</fieldset>
+		<fieldset>
+			<legend>自定义属性</legend>
+			<MyButton
+				variant="success"
+				@click="
+					props.component.customProps.push({
+						key: 'key',
+						label: '标签名称',
+						type: 'text',
+						options: [],
+					})
+				"
+			>
+				新增属性
+			</MyButton>
+			<details v-for="(v, i) in props.component.customProps" :key="i" class="details" open>
+				<summary>{{ v.label }}</summary>
+				<fieldset>
+					<FormItem
+						label="key"
+						:for="'setter-custom-props-key' + i"
+						:icons="[{ href: '#key', onClick: () => editKey(v.key) }]"
+					>
+						<input
+							:id="'setter-custom-props-key' + i"
+							type="text"
+							readonly
+							:value="v.key"
+							@input="v.key = ($event.target as HTMLInputElement).value"
+						/>
+					</FormItem>
+					<FormItem label="标签" :for="'setter-custom-props-label' + i">
+						<input
+							:id="'setter-custom-props-label' + i"
+							type="text"
+							:value="v.label"
+							@input="v.label = ($event.target as HTMLInputElement).value"
+						/>
+					</FormItem>
+					<FormItem label="类型" :for="'setter-custom-props-type' + i">
+						<select
+							:id="'setter-custom-props-type' + i"
+							:value="v.type"
+							@input="v.type = ($event.target as HTMLSelectElement).value as CustomPropType"
+						>
+							<option value="text">文本输入框</option>
+							<option value="number">数字输入框</option>
+							<option value="select">选择器</option>
+							<option value="select">颜色选择器</option>
+						</select>
+					</FormItem>
+				</fieldset>
+			</details>
 		</fieldset>
 	</form>
 </template>

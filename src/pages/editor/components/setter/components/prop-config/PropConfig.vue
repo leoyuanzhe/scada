@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 <template>
 	<form class="form" @submit.prevent>
 		<h1>属性</h1>
-		<ComponentizationConfig v-if="props.component.componentization.enable" :component="props.component" />
+		<ComponentizationConfig :component="props.component" />
 		<ContainerConfig v-if="props.component.key === 'container'" :component="props.component" />
 		<TextConfig v-if="props.component.key === 'text'" :component="props.component" />
 	</form>
