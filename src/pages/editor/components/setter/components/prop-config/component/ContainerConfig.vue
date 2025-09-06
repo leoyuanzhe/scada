@@ -18,7 +18,7 @@ const codeIcon = generateCodeIcon<ContainerProps>(props.component.propsExpressio
 			<FormItem label="背景颜色" for="setter-backgroundColor" :icons="[codeIcon('backgroundColor')]">
 				<input
 					id="setter-backgroundColor"
-					type="text"
+					type="color"
 					:value="props.component.props.backgroundColor"
 					@input="props.component.props.backgroundColor = ($event.target as HTMLInputElement).value"
 				/>

@@ -27,7 +27,6 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 		height: 300,
 	},
 	props,
-	customProps: [],
 	state: {},
 	watchers: [],
 	dataSources: [],
@@ -38,6 +37,8 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	},
 	propsExpression: {},
 	stateExpression: {},
+	customProps: [],
+	customEmits: [],
 	components: [],
 	render: (component) => <ContainerComponent component={component} />,
 });

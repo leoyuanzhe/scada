@@ -49,6 +49,8 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		mounted: { executeType: "concurrent", timeout: 0, actionsName: [] },
 		beforeUnmount: { executeType: "concurrent", timeout: 0, actionsName: [] },
 	},
+	customProps: [],
+	customEmits: [],
 	propsExpression: {},
 	stateExpression: {},
 	components: [],
