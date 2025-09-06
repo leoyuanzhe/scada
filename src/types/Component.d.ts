@@ -16,6 +16,10 @@ export type CustomProp = {
 	type: CustomPropType;
 	options: { label: string; value: string }[];
 };
+export type CustomEmit = {
+	key: string;
+	label: string;
+};
 export type Watcher = {
 	name: string;
 	sourceHandler: string;
@@ -115,12 +119,13 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 		height: number;
 	};
 	props: Props;
-	customProps: CustomProp[];
 	state: Record<keyof Component["stateExpression"], any>;
 	watchers: Watcher[];
 	dataSources: DataSource[];
 	actions: Action[];
 	emits: Record<EmitKey | "mounted" | "beforeUnmount", EmitEvent>;
+	customProps: CustomProp[];
+	customEmits: CustomEmit[];
 	components: Component[];
 	propsExpression: Partial<Record<keyof Props, string>>;
 	stateExpression: Record<string, string>;

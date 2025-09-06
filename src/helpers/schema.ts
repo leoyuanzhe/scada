@@ -25,12 +25,13 @@ export const assetTransferComponent = (asset: Asset): Component => {
 		autoLayout: cloneAsset.component.autoLayout,
 		layout: cloneAsset.component.layout,
 		props: cloneAsset.component.props,
-		customProps: cloneAsset.component.customProps,
 		state: cloneAsset.component.state,
 		watchers: cloneAsset.component.watchers,
 		dataSources: cloneAsset.component.dataSources,
 		actions: cloneAsset.component.actions,
 		emits: cloneAsset.component.emits,
+		customProps: cloneAsset.component.customProps,
+		customEmits: cloneAsset.component.customEmits,
 		components: cloneAsset.component.components,
 		propsExpression: cloneAsset.component.propsExpression,
 		stateExpression: cloneAsset.component.stateExpression,
@@ -91,13 +92,11 @@ export const editObjectValue = <T extends Partial<Record<string, any>>>(
 			.catch(() => {});
 	});
 };
-export const initComponent = (component: Component, onMounted: Function, onBeforeUnmount: Function, payload = {}) => {
+export const initComponent = (component: Component) => {
 	initState(component);
 	initProps(component);
 	initDataSources(component);
 	initWatchers(component);
-	onMounted(() => triggerEmit(component.emits.mounted, component, payload));
-	onBeforeUnmount(() => triggerEmit(component.emits.beforeUnmount, component, payload));
 	if (component.nestable) {
 		watch(
 			() => component.components,
@@ -379,6 +378,12 @@ export async function requestDataSource(dataSource: DataSource, component: Schem
 async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {
 	const schemaStore = useSchema();
 	try {
+		const parent = !schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null;
+		const emits = async (key: string, data: any) => {
+			if (parent && !schemaStore.isSchema(parent) && parent.emits[key]) {
+				await triggerEmit(parent.emits[key], parent, data, event);
+			}
+		};
 		return {
 			result: await new Function(
 				"state",
@@ -387,6 +392,7 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				"root",
 				"currentRoot",
 				"schema",
+				"emits",
 				"payload",
 				"event",
 				handler
@@ -394,10 +400,11 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				this,
 				this.state,
 				schemaStore.state,
-				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				parent,
 				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
 				schemaStore.currentRootComponent,
 				schemaStore.$state,
+				emits,
 				payload,
 				event
 			),
