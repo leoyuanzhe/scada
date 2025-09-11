@@ -33,10 +33,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		@drop.stop="dragger.layerOnDrop()"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
-		<summary
-			:class="{ 'not-nestable': !props.component.nestable || props.component.hideChildrenLayer }"
-			@dragover.prevent
-		>
+		<summary :class="{ 'not-nestable': !props.component.nestable }" @dragover.prevent>
 			{{ props.component.title }}
 		</summary>
 		<slot></slot>

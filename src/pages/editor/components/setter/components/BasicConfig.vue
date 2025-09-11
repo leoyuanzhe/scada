@@ -134,13 +134,13 @@ const removeCustomEmit = (key: string) => {
 					"
 				/>
 			</FormItem>
-			<FormItem label="隐藏子图层" for="setter-basic-hide-children-layer">
+			<FormItem label="可嵌套" for="setter-basic-nestable">
 				<input
-					id="setter-basic-hide-children-layer"
+					id="setter-basic-nestable"
 					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).hideChildrenLayer"
+					:checked="(props.component as ComponentWithLayout).nestable"
 					@input="
-						(props.component as ComponentWithLayout).hideChildrenLayer = Boolean(
+						(props.component as ComponentWithLayout).nestable = Boolean(
 							($event.target as HTMLInputElement).checked
 						)
 					"

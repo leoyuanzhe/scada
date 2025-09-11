@@ -110,7 +110,6 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	hidden: boolean;
 	resizable: boolean;
 	autoLayout: boolean;
-	hideChildrenLayer: boolean;
 	layout?: {
 		snap: { v: number[]; h: number[] };
 		left: number;

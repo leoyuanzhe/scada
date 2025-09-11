@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {});
 <template>
 	<ComponentDetails :component="props.component">
 		<RecursiveComponent
-			v-for="v in props.component.hideChildrenLayer ? [] : props.component.components"
+			v-for="v in !props.component.nestable ? [] : props.component.components"
 			:key="v.id"
 			:component="v"
 		/>

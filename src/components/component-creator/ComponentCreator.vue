@@ -52,7 +52,7 @@ const RenderComponent = () =>
 		@mousedown="dragger.componentOnMouseDown($event, component)"
 		@dragover.prevent="dragger.componentOnDragOver($event, component)"
 		@dragleave.stop="dragger.componentOnDragLeave(component)"
-		@drop="dragger.componentOnDrop($event, component)"
+		@drop.stop="dragger.componentOnDrop($event, component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	/>
 </template>

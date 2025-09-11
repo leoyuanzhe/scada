@@ -21,7 +21,6 @@ export const assetTransferComponent = (asset: Asset): Component => {
 		locked: cloneAsset.component.locked,
 		hidden: cloneAsset.component.hidden,
 		resizable: cloneAsset.component.resizable,
-		hideChildrenLayer: cloneAsset.component.hideChildrenLayer,
 		autoLayout: cloneAsset.component.autoLayout,
 		layout: cloneAsset.component.layout,
 		props: cloneAsset.component.props,
