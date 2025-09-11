@@ -32,7 +32,6 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	hidden: false,
 	resizable: true,
 	autoLayout: false,
-	hideChildrenLayer: false,
 	layout: {
 		snap: { v: [], h: [] },
 		left: 0,

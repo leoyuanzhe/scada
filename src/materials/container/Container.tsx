@@ -18,7 +18,6 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	hidden: false,
 	resizable: false,
 	autoLayout: true,
-	hideChildrenLayer: false,
 	layout: {
 		snap: { v: [], h: [] },
 		left: 0,

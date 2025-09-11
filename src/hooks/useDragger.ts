@@ -406,29 +406,33 @@ const componentOnDragLeave = (component: Component) => {
 	component.actived = false;
 };
 const componentOnDrop = (e: DragEvent, parent: Component) => {
-	if (parent.nestable) {
-		e.stopPropagation();
-		const assetStore = useAsset();
-		const commandStore = useCommand();
-		const schemaStore = useSchema();
-		const assetId = e.dataTransfer?.getData("assetId");
-		const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
-		if (asset) {
-			const newComponent = assetTransferComponent(asset);
-			if (newComponent.layout) {
-				const { left, top } = getOffsetFromRoot(parent);
-				if (parent.nestable && !schemaStore.isRoot(parent.id) && !parent.components.length && parent.layout) {
-					newComponent.layout.left = 0 + left;
-					newComponent.layout.top = 0 + top;
+	const assetStore = useAsset();
+	const commandStore = useCommand();
+	const schemaStore = useSchema();
+	const assetId = e.dataTransfer?.getData("assetId");
+	const asset = deepClone(assetStore.assets.find((v) => v.id === assetId));
+	if (asset) {
+		const newComponent = assetTransferComponent(asset);
+		if (newComponent.layout) {
+			const { left, top } = getOffsetFromRoot(parent);
+			if (parent.nestable) {
+				if (!schemaStore.isRoot(parent.id) && !parent.components.length && parent.layout) {
+					newComponent.layout.left = left;
+					newComponent.layout.top = top;
 					newComponent.layout.width = parent.layout.width;
 					newComponent.layout.height = parent.layout.height;
 				} else {
 					newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
 					newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
 				}
+				commandStore.createComponent(newComponent);
+				schemaStore.joinGroup(newComponent, parent);
+			} else {
+				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
+				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+				commandStore.createComponent(newComponent);
+				schemaStore.joinGroup(newComponent, schemaStore.currentRootComponent!);
 			}
-			commandStore.createComponent(newComponent);
-			schemaStore.joinGroup(newComponent, parent);
 		}
 	}
 };
