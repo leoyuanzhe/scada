@@ -20,8 +20,12 @@ const props = withDefaults(defineProps<Props>(), {});
 			'component-details': true,
 			actived: props.component.actived,
 			target: props.component.id === schemaStore.targetComponentId,
-			before: props.component.id === dragger.layer.dragOverComponent?.id && dragger.layer.position === 'before',
-			after: props.component.id === dragger.layer.dragOverComponent?.id && dragger.layer.position === 'after',
+			before:
+				props.component.id === dragger.layerDataTransfer.dragOverComponent?.id &&
+				dragger.layerDataTransfer.position === 'before',
+			after:
+				props.component.id === dragger.layerDataTransfer.dragOverComponent?.id &&
+				dragger.layerDataTransfer.position === 'after',
 		}"
 		open
 		draggable="true"
