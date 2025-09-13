@@ -41,7 +41,7 @@ const categories = computed(() => {
 				v-for="v in categories.find((v) => v.category === current)?.assets ?? []"
 				:key="v.id"
 				draggable="true"
-				@dragstart="dragger.assetOnDragStart($event, v)"
+				@dragstart="dragger.assetOnDragStart(v)"
 			>
 				<img :src="v.cover" alt="" />
 				<figcaption>{{ v.title }}</figcaption>

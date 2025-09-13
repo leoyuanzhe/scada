@@ -20,3 +20,9 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 		<ComponentCreator v-for="v in props.component.components" :key="v.id" :component="v" />
 	</div>
 </template>
+
+<style lang="scss" scoped>
+.page {
+	background: url("http://www.deskcar.com/desktop/else/201298120921/2.jpg") no-repeat center / cover;
+}
+</style>

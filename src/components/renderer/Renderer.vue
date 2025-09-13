@@ -31,7 +31,7 @@ onMounted(() => {
 		@wheel="dragger.rendererOnWheel($event)"
 		@mousedown="dragger.rendererOnMouseDown($event)"
 		@dragover.prevent
-		@drop="dragger.rendererOnDrop($event, router)"
+		@drop="dragger.rendererOnDrop(router)"
 	>
 		<GridLine />
 		<RootComponent />
