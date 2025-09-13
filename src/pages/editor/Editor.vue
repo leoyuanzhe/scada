@@ -1,26 +1,49 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useClient } from "@/stores/useClient";
+import { useMaterial } from "@/stores/useMaterial";
+import { useAsset } from "@/stores/useAsset";
 import { useSchema } from "@/stores/useSchema";
 import { useRuler } from "@/hooks/useRuler";
+import { useDragger } from "@/hooks/useDragger";
 import MenuBar from "./components/MenuBar.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "@/components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
 
 const route = useRoute();
+const clientStore = useClient();
+const materialStore = useMaterial();
+const assetStore = useAsset();
 const schemaStore = useSchema();
+const dragger = useDragger();
 const ruler = useRuler();
 const layout = reactive({
 	setterWidth: 400,
 });
-watch(
-	() => route.query.id,
-	(id) => {
-		if (id) schemaStore.currentRootId = id as string;
-	},
-	{ immediate: true }
-);
+init();
+function init() {
+	clientStore.init();
+	materialStore.init();
+	assetStore.init();
+	schemaStore.init();
+	watch(
+		() => route.query.id,
+		(id) => {
+			if (id) schemaStore.currentRootId = id as string;
+		},
+		{ immediate: true }
+	);
+	if (
+		schemaStore.targetComponent &&
+		schemaStore.findRoot(schemaStore.targetComponent).id !== schemaStore.currentRootId
+	) {
+		schemaStore.targetComponentId = "";
+		schemaStore.deactivateAllComponent();
+		dragger.computedSelector();
+	}
+}
 const onUpdateSetterWidth = (e: number) => {
 	layout.setterWidth = e;
 	ruler.drawRulerH();

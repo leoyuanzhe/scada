@@ -108,8 +108,11 @@ export interface Component<Props = Record<string, any>, EmitKey = string> {
 	nestable: boolean;
 	locked: boolean;
 	hidden: boolean;
+	selectable: boolean;
+	moveable: boolean;
 	resizable: boolean;
-	autoLayout: boolean;
+	autoReplace: boolean; // 拖入组件时，是否替换当前组件
+	autoLayout: boolean; // 自组件改变布局时，是否自动调整布局
 	layout?: {
 		snap: { v: number[]; h: number[] };
 		left: number;

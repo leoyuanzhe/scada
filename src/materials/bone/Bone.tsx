@@ -1,46 +1,41 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
-import PageComponent from "./Page.vue";
+import BoneComponent from "./Bone.vue";
 
-const props = deepClone({
-	backgroundColor: "#00000000",
-});
-export type PageProps = typeof props;
-export const Page = (): MaterialWithLayout<PageProps> => ({
+const props = deepClone({});
+export type BoneProps = typeof props;
+export const Bone = (): MaterialWithLayout<BoneProps> => ({
 	version: "0.0.1",
 	id: generateId(),
-	key: "page",
-	title: "页面",
+	key: "bone",
+	title: "骨架",
 	actived: false,
 	nestable: true,
 	locked: false,
 	hidden: false,
-	selectable: true,
+	selectable: false,
 	moveable: false,
 	resizable: false,
-	autoReplace: false,
+	autoReplace: true,
 	autoLayout: false,
 	layout: {
 		snap: { v: [], h: [] },
 		left: 0,
 		top: 0,
-		width: 1920,
-		height: 1080,
+		width: 300,
+		height: 300,
 	},
 	props,
 	state: {},
 	watchers: [],
 	dataSources: [],
 	actions: [],
-	emits: {
-		mounted: { executeType: "concurrent", timeout: 0, actionsName: [] },
-		beforeUnmount: { executeType: "concurrent", timeout: 0, actionsName: [] },
-	},
+	emits: {},
 	propsExpression: {},
 	stateExpression: {},
 	customProps: [],
 	customEmits: [],
 	components: [],
-	render: (component) => <PageComponent component={component} />,
+	render: (component) => <BoneComponent component={component} />,
 });

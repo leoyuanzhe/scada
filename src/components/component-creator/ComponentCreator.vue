@@ -45,7 +45,8 @@ const RenderComponent = () =>
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
 			locked: !clientStore.previewing && props.component.locked,
-			action: clientStore.enabledOperate,
+			target: schemaStore.targetComponentId === props.component.id,
+			moveable: schemaStore.getComponentLevel(component.id) === 2,
 		}"
 		v-show="!props.component.hidden"
 		:style="styleV2"
@@ -61,14 +62,6 @@ const RenderComponent = () =>
 .component {
 	position: absolute;
 	transition: box-shadow 0.2s;
-	&::after {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
 	&.root {
 		&::after {
 			content: none;
@@ -77,9 +70,19 @@ const RenderComponent = () =>
 	&.locked {
 		pointer-events: none;
 	}
-	&.action {
+	&.target {
 		&::after {
-			display: none;
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+	}
+	&.moveable {
+		&::after {
+			cursor: move;
 		}
 	}
 }

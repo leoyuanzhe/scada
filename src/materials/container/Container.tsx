@@ -16,7 +16,10 @@ export const Container = (): MaterialWithLayout<ContainerProps> => ({
 	nestable: true,
 	locked: false,
 	hidden: false,
+	selectable: true,
+	moveable: true,
 	resizable: false,
+	autoReplace: false,
 	autoLayout: true,
 	layout: {
 		snap: { v: [], h: [] },

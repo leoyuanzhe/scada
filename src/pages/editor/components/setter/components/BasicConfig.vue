@@ -122,19 +122,7 @@ const removeCustomEmit = (key: string) => {
 					"
 				/>
 			</FormItem>
-			<FormItem v-if="props.component.nestable" label="自动布局" for="setter-basic-auto-layout">
-				<input
-					id="setter-basic-auto-layout"
-					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).autoLayout"
-					@input="
-						(props.component as ComponentWithLayout).autoLayout = Boolean(
-							($event.target as HTMLInputElement).checked
-						)
-					"
-				/>
-			</FormItem>
-			<FormItem label="可嵌套" for="setter-basic-nestable">
+			<FormItem label="嵌套" for="setter-basic-nestable">
 				<input
 					id="setter-basic-nestable"
 					type="checkbox"

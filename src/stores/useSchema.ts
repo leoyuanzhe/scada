@@ -35,9 +35,9 @@ export const useSchema = defineStore("schema", {
 		moveableComponents(): ComponentWithLayout[] {
 			return (this.currentRootComponent?.components.filter((v) => v.layout) as ComponentWithLayout[]) ?? [];
 		},
-		// 所有可移动的下的未隐藏的未锁定的根组件下的组件
-		moveableVisibleUnlockedComponents(): ComponentWithLayout[] {
-			return this.moveableComponents.filter((v) => !v.hidden && !v.locked);
+		// 所有可移动的下的未隐藏的未锁定的可选中的根组件下的组件
+		moveableVisibleUnlockedSelectableComponents(): ComponentWithLayout[] {
+			return this.moveableComponents.filter((v) => !v.hidden && !v.locked && v.selectable);
 		},
 		// 激活的有布局属性的根组件下的组件
 		activedMoveableComponents(): ComponentWithLayout[] {
@@ -141,6 +141,22 @@ export const useSchema = defineStore("schema", {
 			}
 			return (parent as Component) || component;
 		},
+		// 获取组件的层级
+		getComponentLevel(componentId: string) {
+			if (this.isRoot(componentId)) return 1;
+			const component = this.findComponent(componentId);
+			if (!component) return -1;
+			let level = 0;
+			let currentComponentId = componentId;
+			while (currentComponentId) {
+				const { parent } = this.findParent(currentComponentId);
+				if (!parent) break;
+				level++;
+				if (this.isSchema(parent)) return level;
+				currentComponentId = parent.id;
+			}
+			return level;
+		},
 		// 分配包括该组件的所有子组件id
 		assignComponentId(component: Component) {
 			getFlatedComponents(component).forEach((v) => (v.id = generateId()));
@@ -189,7 +205,7 @@ export const useSchema = defineStore("schema", {
 			// 检查子组件，没有子组件就删除，有子组件适应位置
 			const checkChildren = (component: Component) => {
 				if (!this.isRoot(component.id)) {
-					if (component.components.length === 0) {
+					if (component.autoLayout && component.components.length === 0) {
 						this.deleteComponent(component.id);
 					}
 					if (component.layout) {
