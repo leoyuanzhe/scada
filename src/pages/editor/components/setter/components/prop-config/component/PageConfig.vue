@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Component } from "@/types/Component";
-import type { ContainerProps } from "@/materials/container/Container";
+import type { PageProps } from "@/materials/page/Page";
 import { generateCodeIcon } from "../helpers/formItem";
 import FormItem from "@/components/form-item/FormItem.vue";
 
 interface Props {
-	component: Component<ContainerProps>;
+	component: Component<PageProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
-const codeIcon = generateCodeIcon<ContainerProps>(props.component.propsExpression);
+const codeIcon = generateCodeIcon<PageProps>(props.component.propsExpression);
 </script>
 
 <template>

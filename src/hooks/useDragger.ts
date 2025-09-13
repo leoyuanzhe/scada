@@ -416,7 +416,7 @@ const componentOnDrop = (e: DragEvent, parent: Component) => {
 		if (newComponent.layout) {
 			const { left, top } = getOffsetFromRoot(parent);
 			if (parent.nestable) {
-				if (!schemaStore.isRoot(parent.id) && !parent.components.length && parent.layout) {
+				if (parent.autoLayout && !parent.components.length && parent.layout) {
 					newComponent.layout.left = left;
 					newComponent.layout.top = top;
 					newComponent.layout.width = parent.layout.width;

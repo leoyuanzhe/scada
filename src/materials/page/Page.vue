@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted } from "vue";
 import type { ComponentWithLayout } from "@/types/Component";
-import type { ContainerProps } from "./Container";
+import type { PageProps } from "./Page";
 import { initComponent, triggerEmit } from "@/helpers/schema";
 import ComponentCreator from "@/components/component-creator/ComponentCreator.vue";
 
 interface Props {
-	component: ComponentWithLayout<ContainerProps>;
+	component: ComponentWithLayout<PageProps>;
 }
 const props = withDefaults(defineProps<Props>(), {});
 const payload = {};
@@ -16,7 +16,7 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 </script>
 
 <template>
-	<div class="container" :style="{ backgroundColor: props.component.props.backgroundColor }">
+	<div class="page" :style="{ backgroundColor: props.component.props.backgroundColor }">
 		<ComponentCreator v-for="v in props.component.components" :key="v.id" :component="v" />
 	</div>
 </template>

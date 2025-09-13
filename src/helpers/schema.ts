@@ -96,10 +96,10 @@ export const initComponent = (component: Component) => {
 	initProps(component);
 	initDataSources(component);
 	initWatchers(component);
-	if (component.nestable) {
+	if (component.autoLayout && component.nestable) {
 		watch(
 			() => component.components,
-			() => component.autoLayout && relayoutComponent(component),
+			() => relayoutComponent(component),
 			{ immediate: true, deep: true }
 		);
 	}
