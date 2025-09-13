@@ -26,14 +26,20 @@ const props = withDefaults(defineProps<Props>(), {});
 		open
 		draggable="true"
 		@focusin.stop
-		@mousedown.stop="dragger.focusComponent($event, props.component, router)"
+		@mousedown.stop="dragger.layerOnMouseDown($event, props.component, router)"
 		@dragstart.stop="dragger.layerOnDragStart(props.component)"
 		@dragover.prevent="dragger.layerOnDragOver($event, component)"
 		@dragleave.stop="dragger.layerOnDragLeave(component)"
 		@drop.stop="dragger.layerOnDrop()"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
-		<summary :class="{ 'not-nestable': !props.component.nestable }" @dragover.prevent>
+		<summary
+			:class="{
+				disabled: !props.component.selectable,
+				'hide-marker': !props.component.nestable || props.component.autoReplace,
+			}"
+			@dragover.prevent
+		>
 			{{ props.component.title }}
 		</summary>
 		<slot></slot>
@@ -85,13 +91,17 @@ const props = withDefaults(defineProps<Props>(), {});
 		&:last-child {
 			margin-bottom: 0;
 		}
-		&.not-nestable {
+		&.hide-marker {
 			padding-left: 1.5em;
 			&::marker {
 				content: "";
 			}
 		}
-		&:hover {
+		&.disabled {
+			color: #ccc;
+			cursor: not-allowed;
+		}
+		&:not(.disabled):hover {
 			box-shadow: 0 0 3px 1px var(--primary-color);
 		}
 	}

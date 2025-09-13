@@ -41,6 +41,10 @@ const assetOnDragStart = (e: DragEvent, asset: Asset) => {
 		e.dataTransfer?.setData("assetId", item.id);
 	}
 };
+const layerOnMouseDown = (e: MouseEvent, component: Component, router?: Router) => {
+	if (!component.selectable) return;
+	focusComponent(e, component, router);
+};
 const layerOnDragStart = (component: Component) => {
 	const schemaStore = useSchema();
 	schemaStore.deactivateAllComponent();
@@ -180,7 +184,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 					}
 					// 正框选（从左往右框选）
 					if (startX < e.clientX) {
-						schemaStore.moveableVisibleUnlockedComponents.forEach((component) => {
+						schemaStore.moveableVisibleUnlockedSelectableComponents.forEach((component) => {
 							const left = getActualLeft(component.layout.left);
 							const top = getActualTop(component.layout.top);
 							const width = getScaledOffset(component.layout.width);
@@ -195,7 +199,7 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 							}
 						});
 					} else {
-						schemaStore.moveableVisibleUnlockedComponents.forEach((component) => {
+						schemaStore.moveableVisibleUnlockedSelectableComponents.forEach((component) => {
 							const left = getActualLeft(component.layout.left);
 							const top = getActualTop(component.layout.top);
 							const width = getScaledOffset(component.layout.width);
@@ -241,157 +245,155 @@ const rendererOnDrop = (e: DragEvent, router: Router) => {
 const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 	const clientStore = useClient();
 	const schemaStore = useSchema();
-	if (clientStore.keyboard.spaceKey) return;
+	if (clientStore.keyboard.spaceKey || !component.selectable) return;
 	if (!schemaStore.isRoot(component.id)) e.stopPropagation();
-	if (!clientStore.previewing && !clientStore.enabledOperate && !schemaStore.isRoot(component.id)) {
-		focusComponent(e, component);
-		const oldSchema = deepClone(schemaStore.$state);
-		let moved = false; // 是否移动过（撤销队列使用）
-		const startX = e.clientX; // 鼠标按下时的X坐标
-		const startY = e.clientY;
-		const startSelectorLeft = selector.left;
-		const startSelectorTop = selector.top;
-		// 激活组件拖拽开始时的坐标
-		const snapLines =
-			clientStore.snap.enable && !e.ctrlKey && !e.metaKey
-				? {
-						v: [
-							getActualLeft(0),
-							getActualLeft((schemaStore.currentRootComponent?.layout?.width ?? 0) / 2),
-							getActualLeft(schemaStore.currentRootComponent?.layout?.width ?? 0),
-							...schemaStore.unactivedMoveableComponents
-								.filter((v) => {
-									return schemaStore.activedMoveableFlatedComponents.some(
-										(v2) => !schemaStore.isContains(v2, v.id)
-									);
-								})
-								.flatMap((v) => [
-									getActualLeft(v.layout.left),
-									getActualLeft(v.layout.left + v.layout.width / 2),
-									getActualLeft(v.layout.left + v.layout.width),
-									...v.layout.snap.v.map((v2) => getActualLeft(v.layout.left + v.layout.width * v2)),
-								]),
-							...clientStore.guide.line.v.map((v) => getActualLeft(v)),
-						],
-						h: [
-							getActualTop(0),
-							getActualTop((schemaStore.currentRootComponent?.layout?.height ?? 0) / 2),
-							getActualTop(schemaStore.currentRootComponent?.layout?.height ?? 0),
-							...schemaStore.unactivedMoveableComponents
-								.filter((v) => {
-									return schemaStore.activedMoveableFlatedComponents.some(
-										(v2) => !schemaStore.isContains(v2, v.id)
-									);
-								})
-								.flatMap((v) => [
-									getActualTop(v.layout.top),
-									getActualTop(v.layout.top + v.layout.height / 2),
-									getActualTop(v.layout.top + v.layout.height),
-									...v.layout.snap.h.map((v2) => getActualTop(v.layout.top + v.layout.height * v2)),
-								]),
-							...clientStore.guide.line.h.map((v) => getActualTop(v)),
-						],
-				  }
-				: { v: [], h: [] };
-		const startActiveComponentsPosition = schemaStore.activedMoveableFlatedComponents.map((v) => ({
-			left: getActualLeft(v.layout.left),
-			top: getActualTop(v.layout.top),
-		}));
-		document.body.addEventListener("mousemove", mouseMove);
-		document.body.addEventListener("mouseup", mouseUp);
-		function mouseMove(e: MouseEvent) {
-			moved = true;
-			const moveX = e.clientX - startX; // 移动的X轴距离
-			const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
-			const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
-			const middleV = snapLines.v.find(
-				(v) => Math.abs(v - dragLeft - selector.width / 2) < getScaledOffset(clientStore.snap.distance)
-			);
-			const rightV = snapLines.v.find(
-				(v) => Math.abs(v - dragLeft - selector.width) < getScaledOffset(clientStore.snap.distance)
-			);
-			if (leftV !== undefined) {
-				const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.left =
-						getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
-				});
-				snapLine.v = left;
-			} else if (middleV !== undefined) {
-				const middle = getLogicalLeft(middleV);
-				const left = middle - getUnscaledOffset(selector.width / 2);
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.left =
-						getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
-				});
-				snapLine.v = middle;
-			} else if (rightV !== undefined) {
-				const right = getLogicalLeft(rightV);
-				const left = right - getUnscaledOffset(selector.width);
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.left =
-						getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
-				});
-				snapLine.v = right;
-			} else {
-				const logicalDragLeft = getLogicalLeft(dragLeft); // 将当前位置转换为逻辑坐标（未缩放）
-				const snappedLogicalLeft = Math.round(getNearestGridLinePosition(logicalDragLeft)); // 获取最接近的网格线位置（逻辑坐标）
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					const originalLeft = getLogicalLeft(startActiveComponentsPosition[index].left);
-					component.layout.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
-				});
-				snapLine.v = null;
-			}
-			const moveY = e.clientY - startY;
-			const dragTop = startSelectorTop + moveY; // 拖拽后的相对于渲染器的left值
-			const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
-			const middleH = snapLines.h.find(
-				(v) => Math.abs(v - dragTop - selector.height / 2) < clientStore.snap.distance
-			);
-			const bottomH = snapLines.h.find(
-				(v) => Math.abs(v - dragTop - selector.height) < clientStore.snap.distance
-			);
-			if (topH !== undefined) {
-				const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.top =
-						getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
-				});
-				snapLine.h = top;
-			} else if (middleH !== undefined) {
-				const middle = getLogicalTop(middleH);
-				const top = middle - getUnscaledOffset(selector.height / 2);
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.top =
-						getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
-				});
-				snapLine.h = middle;
-			} else if (bottomH !== undefined) {
-				const right = getLogicalTop(bottomH);
-				const top = right - getUnscaledOffset(selector.height);
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					component.layout.top =
-						getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
-				});
-				snapLine.h = right;
-			} else {
-				const logicalDragTop = getLogicalTop(dragTop);
-				const snappedLogicalTop = Math.round(getNearestGridLinePosition(logicalDragTop));
-				schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-					const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
-					component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
-				});
-				snapLine.h = null;
-			}
-			computedSelector();
-		}
-		function mouseUp() {
+	if (clientStore.previewing || clientStore.enabledOperate || schemaStore.isRoot(component.id)) return;
+	focusComponent(e, component);
+	if (!component.moveable || schemaStore.getComponentLevel(component.id) !== 2) return;
+	const oldSchema = deepClone(schemaStore.$state);
+	let moved = false; // 是否移动过（撤销队列使用）
+	const startX = e.clientX; // 鼠标按下时的X坐标
+	const startY = e.clientY;
+	const startSelectorLeft = selector.left;
+	const startSelectorTop = selector.top;
+	// 激活组件拖拽开始时的坐标
+	const snapLines =
+		clientStore.snap.enable && !e.ctrlKey && !e.metaKey
+			? {
+					v: [
+						getActualLeft(0),
+						getActualLeft((schemaStore.currentRootComponent?.layout?.width ?? 0) / 2),
+						getActualLeft(schemaStore.currentRootComponent?.layout?.width ?? 0),
+						...schemaStore.unactivedMoveableComponents
+							.filter((v) => {
+								return schemaStore.activedMoveableFlatedComponents.some(
+									(v2) => !schemaStore.isContains(v2, v.id)
+								);
+							})
+							.flatMap((v) => [
+								getActualLeft(v.layout.left),
+								getActualLeft(v.layout.left + v.layout.width / 2),
+								getActualLeft(v.layout.left + v.layout.width),
+								...v.layout.snap.v.map((v2) => getActualLeft(v.layout.left + v.layout.width * v2)),
+							]),
+						...clientStore.guide.line.v.map((v) => getActualLeft(v)),
+					],
+					h: [
+						getActualTop(0),
+						getActualTop((schemaStore.currentRootComponent?.layout?.height ?? 0) / 2),
+						getActualTop(schemaStore.currentRootComponent?.layout?.height ?? 0),
+						...schemaStore.unactivedMoveableComponents
+							.filter((v) => {
+								return schemaStore.activedMoveableFlatedComponents.some(
+									(v2) => !schemaStore.isContains(v2, v.id)
+								);
+							})
+							.flatMap((v) => [
+								getActualTop(v.layout.top),
+								getActualTop(v.layout.top + v.layout.height / 2),
+								getActualTop(v.layout.top + v.layout.height),
+								...v.layout.snap.h.map((v2) => getActualTop(v.layout.top + v.layout.height * v2)),
+							]),
+						...clientStore.guide.line.h.map((v) => getActualTop(v)),
+					],
+			  }
+			: { v: [], h: [] };
+	const startActiveComponentsPosition = schemaStore.activedMoveableFlatedComponents.map((v) => ({
+		left: getActualLeft(v.layout.left),
+		top: getActualTop(v.layout.top),
+	}));
+	document.body.addEventListener("mousemove", mouseMove);
+	document.body.addEventListener("mouseup", mouseUp);
+	function mouseMove(e: MouseEvent) {
+		moved = true;
+		const moveX = e.clientX - startX; // 移动的X轴距离
+		const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
+		const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
+		const middleV = snapLines.v.find(
+			(v) => Math.abs(v - dragLeft - selector.width / 2) < getScaledOffset(clientStore.snap.distance)
+		);
+		const rightV = snapLines.v.find(
+			(v) => Math.abs(v - dragLeft - selector.width) < getScaledOffset(clientStore.snap.distance)
+		);
+		if (leftV !== undefined) {
+			const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.left =
+					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+			});
+			snapLine.v = left;
+		} else if (middleV !== undefined) {
+			const middle = getLogicalLeft(middleV);
+			const left = middle - getUnscaledOffset(selector.width / 2);
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.left =
+					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+			});
+			snapLine.v = middle;
+		} else if (rightV !== undefined) {
+			const right = getLogicalLeft(rightV);
+			const left = right - getUnscaledOffset(selector.width);
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.left =
+					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+			});
+			snapLine.v = right;
+		} else {
+			const logicalDragLeft = getLogicalLeft(dragLeft); // 将当前位置转换为逻辑坐标（未缩放）
+			const snappedLogicalLeft = Math.round(getNearestGridLinePosition(logicalDragLeft)); // 获取最接近的网格线位置（逻辑坐标）
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				const originalLeft = getLogicalLeft(startActiveComponentsPosition[index].left);
+				component.layout.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
+			});
 			snapLine.v = null;
-			snapLine.h = null;
-			if (moved) schemaStore.recordStack(oldSchema);
-			document.body.removeEventListener("mousemove", mouseMove);
-			document.body.removeEventListener("mouseup", mouseUp);
 		}
+		const moveY = e.clientY - startY;
+		const dragTop = startSelectorTop + moveY; // 拖拽后的相对于渲染器的left值
+		const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
+		const middleH = snapLines.h.find(
+			(v) => Math.abs(v - dragTop - selector.height / 2) < clientStore.snap.distance
+		);
+		const bottomH = snapLines.h.find((v) => Math.abs(v - dragTop - selector.height) < clientStore.snap.distance);
+		if (topH !== undefined) {
+			const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.top =
+					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+			});
+			snapLine.h = top;
+		} else if (middleH !== undefined) {
+			const middle = getLogicalTop(middleH);
+			const top = middle - getUnscaledOffset(selector.height / 2);
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.top =
+					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+			});
+			snapLine.h = middle;
+		} else if (bottomH !== undefined) {
+			const right = getLogicalTop(bottomH);
+			const top = right - getUnscaledOffset(selector.height);
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				component.layout.top =
+					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+			});
+			snapLine.h = right;
+		} else {
+			const logicalDragTop = getLogicalTop(dragTop);
+			const snappedLogicalTop = Math.round(getNearestGridLinePosition(logicalDragTop));
+			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
+				const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
+				component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
+			});
+			snapLine.h = null;
+		}
+		computedSelector();
+	}
+	function mouseUp() {
+		snapLine.v = null;
+		snapLine.h = null;
+		if (moved) schemaStore.recordStack(oldSchema);
+		document.body.removeEventListener("mousemove", mouseMove);
+		document.body.removeEventListener("mouseup", mouseUp);
 	}
 };
 const componentOnDragOver = (e: DragEvent, component: Component) => {
@@ -416,17 +418,23 @@ const componentOnDrop = (e: DragEvent, parent: Component) => {
 		if (newComponent.layout) {
 			const { left, top } = getOffsetFromRoot(parent);
 			if (parent.nestable) {
-				if (parent.autoLayout && !parent.components.length && parent.layout) {
+				if (parent.autoReplace && parent.layout) {
 					newComponent.layout.left = left;
 					newComponent.layout.top = top;
 					newComponent.layout.width = parent.layout.width;
 					newComponent.layout.height = parent.layout.height;
+					const { parent: parentParent } = schemaStore.findParent(parent.id);
+					if (parentParent && !schemaStore.isSchema(parentParent)) {
+						schemaStore.deleteComponent(parent.id);
+						commandStore.createComponent(newComponent);
+						schemaStore.joinGroup(newComponent, parentParent);
+					}
 				} else {
 					newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
 					newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+					commandStore.createComponent(newComponent);
+					schemaStore.joinGroup(newComponent, parent);
 				}
-				commandStore.createComponent(newComponent);
-				schemaStore.joinGroup(newComponent, parent);
 			} else {
 				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
 				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
@@ -635,6 +643,7 @@ export const useDragger = () => ({
 	rendererOnWheel,
 	rendererOnMouseDown,
 	rendererOnDrop,
+	layerOnMouseDown,
 	layerOnDragStart,
 	layerOnDragOver,
 	layerOnDragLeave,
