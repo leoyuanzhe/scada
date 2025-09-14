@@ -10,12 +10,12 @@ const dragger = useDragger();
 	<div
 		v-if="dragger.snapLine.h !== null && !clientStore.previewing"
 		class="snap-line-h"
-		:style="{ top: dragger.getActualTop(dragger.snapLine.h) + 'px', backgroundColor: clientStore.snap.color }"
+		:style="{ top: dragger.getActualTop(dragger.snapLine.h) + 'px' }"
 	></div>
 	<div
 		v-if="dragger.snapLine.v !== null && !clientStore.previewing"
 		class="snap-line-v"
-		:style="{ left: dragger.getActualLeft(dragger.snapLine.v) + 'px', backgroundColor: clientStore.snap.color }"
+		:style="{ left: dragger.getActualLeft(dragger.snapLine.v) + 'px' }"
 	></div>
 </template>
 
@@ -25,6 +25,7 @@ const dragger = useDragger();
 	left: 0;
 	width: 100%;
 	height: 1px;
+	background-color: var(--lightest-primary-color);
 	transform: translateY(-50%);
 	transition: top 0.2s;
 }
@@ -33,6 +34,7 @@ const dragger = useDragger();
 	top: 0;
 	width: 1px;
 	height: 100%;
+	background-color: var(--lightest-primary-color);
 	transform: translateX(-50%);
 	transition: left 0.2s;
 }

@@ -6,7 +6,6 @@ const clientStore = useClient();
 const styleV2 = computed(() => {
 	const size = scaleSize(clientStore.grid.span * clientStore.canvas.scale);
 	return {
-		backgroundImage: `linear-gradient(to right, ${clientStore.grid.color} 1px, transparent 1px), linear-gradient(to bottom, ${clientStore.grid.color} 1px, transparent 1px)`,
 		backgroundPosition: `${clientStore.canvas.left - 0.5}px ${clientStore.canvas.top - 0.5}px`,
 		backgroundSize: `${size}px ${size}px`,
 	};
@@ -28,5 +27,7 @@ function scaleSize(size: number): number {
 	height: 100%;
 	background-repeat: repeat;
 	pointer-events: none;
+	background-image: linear-gradient(to right, #333333 1px, transparent 1px),
+		linear-gradient(to bottom, #333333 1px, transparent 1px);
 }
 </style>
