@@ -45,3 +45,9 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 		{{ props.component.props.content }}
 	</span>
 </template>
+
+<style lang="scss" scoped>
+.text {
+	display: block;
+}
+</style>

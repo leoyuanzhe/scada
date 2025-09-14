@@ -43,7 +43,7 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 		<menu>
 			<button :class="{ actived: current === 'global' }" @click="current = 'global'">全局</button>
 			<button
-				v-if="!schemaStore.isSchema(targetComponentV2) && targetComponentV2.layout"
+				v-if="!schemaStore.isSchema(targetComponentV2)"
 				:class="{ actived: current === 'basic' }"
 				@click="current = 'basic'"
 			>

@@ -9,6 +9,7 @@
 	--lighten-primary-color: color-mix(in srgb, var(--primary-color), white 20%);
 	--lightest-primary-color: color-mix(in srgb, var(--primary-color), white 80%);
 	--darken-primary-color: color-mix(in srgb, var(--primary-color), black 20%);
+	--darktest-primary-color: color-mix(in srgb, var(--primary-color), black 80%);
 	--lighten-success-color: color-mix(in srgb, var(--success-color), white 20%);
 	--darken-success-color: color-mix(in srgb, var(--success-color), black 20%);
 	--lighten-warning-color: color-mix(in srgb, var(--warning-color), white 20%);
