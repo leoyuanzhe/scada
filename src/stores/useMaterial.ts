@@ -4,6 +4,7 @@ import { Page } from "@/materials/page/Page";
 import { Bone } from "@/materials/bone/Bone";
 import { Container } from "@/materials/container/Container";
 import { Text } from "@/materials/text/Text";
+import { Dialog } from "@/materials/dialog/Dialog";
 
 export const useMaterial = defineStore("material", {
 	state() {
@@ -18,6 +19,7 @@ export const useMaterial = defineStore("material", {
 			this.materials.push(Bone());
 			this.materials.push(Container());
 			this.materials.push(Text());
+			this.materials.push(Dialog());
 		},
 	},
 });
