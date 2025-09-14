@@ -21,8 +21,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const styleV2 = computed(() => {
 	const res: StyleValue = {};
-	if (!props.relative && props.component.layout) {
+	if (!props.relative) {
 		res.position = "absolute";
+	}
+	if (props.component.layout) {
 		res.left = props.component.layout.left + "px";
 		res.top = props.component.layout.top + "px";
 		res.width = props.component.layout.width + "px";

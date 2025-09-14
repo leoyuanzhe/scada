@@ -24,7 +24,7 @@ const dragger = useDragger();
 			</FormItem>
 		</fieldset>
 		<fieldset>
-			<legend>布局</legend>
+			<legend>画布</legend>
 			<FormItem label="X坐标" for="setter-layout-left">
 				<input
 					id="setter-layout-left"
@@ -123,6 +123,17 @@ const dragger = useDragger();
 					min="2"
 					:value="clientStore.grid.span"
 					@input="clientStore.grid.span = Number(($event.target as HTMLInputElement).value)"
+				/>
+			</FormItem>
+		</fieldset>
+		<fieldset>
+			<legend>外观</legend>
+			<FormItem label="主色" for="setter-theme">
+				<input
+					id="setter-theme"
+					type="color"
+					:value="clientStore.theme['--primary-color']"
+					@input="clientStore.theme['--primary-color'] = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
 		</fieldset>

@@ -89,22 +89,22 @@ const props = withDefaults(defineProps<Props>(), {});
 	}
 	&.before {
 		&::before {
-			background-color: #ff0000;
+			background-color: var(--lightest-primary-color);
 		}
 	}
 	&.after {
 		&::after {
-			background-color: #ff0000;
+			background-color: var(--lightest-primary-color);
 		}
 	}
 	&.disabled {
 		color: #999;
 	}
 	&:not(&.before).actived {
-		background-color: var(--darken-primary-color);
+		background-color: var(--darktest-primary-color);
 	}
 	&.target {
-		box-shadow: 0 0 3px 1px #ff0000 inset;
+		box-shadow: 0 0 3px 1px var(--lightest-primary-color) inset;
 	}
 	details {
 		margin-left: 10px;

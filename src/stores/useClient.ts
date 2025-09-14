@@ -6,6 +6,7 @@ import { useSchema } from "./useSchema";
 import { useDragger } from "@/hooks/useDragger";
 import { deepClone } from "@/utils/conversion";
 import { getFlatedComponents } from "@/helpers/schema";
+import { watch } from "vue";
 
 export const useClient = defineStore("client", {
 	state() {
@@ -43,6 +44,9 @@ export const useClient = defineStore("client", {
 			grid: {
 				enable: true,
 				span: 10,
+			},
+			theme: {
+				"--primary-color": "#1677ff",
 			},
 		};
 	},
@@ -223,6 +227,15 @@ export const useClient = defineStore("client", {
 						break;
 				}
 			});
+			watch(
+				() => this.theme,
+				() => {
+					for (const key in this.theme) {
+						document.documentElement.style.setProperty(key, this.theme[key as keyof typeof this.theme]);
+					}
+				},
+				{ immediate: true, deep: true }
+			);
 		},
 		// 重置渲染器视角
 		resetRendererView() {
