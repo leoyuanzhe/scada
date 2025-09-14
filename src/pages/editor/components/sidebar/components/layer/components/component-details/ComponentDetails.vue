@@ -18,14 +18,15 @@ const props = withDefaults(defineProps<Props>(), {});
 	<details
 		:class="{
 			'component-details': true,
+			disabled: !props.component.selectable,
 			actived: props.component.actived,
 			target: props.component.id === schemaStore.targetComponentId,
 			before:
-				props.component.id === dragger.layerDataTransfer.dragOverComponent?.id &&
-				dragger.layerDataTransfer.position === 'before',
+				props.component.id === dragger.dataTransfer.dragOverComponent?.id &&
+				dragger.dataTransfer.layerPosition === 'before',
 			after:
-				props.component.id === dragger.layerDataTransfer.dragOverComponent?.id &&
-				dragger.layerDataTransfer.position === 'after',
+				props.component.id === dragger.dataTransfer.dragOverComponent?.id &&
+				dragger.dataTransfer.layerPosition === 'after',
 		}"
 		open
 		draggable="true"
@@ -39,7 +40,6 @@ const props = withDefaults(defineProps<Props>(), {});
 	>
 		<summary
 			:class="{
-				disabled: !props.component.selectable,
 				'hide-marker': !props.component.nestable || props.component.autoReplace,
 			}"
 			@dragover.prevent
@@ -55,23 +55,22 @@ const props = withDefaults(defineProps<Props>(), {});
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	margin-bottom: 10px;
 	&::before {
 		content: "";
 		position: absolute;
-		top: -10px;
+		top: -5px;
 		left: 0;
 		width: 100%;
-		height: 10px;
+		height: 5px;
 		background-color: transparent;
 	}
 	&::after {
 		content: "";
 		position: absolute;
 		left: 0;
-		bottom: -10px;
+		bottom: -5px;
 		width: 100%;
-		height: 10px;
+		height: 5px;
 		background-color: transparent;
 	}
 	&.before {
@@ -84,47 +83,31 @@ const props = withDefaults(defineProps<Props>(), {});
 			background-color: #ff0000;
 		}
 	}
+	&.disabled {
+		color: #ccc;
+		cursor: not-allowed;
+	}
 	summary {
-		margin-bottom: 10px;
 		padding: 0 10px;
-		line-height: 30px;
-		background-color: #444;
-		border-radius: 4px;
+		font-size: 14px;
+		line-height: 26px;
 		transition: box-shadow 0.2s;
 		cursor: pointer;
-		&:last-child {
-			margin-bottom: 0;
-		}
 		&.hide-marker {
 			padding-left: 1.5em;
 			&::marker {
 				content: "";
 			}
 		}
-		&.disabled {
-			color: #ccc;
-			cursor: not-allowed;
-		}
-		&:not(.disabled):hover {
-			box-shadow: 0 0 3px 1px var(--primary-color);
-		}
-	}
-	&:not([open]) {
-		summary {
-			margin-bottom: 0;
-		}
-	}
-	&:last-child {
-		margin-bottom: 0;
 	}
 	&.actived {
-		box-shadow: 0 0 1px 1px #ff0000cc;
+		background-color: var(--darken-primary-color);
 	}
 	&.target {
-		box-shadow: 0 0 3px 1px #ff0000;
+		box-shadow: 0 0 3px 1px #ff0000 inset;
 	}
 	details {
-		margin-left: 10px;
+		padding-left: 10px;
 	}
 }
 </style>

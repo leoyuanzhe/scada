@@ -33,6 +33,26 @@ export const useCommand = defineStore("command", {
 			dragger.computedSelector();
 			schemaStore.recordStack(oldSchema);
 		},
+		replaceComponent(component: Component, bone: Component) {
+			const schemaStore = useSchema();
+			const dragger = useDragger();
+			const { parent: boneParent } = schemaStore.findParent(bone.id);
+			if (boneParent && !schemaStore.isSchema(boneParent)) {
+				const oldSchema = deepClone(schemaStore.$state);
+				if (component.layout && bone.layout) {
+					component.layout.left = bone.layout.left;
+					component.layout.top = bone.layout.top;
+					component.layout.width = bone.layout.width;
+					component.layout.height = bone.layout.height;
+				}
+				schemaStore.insertAfter(component, bone.id);
+				schemaStore.deleteComponent(bone.id);
+				schemaStore.deactivateAllComponent();
+				component.actived = true;
+				dragger.computedSelector();
+				schemaStore.recordStack(oldSchema);
+			}
+		},
 		moveUp() {
 			const schemaStore = useSchema();
 			const dragger = useDragger();

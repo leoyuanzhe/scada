@@ -23,7 +23,7 @@ const remove = () => {
 <template>
 	<div
 		v-if="!clientStore.previewing"
-		:class="{ bone: true, dragging: dragger.componentDataTransfer.dragOverComponent?.id === props.component.id }"
+		:class="{ bone: true, dragging: dragger.dataTransfer.dragOverComponent?.id === props.component.id }"
 		@dragover.prevent="dragger.boneDragOver(props.component)"
 		@dragleave="dragger.boneDragLeave()"
 	>

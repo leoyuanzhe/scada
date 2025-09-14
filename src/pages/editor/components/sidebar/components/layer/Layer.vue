@@ -13,7 +13,7 @@ const schemaStore = useSchema();
 
 <style scoped lang="scss">
 .layer {
-	padding: 10px;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
