@@ -55,6 +55,7 @@ const props = withDefaults(defineProps<Props>(), {});
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	transition: background-color 0.2s, box-shadow 0.2s;
 	&::before {
 		content: "";
 		position: absolute;
@@ -62,6 +63,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		left: 0;
 		width: 100%;
 		height: 5px;
+		transition: background-color 0.2s;
 		background-color: transparent;
 	}
 	&::after {
@@ -72,6 +74,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		width: 100%;
 		height: 5px;
 		background-color: transparent;
+		transition: background-color 0.2s;
 	}
 	&.before {
 		&::before {
@@ -91,7 +94,6 @@ const props = withDefaults(defineProps<Props>(), {});
 		padding: 0 10px;
 		font-size: 14px;
 		line-height: 26px;
-		transition: box-shadow 0.2s;
 		cursor: pointer;
 		&.hide-marker {
 			padding-left: 1.5em;
@@ -107,7 +109,7 @@ const props = withDefaults(defineProps<Props>(), {});
 		box-shadow: 0 0 3px 1px #ff0000 inset;
 	}
 	details {
-		padding-left: 10px;
+		margin-left: 10px;
 	}
 }
 </style>

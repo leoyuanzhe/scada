@@ -36,6 +36,7 @@ export const useCommand = defineStore("command", {
 		replaceComponent(component: Component, bone: Component) {
 			const schemaStore = useSchema();
 			const dragger = useDragger();
+			if (component.autoReplace && bone.autoReplace) return;
 			const { parent: boneParent } = schemaStore.findParent(bone.id);
 			if (boneParent && !schemaStore.isSchema(boneParent)) {
 				const oldSchema = deepClone(schemaStore.$state);
