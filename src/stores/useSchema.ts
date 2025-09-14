@@ -133,13 +133,14 @@ export const useSchema = defineStore("schema", {
 			return findInComponents(this.$state);
 		},
 		// 找到组件的根组件
-		findRoot(component: Component): Component {
+		findRoot(component: Component): Component | null {
+			if (this.isRoot(component.id)) return component;
 			let { parent } = this.findParent(component.id);
 			while (parent && !this.isSchema(parent) && !this.isRoot(parent.id)) {
 				component = parent;
 				parent = this.findParent(component.id).parent;
 			}
-			return (parent as Component) || component;
+			return parent && !this.isSchema(parent) ? parent : null;
 		},
 		// 获取组件的层级
 		getComponentLevel(componentId: string) {
