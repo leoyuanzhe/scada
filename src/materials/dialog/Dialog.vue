@@ -13,7 +13,7 @@ interface Props {
 const clientStore = useClient();
 const props = withDefaults(defineProps<Props>(), {});
 const oDialog = useTemplateRef("oDialog");
-const payload = { content: "" };
+const payload = {};
 initComponent(props.component);
 onMounted(() => triggerEmit(props.component.emits.mounted, props.component, payload));
 onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.component, payload));

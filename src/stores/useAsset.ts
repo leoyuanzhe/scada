@@ -6,11 +6,13 @@ import { Bone } from "@/materials/bone/Bone";
 import { Container } from "@/materials/container/Container";
 import { Text } from "@/materials/text/Text";
 import { Dialog } from "@/materials/dialog/Dialog";
+import { Chart } from "@/materials/chart/Chart";
 import pageCover from "@/assets/images/page_cover.png";
 import boneCover from "@/assets/images/bone_cover.png";
 import containerCover from "@/assets/images/container_cover.png";
 import textCover from "@/assets/images/text_cover.png";
 import dialogCover from "@/assets/images/dialog_cover.png";
+import commonChartCover from "@/assets/images/common_chart_cover.png";
 
 export const useAsset = defineStore("asset", {
 	state() {
@@ -57,37 +59,44 @@ export const useAsset = defineStore("asset", {
 			this.assets.push({
 				id: generateId(),
 				title: "页面",
-				categories: ["容器"],
+				categories: ["基础"],
 				cover: pageCover,
 				component: Page(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "骨架",
-				categories: ["容器"],
+				categories: ["开发"],
 				cover: boneCover,
 				component: Bone(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "容器",
-				categories: ["容器"],
+				categories: ["基础"],
 				cover: containerCover,
 				component: Container(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "文本",
-				categories: ["信息"],
+				categories: ["基础"],
 				cover: textCover,
 				component: Text(),
 			});
 			this.assets.push({
 				id: generateId(),
 				title: "对话框",
-				categories: ["容器"],
+				categories: ["反馈"],
 				cover: dialogCover,
 				component: Dialog(),
+			});
+			this.assets.push({
+				id: generateId(),
+				title: "通用图表",
+				categories: ["图表"],
+				cover: commonChartCover,
+				component: Chart(),
 			});
 		},
 	},
