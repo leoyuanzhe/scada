@@ -391,6 +391,11 @@ const componentOnDrop = (e: DragEvent, parent: Component) => {
 	dataTransfer.layerPosition = null;
 };
 const layerOnMouseDown = (e: MouseEvent, component: Component, router?: Router) => {
+	const schemaStore = useSchema();
+	const root = schemaStore.findRoot(component);
+	if (root && root.id !== schemaStore.currentRootId) {
+		router?.replace("/editor?id=" + root.id);
+	}
 	focusComponent(e, component, router);
 };
 const layerOnDragStart = (component: Component) => {

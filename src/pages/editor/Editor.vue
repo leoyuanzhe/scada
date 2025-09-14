@@ -37,7 +37,7 @@ function init() {
 	);
 	if (
 		schemaStore.targetComponent &&
-		schemaStore.findRoot(schemaStore.targetComponent).id !== schemaStore.currentRootId
+		schemaStore.findRoot(schemaStore.targetComponent)?.id !== schemaStore.currentRootId
 	) {
 		schemaStore.targetComponentId = "";
 		schemaStore.deactivateAllComponent();

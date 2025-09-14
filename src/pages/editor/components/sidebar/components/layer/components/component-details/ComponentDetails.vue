@@ -29,20 +29,19 @@ const props = withDefaults(defineProps<Props>(), {});
 				dragger.dataTransfer.layerPosition === 'after',
 		}"
 		open
-		draggable="true"
-		@focusin.stop
-		@mousedown.stop="dragger.layerOnMouseDown($event, props.component, router)"
-		@dragstart.stop="dragger.layerOnDragStart(props.component)"
-		@dragover.prevent="dragger.layerOnDragOver($event, component)"
-		@dragleave.stop="dragger.layerOnDragLeave(component)"
-		@drop.stop="dragger.layerOnDrop()"
-		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	>
 		<summary
 			:class="{
 				'hide-marker': !props.component.nestable || props.component.autoReplace,
 			}"
-			@dragover.prevent
+			draggable="true"
+			@focusin.stop
+			@mousedown.stop="dragger.layerOnMouseDown($event, props.component, router)"
+			@dragstart.stop="dragger.layerOnDragStart(props.component)"
+			@dragover.prevent="dragger.layerOnDragOver($event, component)"
+			@dragleave.stop="dragger.layerOnDragLeave(component)"
+			@drop.stop="dragger.layerOnDrop()"
+			@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 		>
 			{{ props.component.title }}
 		</summary>
@@ -76,20 +75,6 @@ const props = withDefaults(defineProps<Props>(), {});
 		background-color: transparent;
 		transition: background-color 0.2s;
 	}
-	&.before {
-		&::before {
-			background-color: #ff0000;
-		}
-	}
-	&.after {
-		&::after {
-			background-color: #ff0000;
-		}
-	}
-	&.disabled {
-		color: #ccc;
-		cursor: not-allowed;
-	}
 	summary {
 		padding: 0 10px;
 		font-size: 14px;
@@ -102,7 +87,20 @@ const props = withDefaults(defineProps<Props>(), {});
 			}
 		}
 	}
-	&.actived {
+	&.before {
+		&::before {
+			background-color: #ff0000;
+		}
+	}
+	&.after {
+		&::after {
+			background-color: #ff0000;
+		}
+	}
+	&.disabled {
+		color: #999;
+	}
+	&:not(&.before).actived {
 		background-color: var(--darken-primary-color);
 	}
 	&.target {
