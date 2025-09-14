@@ -5,10 +5,12 @@ import { Page } from "@/materials/page/Page";
 import { Bone } from "@/materials/bone/Bone";
 import { Container } from "@/materials/container/Container";
 import { Text } from "@/materials/text/Text";
+import { Dialog } from "@/materials/dialog/Dialog";
 import pageCover from "@/assets/images/page_cover.png";
 import boneCover from "@/assets/images/bone_cover.png";
 import containerCover from "@/assets/images/container_cover.png";
 import textCover from "@/assets/images/text_cover.png";
+import dialogCover from "@/assets/images/dialog_cover.png";
 
 export const useAsset = defineStore("asset", {
 	state() {
@@ -79,6 +81,13 @@ export const useAsset = defineStore("asset", {
 				categories: ["信息"],
 				cover: textCover,
 				component: Text(),
+			});
+			this.assets.push({
+				id: generateId(),
+				title: "对话框",
+				categories: ["容器"],
+				cover: dialogCover,
+				component: Dialog(),
 			});
 		},
 	},

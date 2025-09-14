@@ -1,31 +1,18 @@
 import type { MaterialWithLayout } from "@/types/Material";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
-import TextComponent from "./Dialog.vue";
+import DialogComponent from "./Dialog.vue";
 
 const props = deepClone({
-	content: "文本",
-	fontColor: "#ffffff",
-	fontSize: 16,
-	fontStyle: "normal" as "normal" | "italic",
-	fontWeight: "normal" as "normal" | "bold",
-	fontFamily: "serif" as "serif",
-	textAlign: "center" as "left" | "center" | "right",
-	textDecorationLine: "none" as "none" | "overline" | "underline" | "line-through",
-	lineHeight: 30,
-	backgroundColor: "transparent",
-	borderWidth: 0,
-	borderColor: "transparent",
-	borderStyle: "solid" as "solid" | "dashed" | "dotted",
-	borderRadius: 0,
+	show: false,
 });
-export type TextProps = typeof props;
-export type TextEmitKey = "click" | "dblclick";
-export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
+export type DialogProps = typeof props;
+export type DialogEmitKey = "click" | "dblclick";
+export const Dialog = (): MaterialWithLayout<DialogProps, DialogEmitKey> => ({
 	version: "0.0.1",
 	id: generateId(),
-	key: "text",
-	title: "文本",
+	key: "dialog",
+	title: "对话框",
 	actived: false,
 	nestable: false,
 	locked: false,
@@ -39,8 +26,8 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 		snap: { v: [], h: [] },
 		left: 0,
 		top: 0,
-		width: 100,
-		height: 30,
+		width: 800,
+		height: 600,
 	},
 	props,
 	state: {},
@@ -58,5 +45,5 @@ export const Text = (): MaterialWithLayout<TextProps, TextEmitKey> => ({
 	propsExpression: {},
 	stateExpression: {},
 	components: [],
-	render: (component) => <TextComponent component={component} />,
+	render: (component) => <DialogComponent component={component} />,
 });

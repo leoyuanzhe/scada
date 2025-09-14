@@ -19,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {});
 const styleV2 = computed(() => {
 	const res: StyleValue = {};
 	if (props.component.layout) {
+		res.position = "absolute";
 		res.left = props.component.layout.left + "px";
 		res.top = props.component.layout.top + "px";
 		res.width = props.component.layout.width + "px";
@@ -60,7 +61,6 @@ const RenderComponent = () =>
 
 <style lang="scss" scoped>
 .component {
-	position: absolute;
 	transition: box-shadow 0.2s;
 	&.root {
 		&::after {
