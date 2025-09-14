@@ -59,7 +59,6 @@ const remove = () => {
 		}
 	}
 	&.dragging {
-		padding: 10px;
 		&::after {
 			opacity: 1;
 			backdrop-filter: blur(10px);
