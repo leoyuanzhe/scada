@@ -39,9 +39,9 @@ const remove = () => {
 	justify-content: center;
 	align-items: center;
 	border: 1px solid var(--primary-color);
-	transition: padding 0.2s;
 	&::after {
-		content: "将组件拖入此处";
+		content: "将组件拖入此处" !important;
+		position: relative !important;
 		width: 100%;
 		height: 100%;
 		display: flex;
