@@ -76,28 +76,6 @@ const dragger = useDragger();
 			</FormItem>
 		</fieldset>
 		<fieldset>
-			<legend>组件</legend>
-			<FormItem label="激活高亮颜色" for="setter-component-actived-color">
-				<input
-					id="setter-component-actived-color"
-					type="color"
-					:value="clientStore.component.activedColor"
-					@input="clientStore.component.activedColor = ($event.target as HTMLInputElement).value"
-				/>
-			</FormItem>
-		</fieldset>
-		<fieldset>
-			<legend>选择器</legend>
-			<FormItem label="颜色" for="setter-selector-color">
-				<input
-					id="setter-selector-color"
-					type="color"
-					:value="clientStore.selector.color"
-					@input="clientStore.selector.color = ($event.target as HTMLInputElement).value"
-				/>
-			</FormItem>
-		</fieldset>
-		<fieldset>
 			<legend>吸附线</legend>
 			<FormItem label="启用" for="setter-snap-enable">
 				<input
@@ -105,14 +83,6 @@ const dragger = useDragger();
 					type="checkbox"
 					:checked="clientStore.snap.enable"
 					@input="clientStore.snap.enable = Boolean(($event.target as HTMLInputElement).checked)"
-				/>
-			</FormItem>
-			<FormItem label="颜色" for="setter-snap-color">
-				<input
-					id="setter-snap-color"
-					type="color"
-					:value="clientStore.snap.color"
-					@input="clientStore.snap.color = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
 			<FormItem label="距离" for="setter-snap-distance">
@@ -135,14 +105,6 @@ const dragger = useDragger();
 					@input="clientStore.guide.enable = Boolean(($event.target as HTMLInputElement).checked)"
 				/>
 			</FormItem>
-			<FormItem label="颜色" for="setter-guide-color">
-				<input
-					id="setter-guide-color"
-					type="color"
-					:value="clientStore.guide.color"
-					@input="clientStore.guide.color = ($event.target as HTMLInputElement).value"
-				/>
-			</FormItem>
 		</fieldset>
 		<fieldset>
 			<legend>网格线</legend>
@@ -152,14 +114,6 @@ const dragger = useDragger();
 					type="checkbox"
 					:checked="clientStore.grid.enable"
 					@input="clientStore.grid.enable = Boolean(($event.target as HTMLInputElement).checked)"
-				/>
-			</FormItem>
-			<FormItem label="颜色" for="setter-grid-color">
-				<input
-					id="setter-grid-color"
-					type="color"
-					:value="clientStore.grid.color"
-					@input="clientStore.grid.color = ($event.target as HTMLInputElement).value"
 				/>
 			</FormItem>
 			<FormItem label="间隔" for="setter-grid-span">

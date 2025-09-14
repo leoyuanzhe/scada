@@ -28,12 +28,6 @@ const styleV2 = computed(() => {
 		res.width = props.component.layout.width + "px";
 		res.height = props.component.layout.height + "px";
 	}
-	if (!clientStore.previewing && props.component.actived) {
-		res.boxShadow = "0 0 1px 1px " + clientStore.component.activedColor;
-	}
-	if (!clientStore.previewing && props.component.id === schemaStore.targetComponentId) {
-		res.boxShadow = "0 0 3px 3px " + clientStore.component.activedColor;
-	}
 	return res;
 });
 const RenderComponent = () =>
@@ -49,8 +43,9 @@ const RenderComponent = () =>
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
 			locked: !clientStore.previewing && props.component.locked,
-			target: schemaStore.targetComponentId === props.component.id,
+			target: !clientStore.previewing && schemaStore.targetComponentId === props.component.id,
 			moveable: schemaStore.getComponentLevel(component.id) === 2,
+			actived: !clientStore.previewing && props.component.actived,
 		}"
 		v-show="!props.component.hidden"
 		:style="styleV2"
@@ -73,7 +68,11 @@ const RenderComponent = () =>
 	&.locked {
 		pointer-events: none;
 	}
+	&.actived {
+		box-shadow: 0 0 1px 1px var(--primary-color);
+	}
 	&.target {
+		box-shadow: 0 0 3px 1px var(--primary-color);
 		&::after {
 			content: "";
 			position: absolute;

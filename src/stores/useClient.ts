@@ -32,17 +32,9 @@ export const useClient = defineStore("client", {
 			snap: {
 				enable: true,
 				distance: 10,
-				color: "#ff0000",
-			},
-			component: {
-				activedColor: "#ff0000",
-			},
-			selector: {
-				color: "#ff0000",
 			},
 			guide: {
 				enable: true,
-				color: "#ff0000",
 				line: {
 					v: [] as number[],
 					h: [] as number[],
@@ -51,7 +43,6 @@ export const useClient = defineStore("client", {
 			grid: {
 				enable: true,
 				span: 10,
-				color: "#222222",
 			},
 		};
 	},
