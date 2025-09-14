@@ -9,6 +9,8 @@ const dragger = useDragger();
 const ruler = useRuler();
 const oRulerH = useTemplateRef("oRulerH");
 const oRulerV = useTemplateRef("oRulerV");
+let v: number | null = null;
+let h: number | null = null;
 onMounted(() => {
 	ruler.oRulerH.value = oRulerH.value;
 	ruler.oRulerV.value = oRulerV.value;
@@ -30,46 +32,70 @@ onMounted(() => {
 		{ immediate: true }
 	);
 });
-const hMouseDown = (e: MouseEvent) => {
-	const startTop = e.offsetY;
-	clientStore.guide.line.h.push(dragger.getLogicalTop(startTop));
-	const startY = e.clientY;
-	document.body.addEventListener("mousemove", mouseMove);
-	document.body.addEventListener("mouseup", mouseUp);
-	function mouseMove(e: MouseEvent) {
-		const dragTop = e.clientY - startY;
-		clientStore.guide.line.h[clientStore.guide.line.h.length - 1] = Math.round(
-			dragger.getLogicalTop(startTop + dragTop)
+const onHMouseEnter = (e: MouseEvent) => {
+	v = Math.round(dragger.getLogicalTop(e.offsetX + 20));
+	clientStore.guide.line.v.push(v);
+};
+const onHMouseMove = (e: MouseEvent) => {
+	if (v !== null) {
+		clientStore.guide.line.v[clientStore.guide.line.v.length - 1] = Math.round(
+			dragger.getLogicalTop(e.offsetX + 20)
 		);
-	}
-	function mouseUp() {
-		document.body.removeEventListener("mousemove", mouseMove);
-		document.body.removeEventListener("mouseup", mouseUp);
 	}
 };
-const vMouseDown = (e: MouseEvent) => {
-	const startLeft = e.offsetX;
-	clientStore.guide.line.v.push(dragger.getLogicalLeft(startLeft));
-	const startX = e.clientX;
-	document.body.addEventListener("mousemove", mouseMove);
-	document.body.addEventListener("mouseup", mouseUp);
-	function mouseMove(e: MouseEvent) {
-		const dragLeft = e.clientX - startX;
-		clientStore.guide.line.v[clientStore.guide.line.v.length - 1] = Math.round(
-			dragger.getLogicalLeft(startLeft + dragLeft)
+const onHMouseDown = () => {
+	if (v !== null) {
+		clientStore.guide.line.v.unshift(clientStore.guide.line.v[clientStore.guide.line.v.length - 1]);
+	}
+};
+const onHMouseLeave = () => {
+	if (v !== null) {
+		clientStore.guide.line.v.pop();
+		v = null;
+	}
+};
+const onVMouseEnter = (e: MouseEvent) => {
+	h = Math.round(dragger.getLogicalLeft(e.offsetY + 20));
+	clientStore.guide.line.h.push(h);
+};
+const onVMouseMove = (e: MouseEvent) => {
+	if (h !== null) {
+		clientStore.guide.line.h[clientStore.guide.line.h.length - 1] = Math.round(
+			dragger.getLogicalLeft(e.offsetY + 20)
 		);
 	}
-	function mouseUp() {
-		document.body.removeEventListener("mousemove", mouseMove);
-		document.body.removeEventListener("mouseup", mouseUp);
+};
+const onVMouseDown = () => {
+	if (h !== null) {
+		clientStore.guide.line.h.unshift(clientStore.guide.line.h[clientStore.guide.line.h.length - 1]);
+	}
+};
+const onVMouseLeave = () => {
+	if (h !== null) {
+		clientStore.guide.line.h.pop();
+		h = null;
 	}
 };
 </script>
 
 <template>
 	<template v-if="clientStore.ruler.show && !clientStore.previewing">
-		<canvas ref="oRulerH" class="ruler-h" @mousedown.stop="hMouseDown($event)"></canvas>
-		<canvas ref="oRulerV" class="ruler-v" @mousedown.stop="vMouseDown($event)"></canvas>
+		<canvas
+			ref="oRulerH"
+			class="ruler-h"
+			@mouseenter="onHMouseEnter($event)"
+			@mousemove="onHMouseMove($event)"
+			@mousedown="onHMouseDown()"
+			@mouseleave="onHMouseLeave()"
+		></canvas>
+		<canvas
+			ref="oRulerV"
+			class="ruler-v"
+			@mouseenter="onVMouseEnter($event)"
+			@mousemove="onVMouseMove($event)"
+			@mousedown="onVMouseDown()"
+			@mouseleave="onVMouseLeave()"
+		></canvas>
 		<button class="guide-eye" @click="clientStore.guide.enable = !clientStore.guide.enable">
 			<svg class="icon"><use :href="clientStore.guide.enable ? '#eye-slash' : '#eye'" /></svg>
 		</button>

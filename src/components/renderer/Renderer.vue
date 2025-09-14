@@ -35,9 +35,9 @@ onMounted(() => {
 	>
 		<GridLine />
 		<RootComponent />
-		<Ruler />
 		<GuideLine />
 		<SnapLine />
+		<Ruler />
 		<Selector />
 	</div>
 </template>
