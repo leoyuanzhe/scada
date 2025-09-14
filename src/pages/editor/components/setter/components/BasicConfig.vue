@@ -88,53 +88,6 @@ const removeCustomEmit = (key: string) => {
 
 <template>
 	<form class="form" @submit.prevent>
-		<fieldset>
-			<legend>设置</legend>
-			<FormItem label="名称" for="setter-basic-title">
-				<input
-					id="setter-basic-title"
-					type="text"
-					:value="(props.component as ComponentWithLayout).title"
-					@input="(props.component as ComponentWithLayout).title = ($event.target as HTMLInputElement).value"
-				/>
-			</FormItem>
-			<FormItem label="锁定" for="setter-basic-locked">
-				<input
-					id="setter-basic-locked"
-					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).locked"
-					@input="
-						(props.component as ComponentWithLayout).locked = Boolean(
-							($event.target as HTMLInputElement).checked
-						)
-					"
-				/>
-			</FormItem>
-			<FormItem label="隐藏" for="setter-basic-hidden">
-				<input
-					id="setter-basic-hidden"
-					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).hidden"
-					@input="
-						(props.component as ComponentWithLayout).hidden = Boolean(
-							($event.target as HTMLInputElement).checked
-						)
-					"
-				/>
-			</FormItem>
-			<FormItem label="嵌套" for="setter-basic-nestable">
-				<input
-					id="setter-basic-nestable"
-					type="checkbox"
-					:checked="(props.component as ComponentWithLayout).nestable"
-					@input="
-						(props.component as ComponentWithLayout).nestable = Boolean(
-							($event.target as HTMLInputElement).checked
-						)
-					"
-				/>
-			</FormItem>
-		</fieldset>
 		<fieldset v-if="props.component.layout">
 			<legend>布局</legend>
 			<FormItem label="X坐标" for="setter-basic-layout-left">
@@ -182,6 +135,53 @@ const removeCustomEmit = (key: string) => {
 					@input="
 						(props.component.layout.height = Number(($event.target as HTMLInputElement).value)),
 							dragger.computedSelector()
+					"
+				/>
+			</FormItem>
+		</fieldset>
+		<fieldset>
+			<legend>设置</legend>
+			<FormItem label="名称" for="setter-basic-title">
+				<input
+					id="setter-basic-title"
+					type="text"
+					:value="(props.component as ComponentWithLayout).title"
+					@input="(props.component as ComponentWithLayout).title = ($event.target as HTMLInputElement).value"
+				/>
+			</FormItem>
+			<FormItem label="锁定" for="setter-basic-locked">
+				<input
+					id="setter-basic-locked"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).locked"
+					@input="
+						(props.component as ComponentWithLayout).locked = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem label="隐藏" for="setter-basic-hidden">
+				<input
+					id="setter-basic-hidden"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).hidden"
+					@input="
+						(props.component as ComponentWithLayout).hidden = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
+					"
+				/>
+			</FormItem>
+			<FormItem label="嵌套" for="setter-basic-nestable">
+				<input
+					id="setter-basic-nestable"
+					type="checkbox"
+					:checked="(props.component as ComponentWithLayout).nestable"
+					@input="
+						(props.component as ComponentWithLayout).nestable = Boolean(
+							($event.target as HTMLInputElement).checked
+						)
 					"
 				/>
 			</FormItem>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useSchema } from "@/stores/useSchema";
 import GlobalConfig from "./components/GlobalConfig.vue";
 import BasicConfig from "./components/BasicConfig.vue";
@@ -22,6 +22,14 @@ const props = withDefaults(defineProps<Props>(), {});
 const emits = defineEmits<Emits>();
 const current = ref<"global" | "basic" | "prop" | "state" | "dataSource" | "emit" | "watcher">("global");
 const targetComponentV2 = computed<Schema | Component>(() => schemaStore.targetComponent ?? schemaStore.$state);
+watch(
+	() => targetComponentV2.value,
+	() => {
+		if (schemaStore.isSchema(targetComponentV2.value)) current.value = "global";
+		else current.value = "basic";
+	},
+	{ immediate: true }
+);
 const resizerOnMouseDown = (e: MouseEvent) => {
 	document.body.addEventListener("mousemove", onMouseMove);
 	document.body.addEventListener("mouseup", onMouseUp);
