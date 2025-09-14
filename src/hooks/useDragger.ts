@@ -21,17 +21,11 @@ const snapLine = reactive({
 	v: null as number | null,
 	h: null as number | null,
 });
-// 组件
-const componentDataTransfer = reactive({
+const dataTransfer = reactive({
 	dragStartAsset: null as Asset | null,
-	dragOverComponent: null as Component | null,
-});
-// 图层
-const layerDataTransfer = reactive({
-	dragging: false,
 	dragStartComponent: null as Component | null,
 	dragOverComponent: null as Component | null,
-	position: null as "before" | "after" | null,
+	layerPosition: null as "before" | "after" | null,
 });
 const assetOnDragStart = (asset: Asset) => {
 	const assetStore = useAsset();
@@ -43,70 +37,8 @@ const assetOnDragStart = (asset: Asset) => {
 		selector.top = 0;
 		selector.width = 0;
 		selector.height = 0;
-		componentDataTransfer.dragStartAsset = item;
+		dataTransfer.dragStartAsset = item;
 	}
-};
-const layerOnMouseDown = (e: MouseEvent, component: Component, router?: Router) => {
-	if (!component.selectable) return;
-	focusComponent(e, component, router);
-};
-const layerOnDragStart = (component: Component) => {
-	const schemaStore = useSchema();
-	schemaStore.deactivateAllComponent();
-	layerDataTransfer.dragging = true;
-	layerDataTransfer.dragStartComponent = component;
-};
-const layerOnDragOver = (e: DragEvent, component: Component) => {
-	const schemaStore = useSchema();
-	if (
-		layerDataTransfer.dragStartComponent!.id !== component.id &&
-		!schemaStore.isContains(layerDataTransfer.dragStartComponent!, component.id)
-	) {
-		e.stopPropagation();
-		schemaStore.deactivateAllComponent();
-		if (e.offsetY <= 5) {
-			// 组件的上边
-			layerDataTransfer.position = "before";
-			layerDataTransfer.dragOverComponent = component;
-			component.actived = true;
-		} else if (e.offsetY >= (e.target as HTMLDetailsElement).offsetHeight - 5) {
-			// 组件的下边
-			layerDataTransfer.position = "after";
-			layerDataTransfer.dragOverComponent = component;
-			component.actived = true;
-		} else if (component.nestable) {
-			layerDataTransfer.position = null;
-			layerDataTransfer.dragOverComponent = component;
-			component.actived = true;
-		}
-	}
-};
-const layerOnDragLeave = (component: Component) => {
-	component.actived = false;
-	layerDataTransfer.position = null;
-	layerDataTransfer.dragOverComponent = null;
-};
-const layerOnDrop = () => {
-	const schemaStore = useSchema();
-	const commandStore = useCommand();
-	const dragger = useDragger();
-	if (layerDataTransfer.dragStartComponent && layerDataTransfer.dragOverComponent) {
-		if (layerDataTransfer.position === null && layerDataTransfer.dragOverComponent!.nestable) {
-			commandStore.joinGroup(layerDataTransfer.dragStartComponent.id, layerDataTransfer.dragOverComponent.id);
-		} else if (layerDataTransfer.position === "before") {
-			commandStore.insertBefore(layerDataTransfer.dragStartComponent.id, layerDataTransfer.dragOverComponent.id);
-		} else if (layerDataTransfer.position === "after") {
-			commandStore.insertAfter(layerDataTransfer.dragStartComponent.id, layerDataTransfer.dragOverComponent.id);
-		}
-		schemaStore.deactivateAllComponent();
-		schemaStore.targetComponentId = layerDataTransfer.dragStartComponent.id;
-		layerDataTransfer.dragStartComponent.actived = true;
-		dragger.computedSelector();
-	}
-	layerDataTransfer.dragStartComponent = null;
-	layerDataTransfer.dragOverComponent = null;
-	layerDataTransfer.position = null;
-	layerDataTransfer.dragging = false;
 };
 const rendererOnWheel = (e: WheelEvent) => {
 	const clientStore = useClient();
@@ -233,15 +165,15 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 const rendererOnDrop = (router: Router) => {
 	const schemaStore = useSchema();
 	const commandStore = useCommand();
-	if (componentDataTransfer.dragStartAsset) {
-		const newComponent = assetTransferComponent(componentDataTransfer.dragStartAsset);
+	if (dataTransfer.dragStartAsset) {
+		const newComponent = assetTransferComponent(dataTransfer.dragStartAsset);
 		if (newComponent.layout) {
 			newComponent.layout.left = 0;
 			newComponent.layout.top = 0;
 		}
 		commandStore.createRootComponent(newComponent);
 		schemaStore.deactivateAllComponent();
-		componentDataTransfer.dragStartAsset = null;
+		dataTransfer.dragStartAsset = null;
 		router.replace("/editor?id=" + newComponent.id);
 	}
 };
@@ -413,43 +345,119 @@ const componentOnDragLeave = (component: Component) => {
 const componentOnDrop = (e: DragEvent, parent: Component) => {
 	const commandStore = useCommand();
 	const schemaStore = useSchema();
-	if (componentDataTransfer.dragStartAsset) {
-		const newComponent = assetTransferComponent(componentDataTransfer.dragStartAsset);
-		if (newComponent.layout) {
-			const { left, top } = getOffsetFromRoot(parent);
-			if (parent.nestable) {
-				if (parent.autoReplace && parent.layout) {
+	let newComponent = null;
+	if (dataTransfer.dragStartAsset) {
+		newComponent = assetTransferComponent(dataTransfer.dragStartAsset);
+	} else if (dataTransfer.dragStartComponent) {
+		newComponent = dataTransfer.dragStartComponent;
+		schemaStore.deleteComponent(newComponent.id);
+	}
+	if (newComponent) {
+		const { left, top } = getOffsetFromRoot(parent);
+		if (parent.nestable) {
+			if (parent.autoReplace) {
+				if (newComponent?.layout && parent.layout) {
 					newComponent.layout.left = left;
 					newComponent.layout.top = top;
 					newComponent.layout.width = parent.layout.width;
 					newComponent.layout.height = parent.layout.height;
-					const { parent: parentParent } = schemaStore.findParent(parent.id);
-					if (parentParent && !schemaStore.isSchema(parentParent)) {
-						schemaStore.deleteComponent(parent.id);
-						commandStore.createComponent(newComponent);
-						schemaStore.joinGroup(newComponent, parentParent);
-					}
-				} else {
-					newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
-					newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+				}
+				const { parent: parentParent } = schemaStore.findParent(parent.id);
+				if (parentParent && !schemaStore.isSchema(parentParent)) {
+					schemaStore.deleteComponent(parent.id);
 					commandStore.createComponent(newComponent);
-					schemaStore.joinGroup(newComponent, parent);
+					schemaStore.joinGroup(newComponent, parentParent);
 				}
 			} else {
+				if (newComponent.layout) {
+					newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
+					newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
+				}
+				commandStore.createComponent(newComponent);
+				schemaStore.joinGroup(newComponent, parent);
+			}
+		} else {
+			if (newComponent.layout) {
 				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
 				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
-				commandStore.createComponent(newComponent);
-				schemaStore.joinGroup(newComponent, schemaStore.currentRootComponent!);
 			}
+			commandStore.createComponent(newComponent);
+			schemaStore.joinGroup(newComponent, schemaStore.currentRootComponent!);
 		}
 	}
-	componentDataTransfer.dragOverComponent = null;
+	dataTransfer.dragStartAsset = null;
+	dataTransfer.dragStartComponent = null;
+	dataTransfer.dragOverComponent = null;
+	dataTransfer.layerPosition = null;
+};
+const layerOnMouseDown = (e: MouseEvent, component: Component, router?: Router) => {
+	focusComponent(e, component, router);
+};
+const layerOnDragStart = (component: Component) => {
+	const schemaStore = useSchema();
+	schemaStore.deactivateAllComponent();
+	dataTransfer.dragStartComponent = component;
+};
+const layerOnDragOver = (e: DragEvent, component: Component) => {
+	const schemaStore = useSchema();
+	if (
+		dataTransfer.dragStartComponent!.id !== component.id &&
+		!schemaStore.isContains(dataTransfer.dragStartComponent!, component.id)
+	) {
+		e.stopPropagation();
+		schemaStore.deactivateAllComponent();
+		if (e.offsetY <= 5) {
+			// 组件的上边
+			dataTransfer.layerPosition = "before";
+			dataTransfer.dragOverComponent = component;
+			component.actived = true;
+		} else if (e.offsetY >= (e.target as HTMLDetailsElement).offsetHeight - 5) {
+			// 组件的下边
+			dataTransfer.layerPosition = "after";
+			dataTransfer.dragOverComponent = component;
+			component.actived = true;
+		} else if (component.nestable) {
+			dataTransfer.layerPosition = null;
+			dataTransfer.dragOverComponent = component;
+			component.actived = true;
+		}
+	}
+};
+const layerOnDragLeave = (component: Component) => {
+	component.actived = false;
+	dataTransfer.dragOverComponent = null;
+	dataTransfer.layerPosition = null;
+};
+const layerOnDrop = () => {
+	const schemaStore = useSchema();
+	const commandStore = useCommand();
+	const dragger = useDragger();
+	if (dataTransfer.dragStartComponent && dataTransfer.dragOverComponent) {
+		if (dataTransfer.layerPosition === null && dataTransfer.dragOverComponent!.nestable) {
+			if (dataTransfer.dragOverComponent.autoReplace)
+				commandStore.replaceComponent(dataTransfer.dragStartComponent, dataTransfer.dragOverComponent);
+			else commandStore.joinGroup(dataTransfer.dragStartComponent.id, dataTransfer.dragOverComponent.id);
+		} else if (dataTransfer.layerPosition === "before") {
+			commandStore.insertBefore(dataTransfer.dragStartComponent.id, dataTransfer.dragOverComponent.id);
+		} else if (dataTransfer.layerPosition === "after") {
+			commandStore.insertAfter(dataTransfer.dragStartComponent.id, dataTransfer.dragOverComponent.id);
+		}
+		schemaStore.deactivateAllComponent();
+		schemaStore.targetComponentId = dataTransfer.dragStartComponent.id;
+		dataTransfer.dragStartComponent.actived = true;
+		dragger.computedSelector();
+	}
+	dataTransfer.dragStartAsset = null;
+	dataTransfer.dragStartComponent = null;
+	dataTransfer.dragOverComponent = null;
+	dataTransfer.layerPosition = null;
 };
 const boneDragOver = (component: Component) => {
-	componentDataTransfer.dragOverComponent = component;
+	dataTransfer.dragOverComponent = component;
 };
 const boneDragLeave = () => {
-	componentDataTransfer.dragOverComponent = null;
+	dataTransfer.dragOverComponent = null;
+	dataTransfer.layerPosition = null;
 };
 const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r" | "rb" | "b" | "lb" | "l" | "lt") => {
 	const schemaStore = useSchema();
@@ -645,8 +653,7 @@ function getUnscaledOffset(number: number) {
 export const useDragger = () => ({
 	selector,
 	snapLine,
-	componentDataTransfer,
-	layerDataTransfer,
+	dataTransfer,
 	assetOnDragStart,
 	rendererOnWheel,
 	rendererOnMouseDown,
