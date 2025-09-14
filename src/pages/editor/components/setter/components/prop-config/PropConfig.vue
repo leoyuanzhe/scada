@@ -3,6 +3,7 @@ import type { Component } from "@/types/Component";
 import ComponentizationConfig from "./component/ComponentizationConfig.vue";
 import ContainerConfig from "./component/ContainerConfig.vue";
 import TextConfig from "./component/TextConfig.vue";
+import DialogConfig from "./component/DialogConfig.vue";
 
 const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 </script>
@@ -13,6 +14,7 @@ const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 		<ComponentizationConfig :component="props.component" />
 		<ContainerConfig v-if="props.component.key === 'container'" :component="props.component" />
 		<TextConfig v-if="props.component.key === 'text'" :component="props.component" />
+		<DialogConfig v-if="props.component.key === 'dialog'" :component="props.component" />
 	</form>
 </template>
 

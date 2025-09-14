@@ -10,15 +10,18 @@ import { computedMousePosition, openComponentMenu } from "@/helpers/contextMenu"
 
 interface Props {
 	component: Component;
+	relative?: boolean;
 }
 const clientStore = useClient();
 const materialStore = useMaterial();
 const schemaStore = useSchema();
 const dragger = useDragger();
-const props = withDefaults(defineProps<Props>(), {});
+const props = withDefaults(defineProps<Props>(), {
+	relative: false,
+});
 const styleV2 = computed(() => {
 	const res: StyleValue = {};
-	if (props.component.layout) {
+	if (!props.relative && props.component.layout) {
 		res.position = "absolute";
 		res.left = props.component.layout.left + "px";
 		res.top = props.component.layout.top + "px";

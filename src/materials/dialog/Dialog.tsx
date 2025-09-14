@@ -1,4 +1,4 @@
-import type { MaterialWithLayout } from "@/types/Material";
+import type { Material } from "@/types/Material";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
 import DialogComponent from "./Dialog.vue";
@@ -8,27 +8,20 @@ const props = deepClone({
 });
 export type DialogProps = typeof props;
 export type DialogEmitKey = "click" | "dblclick";
-export const Dialog = (): MaterialWithLayout<DialogProps, DialogEmitKey> => ({
+export const Dialog = (): Material<DialogProps, DialogEmitKey> => ({
 	version: "0.0.1",
 	id: generateId(),
 	key: "dialog",
 	title: "对话框",
 	actived: false,
-	nestable: false,
+	nestable: true,
 	locked: false,
 	hidden: false,
 	selectable: true,
 	moveable: false,
-	resizable: true,
+	resizable: false,
 	autoReplace: false,
 	autoLayout: false,
-	layout: {
-		snap: { v: [], h: [] },
-		left: 0,
-		top: 0,
-		width: 800,
-		height: 600,
-	},
 	props,
 	state: {},
 	watchers: [],
