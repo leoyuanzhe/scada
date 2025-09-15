@@ -1,9 +1,54 @@
 import type { MaterialWithLayout } from "@/types/Material";
+import type { EChartsOptionV2 } from "@/types/EchartsOptionV2";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
 import ChartComponent from "./Chart.vue";
+import type { Color } from "echarts";
 
-const props = deepClone({});
+const a: Color = {
+	type: "linear",
+	x: 0,
+	y: 0,
+	x2: 0,
+	y2: 1,
+	colorStops: [
+		{
+			offset: 0,
+			color: "red", // 0% 处的颜色
+		},
+		{
+			offset: 1,
+			color: "blue", // 100% 处的颜色
+		},
+	],
+	global: false, // 缺省为 false
+};
+
+const props = deepClone({
+	option: {
+		title: {
+			id: "",
+			show: true,
+			text: "ECharts 入门示例",
+			link: "",
+		},
+		tooltip: {},
+		legend: {
+			data: ["销量"],
+		},
+		xAxis: {
+			data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+		},
+		yAxis: {},
+		series: [
+			{
+				name: "销量",
+				type: "bar",
+				data: [5, 20, 36, 10, 10, 20],
+			},
+		],
+	} as EChartsOptionV2,
+});
 export type ChartProps = typeof props;
 export type ChartEmitKey = "click";
 export const Chart = (): MaterialWithLayout<ChartProps, ChartEmitKey> => ({
