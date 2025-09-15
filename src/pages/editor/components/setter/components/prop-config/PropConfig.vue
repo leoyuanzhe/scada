@@ -4,6 +4,7 @@ import ComponentizationConfig from "./component/ComponentizationConfig.vue";
 import ContainerConfig from "./component/ContainerConfig.vue";
 import TextConfig from "./component/TextConfig.vue";
 import DialogConfig from "./component/DialogConfig.vue";
+import ChartConfig from "./component/ChartConfig.vue";
 
 const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 </script>
@@ -15,6 +16,7 @@ const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 		<ContainerConfig v-if="props.component.key === 'container'" :component="props.component" />
 		<TextConfig v-if="props.component.key === 'text'" :component="props.component" />
 		<DialogConfig v-if="props.component.key === 'dialog'" :component="props.component" />
+		<ChartConfig v-if="props.component.key === 'chart'" :component="props.component" />
 	</form>
 </template>
 
