@@ -3,26 +3,6 @@ import type { EChartsOptionV2 } from "@/types/EchartsOptionV2";
 import { generateId } from "@/helpers/schema";
 import { deepClone } from "@/utils/conversion";
 import ChartComponent from "./Chart.vue";
-import type { Color } from "echarts";
-
-const a: Color = {
-	type: "linear",
-	x: 0,
-	y: 0,
-	x2: 0,
-	y2: 1,
-	colorStops: [
-		{
-			offset: 0,
-			color: "red", // 0% 处的颜色
-		},
-		{
-			offset: 1,
-			color: "blue", // 100% 处的颜色
-		},
-	],
-	global: false, // 缺省为 false
-};
 
 const props = deepClone({
 	option: {
