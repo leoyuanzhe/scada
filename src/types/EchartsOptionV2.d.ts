@@ -6,7 +6,7 @@ type EChartsOptionV2FontWeight = "normal" | "bold" | "bolder" | "lighter" | numb
 type EChartsOptionV2BorderType = "solid" | "dashed" | "dotted" | number | number[];
 type EChartsOptionV2Align = "left" | "center" | "right" | null;
 type EChartsOptionV2VerticalAlign = "top" | "middle" | "bottom" | null;
-type EChartsOptionV2VerticalOrient = "horizontal" | "vertical";
+type EChartsOptionV2VOrient = "horizontal" | "vertical";
 type EChartsOptionV2Symbol =
 	| "circle"
 	| "rect"
@@ -18,13 +18,13 @@ type EChartsOptionV2Symbol =
 	| "none"
 	| string;
 type EChartsOptionV2Overflow = "none" | "truncate" | "break" | "breakAll";
-type EchartsOptionV2Position = {
+type EChartsOptionV2Position = {
 	left: "auto" | "left" | "center" | "right" | string | number;
 	top: "auto" | "top" | "middle" | "bottom" | string | number;
 	right: "auto" | string | number;
 	bottom: "auto" | string | number;
 };
-type EchartsOptionV2Size = {
+type EChartsOptionV2Size = {
 	width: number | string | null;
 	height: number | string | null;
 };
@@ -39,7 +39,7 @@ type EChartsOptionV2TextBackgroundColor =
 	| string
 	| ({
 			image: string;
-	  } & EchartsOptionV2Size);
+	  } & EChartsOptionV2Size);
 type EChartsOptionV2TextBorder = {
 	textBorderColor: Color;
 	textBorderWidth: number;
@@ -396,7 +396,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 		zlevel: number;
 		z: number;
 		backgroundColor: Color;
-	} & EchartsOptionV2Position &
+	} & EChartsOptionV2Position &
 		EChartsOptionV2Border &
 		EChartsOptionV2Shadow &
 		EChartsOptionV2CoordinateSystem;
@@ -406,7 +406,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 		show: boolean;
 		zlevel: number;
 		z: number;
-		orient: EChartsOptionV2VerticalOrient;
+		orient: EChartsOptionV2VOrient;
 		align: EChartsOptionV2Align;
 		padding: number | number[];
 		itemGap: number;
@@ -475,7 +475,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 					ellipsis: string;
 					rich: EChartsOptionV2Rich;
 					richInheritPlainLabel: boolean;
-				} & EchartsOptionV2Size &
+				} & EChartsOptionV2Size &
 					EChartsOptionV2Font &
 					EChartsOptionV2Border &
 					EChartsOptionV2Shadow &
@@ -497,7 +497,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 				ellipsis: string;
 				rich: EChartsOptionV2Rich;
 				richInheritPlainLabel: boolean;
-			} & EchartsOptionV2Size &
+			} & EChartsOptionV2Size &
 				EChartsOptionV2Font &
 				EChartsOptionV2Border &
 				EChartsOptionV2Shadow &
@@ -509,7 +509,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 			triggerEvent: boolean;
 		} & EChartsOptionV2Border &
 			EChartsOptionV2Shadow)[];
-	} & EchartsOptionV2Position &
+	} & EChartsOptionV2Position &
 		EChartsOptionV2Size &
 		EChartsOptionV2CoordinateSystem;
 	grid: {
@@ -519,7 +519,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 		z: number;
 		containLabel: boolean;
 		outerBoundsMode: "auto" | "none" | "same";
-		outerBounds: EchartsOptionV2Position & EChartsOptionV2Size;
+		outerBounds: EChartsOptionV2Position & EChartsOptionV2Size;
 		outerBoundsContain: "auto" | "all" | "axisLabel";
 		backgroundColor: Color;
 		tooltip: {
@@ -534,7 +534,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 			textStyle: EChartsOptionV2TextStyle;
 			extraCssText: string;
 		};
-	} & EchartsOptionV2Position &
+	} & EChartsOptionV2Position &
 		EChartsOptionV2Size &
 		EChartsOptionV2Border &
 		EChartsOptionV2Shadow &
@@ -903,7 +903,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 				maxSpan: number;
 				minValueSpan: number | string | Date;
 				maxValueSpan: number | string | Date;
-				orient: EChartsOptionV2VerticalOrient;
+				orient: EChartsOptionV2VOrient;
 				zoomLock: boolean;
 				throttle: number;
 				rangeMode: string[];
@@ -963,7 +963,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 				maxSpan: number;
 				minValueSpan: number | string | Date;
 				maxValueSpan: number | string | Date;
-				orient: EChartsOptionV2VerticalOrient;
+				orient: EChartsOptionV2VOrient;
 				zoomLock: boolean;
 				throttle: number;
 				rangeMode: string[];
@@ -973,13 +973,123 @@ export interface EChartsOptionV2 extends EChartsOption {
 					opacity: number;
 				} & EChartsOptionV2Border &
 					EChartsOptionV2Shadow;
-				emphasis: {};
-		  } & EchartsOptionV2Position &
-				EchartsOptionV2Size &
+				emphasis: {
+					handleStyle: {
+						color: Color;
+						opacity: number;
+					} & EChartsOptionV2Border &
+						EChartsOptionV2Shadow;
+					handleLabel: {
+						show: boolean;
+					};
+					moveHandleStyle: {
+						color: Color;
+						opacity: number;
+					} & EChartsOptionV2Border &
+						EChartsOptionV2Shadow;
+				};
+		  } & EChartsOptionV2Position &
+				EChartsOptionV2Size &
 				EChartsOptionV2Border &
 				EChartsOptionV2CoordinateSystem)
 	)[];
-	visualMap: {}[];
+	visualMap: (
+		| ({
+				type: "continuous";
+				id: string;
+				min: number;
+				max: number;
+				range: number[];
+				unboundedRange: boolean;
+				calculable: boolean;
+				realtime: boolean;
+				inverse: boolean;
+				precision: number;
+				itemWidth: number;
+				itemHeight: number;
+				align: "auto" | "left" | "right" | "top" | "bottom";
+				text: string[];
+				textGap: number;
+				show: boolean;
+				dimension: number;
+				seriesIndex: number | string | (number | string)[];
+				seriesId: number | string | (number | string)[];
+				hoverLink: boolean;
+				inRange: any;
+				outOfRange: any;
+				controller: {
+					inRange: any;
+					outOfRange: any;
+				};
+				zlevel: number;
+				z: number;
+				orient: EChartsOptionV2VOrient;
+				padding: number | number[];
+				backgroundColor: Color;
+				color: string[];
+				textStyle: EChartsOptionV2TextStyle;
+				formatter: string | ((params: any) => string);
+				handleIcon: EChartsOptionV2Symbol;
+				handleSize: number | string;
+				handleStyle: {
+					color: Color;
+					opacity: number;
+				} & EChartsOptionV2Border &
+					EChartsOptionV2Shadow;
+				indicatorIcon: EChartsOptionV2Symbol;
+				indicatorSize: number | string;
+				indicatorStyle: {
+					color: Color;
+					opacity: number;
+				} & EChartsOptionV2Border &
+					EChartsOptionV2Shadow;
+		  } & EChartsOptionV2Position &
+				EChartsOptionV2Border &
+				EChartsOptionV2CoordinateSystem)
+		| ({
+				type: "piecewise";
+				id: string;
+				splitNumber: number;
+				pieces: any[];
+				categories: string[];
+				min: number;
+				max: number;
+				minOpen: boolean;
+				maxOpen: boolean;
+				selectedMode: "multiple" | "single" | boolean;
+				inverse: boolean;
+				precision: boolean;
+				itemWidth: number;
+				itemHeight: number;
+				align: "auto" | "left" | "right";
+				text: string[];
+				textGap: number;
+				showLabel: boolean;
+				itemGap: number;
+				itemSymbol: EChartsOptionV2Symbol;
+				show: boolean;
+				dimension: number[][];
+				seriesIndex: number | string | (number | string)[];
+				seriesId: number | string | (number | string)[];
+				hoverLink: boolean;
+				inRange: any;
+				outOfRange: any;
+				controller: {
+					inRange: any;
+					outOfRange: any;
+				};
+				zlevel: number;
+				z: number;
+				orient: EChartsOptionV2VOrient;
+				padding: number | number[];
+				backgroundColor: Color;
+				color: string[];
+				textStyle: EChartsOptionV2TextStyle;
+				formatter: string | ((params: any) => string);
+		  } & EChartsOptionV2Position &
+				EChartsOptionV2Border &
+				EChartsOptionV2CoordinateSystem)
+	)[];
 	axisPointer: {
 		id: string;
 		show: boolean;
