@@ -81,12 +81,13 @@ type EChartsOptionV2Rich = Record<
 		EChartsOptionV2Border &
 		EChartsOptionV2Shadow
 >;
+type EChartsOptionV2AreaStyle = {
+	color: string[];
+} & EChartsOptionV2Shadow;
 type EChartsOptionV2LineStyle = {
 	color: Color;
 	width: number;
 	opacity: number;
-	inactiveColor: Color;
-	inactiveWidth: number;
 } & EChartsOptionV2LineBorder &
 	EChartsOptionV2Shadow;
 type EChartsOptionV2Border = {
@@ -214,6 +215,14 @@ type EChartsOptionV2Name = {
 		ellipsis: string;
 	};
 };
+type EChartsOptionV2Handle = {
+	show: boolean;
+	icon: EChartsOptionV2Symbol;
+	size: number | number[];
+	margin: number;
+	color: Color;
+	throttle: number;
+} & EChartsOptionV2Shadow;
 type EChartsOptionV2Axis = {
 	id: string;
 	show: boolean;
@@ -316,9 +325,7 @@ type EChartsOptionV2Axis = {
 	splitArea: {
 		show: boolean;
 		interval: number | ((index: number, value: string) => boolean);
-		areaStyle: {
-			color: string[];
-		} & EChartsOptionV2Shadow;
+		areaStyle: EChartsOptionV2AreaStyle;
 	};
 	axisPointer: {
 		show: boolean;
@@ -350,14 +357,7 @@ type EChartsOptionV2Axis = {
 		triggerTooltip: boolean;
 		value: number;
 		status: "show" | "hide";
-		handle: {
-			show: boolean;
-			icon: EChartsOptionV2Symbol;
-			size: number | number[];
-			margin: number;
-			color: Color;
-			throttle: number;
-		} & EChartsOptionV2Shadow;
+		handle: EChartsOptionV2Handle;
 	};
 	tooltip: {
 		show: boolean;
@@ -629,9 +629,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 		splitArea: {
 			show: boolean;
 			interval: number | ((index: number, value: string) => boolean);
-			areaStyle: {
-				color: string[];
-			} & EChartsOptionV2Shadow;
+			areaStyle: EChartsOptionV2AreaStyle;
 		};
 		axisPointer: {
 			show: boolean;
@@ -663,14 +661,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 			triggerTooltip: boolean;
 			value: number;
 			status: "show" | "hide";
-			handle: {
-				show: boolean;
-				icon: EChartsOptionV2Symbol;
-				size: number | number[];
-				margin: number;
-				color: Color;
-				throttle: number;
-			} & EChartsOptionV2Shadow;
+			handle: EChartsOptionV2Handle;
 		};
 		tooltip: {
 			show: boolean;
@@ -689,10 +680,341 @@ export interface EChartsOptionV2 extends EChartsOption {
 		}[];
 	} & EChartsOptionV2Name &
 		EChartsOptionV2Animation;
-	angleAxis: {};
-	radar: {};
-	dataZoom: {}[];
+	angleAxis: {
+		id: string;
+		polarIndex: number;
+		startAngle: number;
+		endAngle: number;
+		clockwise: boolean;
+		type: "value" | "category" | "time" | "log";
+		inverse: boolean;
+		boundaryGap: boolean | string[];
+		min: number | string | ((params: any) => number);
+		max: number | string | ((params: any) => number);
+		scale: boolean;
+		splitNumber: number;
+		minInterval: number;
+		maxInterval: number;
+		interval: number;
+		logBase: number;
+		startValue: number;
+		silent: boolean;
+		triggerEvent: boolean;
+		axisLine: {
+			show: boolean;
+			symbol: EChartsOptionV2Symbol | EChartsOptionV2Symbol[];
+			symbolSize: number[];
+			symbolOffset: number[];
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		axisTick: {
+			show: boolean;
+			alignWithLabel: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			inside: boolean;
+			length: number;
+			lineStyle: EChartsOptionV2LineStyle;
+			customValues: number[];
+		};
+		minorTick: {
+			show: boolean;
+			splitNumber: number;
+			length: number;
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		axisLabel: {
+			show: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			inside: boolean;
+			rotate: number;
+			margin: number;
+			formatter: string | ((params: any) => string);
+			showMinLabel: boolean;
+			showMaxLabel: boolean;
+			alignMinLabel: "left" | "center" | "right" | null;
+			alignMaxLabel: "left" | "center" | "right" | null;
+			hideOverlap: boolean;
+			customValues: number[];
+		} & EChartsOptionV2TextStyle &
+			EChartsOptionV2Border &
+			EChartsOptionV2Shadow;
+		splitLine: {
+			show: boolean;
+			showMinLine: boolean;
+			showMaxLine: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		minorSplitLine: {
+			show: boolean;
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		splitArea: {
+			show: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			areaStyle: EChartsOptionV2AreaStyle;
+		};
+		axisPointer: {
+			show: boolean;
+			type: "line" | "shadow" | "none";
+			snap: boolean;
+			z: number;
+			label: {
+				show: boolean;
+				precision: number | string;
+				formatter: string | ((params: any) => string);
+				margin: number;
+				lineHeight: number | null;
+				overflow: EChartsOptionV2Overflow;
+				ellipsis: string;
+				padding: number | number[];
+				backgroundColor: string;
+			} & EChartsOptionV2Size &
+				EChartsOptionV2Font &
+				EChartsOptionV2TextBorder &
+				EChartsOptionV2TextShadow &
+				EChartsOptionV2Border &
+				EChartsOptionV2Shadow;
+			lineStyle: EChartsOptionV2LineStyle;
+			shadowStyle: {
+				color: Color;
+				opacity: number;
+			} & EChartsOptionV2Shadow;
+			triggerEmphasis: boolean;
+			triggerTooltip: boolean;
+			value: number;
+			status: "show" | "hide";
+			handle: EChartsOptionV2Handle;
+		};
+		tooltip: {
+			show: boolean;
+			position: string | (string | number)[];
+			formatter: string | ((params: any) => string);
+			backgroundColor: Color;
+			padding: number | number[];
+			textStyle: EChartsOptionV2TextStyle;
+			extraCssText: string;
+		} & EChartsOptionV2Border;
+		zlevel: number;
+		z: number;
+		data: {
+			value: string;
+			textStyle: EChartsOptionV2TextStyle;
+		}[];
+	} & EChartsOptionV2Name &
+		EChartsOptionV2Animation;
+	radar: {
+		id: string;
+		zlevel: number;
+		z: number;
+		center: (number | string)[];
+		radius: (number | string)[];
+		startAngle: number;
+		axisName: {
+			show: boolean;
+			formatter: string | ((params: any) => string);
+			lineHeight: number | null;
+			overflow: EChartsOptionV2Overflow;
+			ellipsis: string;
+			padding: number | number[];
+			backgroundColor: string;
+			rich: EChartsOptionV2Rich;
+			richInheritPlainLabel: boolean;
+		} & EChartsOptionV2Size &
+			EChartsOptionV2Font &
+			EChartsOptionV2TextBorder &
+			EChartsOptionV2TextShadow &
+			EChartsOptionV2Border &
+			EChartsOptionV2Shadow;
+		axisNameGap: number;
+		splitNumber: number;
+		shape: "polygon" | "circle";
+		scale: boolean;
+		silent: boolean;
+		triggerEvent: boolean;
+		axisLine: {
+			show: boolean;
+			symbol: EChartsOptionV2Symbol | EChartsOptionV2Symbol[];
+			symbolSize: number[];
+			symbolOffset: number[];
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		axisTick: {
+			show: boolean;
+			alignWithLabel: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			inside: boolean;
+			length: number;
+			lineStyle: EChartsOptionV2LineStyle;
+			customValues: number[];
+		};
+		axisLabel: {
+			show: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			inside: boolean;
+			rotate: number;
+			margin: number;
+			formatter: string | ((params: any) => string);
+			showMinLabel: boolean;
+			showMaxLabel: boolean;
+			alignMinLabel: "left" | "center" | "right" | null;
+			alignMaxLabel: "left" | "center" | "right" | null;
+			hideOverlap: boolean;
+			customValues: number[];
+		} & EChartsOptionV2TextStyle &
+			EChartsOptionV2Border &
+			EChartsOptionV2Shadow;
+		splitLine: {
+			show: boolean;
+			showMinLine: boolean;
+			showMaxLine: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			lineStyle: EChartsOptionV2LineStyle;
+		};
+		splitArea: {
+			show: boolean;
+			interval: number | ((index: number, value: string) => boolean);
+			areaStyle: EChartsOptionV2AreaStyle;
+		};
+		indicator: {
+			name: string;
+			max: number;
+			min: number;
+			color: string;
+		}[];
+	} & EChartsOptionV2CoordinateSystem &
+		EChartsOptionV2Name &
+		EChartsOptionV2Animation;
+	dataZoom: (
+		| {
+				type: "inside";
+				id: string;
+				disabled: boolean;
+				xAxisIndex: number | number[];
+				yAxisIndex: number | number[];
+				radiusAxisIndex: number | number[];
+				angleAxisIndex: number | number[];
+				filterMode: "filter" | "weakFilter" | "empty" | "none";
+				start: number;
+				end: number;
+				startValue: number | string | Date;
+				endValue: number | string | Date;
+				minSpan: number;
+				maxSpan: number;
+				minValueSpan: number | string | Date;
+				maxValueSpan: number | string | Date;
+				orient: EChartsOptionV2VerticalOrient;
+				zoomLock: boolean;
+				throttle: number;
+				rangeMode: string[];
+				zoomOnMouseWheel: boolean | "shift" | "ctrl" | "alt";
+				moveOnMouseMove: boolean | "shift" | "ctrl" | "alt";
+				moveOnMouseWheel: boolean | "shift" | "ctrl" | "alt";
+				preventDefaultMouseMove: boolean;
+		  }
+		| ({
+				type: "slider";
+				id: string;
+				show: boolean;
+				backgroundColor: Color;
+				dataBackground: {
+					lineStyle: EChartsOptionV2LineStyle;
+					areaStyle: EChartsOptionV2AreaStyle;
+				};
+				selectedDataBackground: {
+					lineStyle: EChartsOptionV2LineStyle;
+					areaStyle: EChartsOptionV2AreaStyle;
+				};
+				fillerColor: Color;
+				disabled: boolean;
+				handleIcon: EChartsOptionV2Symbol;
+				handleSize: number | string;
+				handleStyle: {
+					color: Color;
+					opacity: number;
+				} & EChartsOptionV2Border &
+					EChartsOptionV2Shadow;
+				handleLabel: {
+					show: boolean;
+				};
+				moveHandleIcon: EChartsOptionV2Symbol;
+				moveHandleSize: number | string;
+				moveHandleStyle: {
+					color: Color;
+					opacity: number;
+				} & EChartsOptionV2Border &
+					EChartsOptionV2Shadow;
+				labelPrecision: "auto" | number;
+				labelFormatter: string | ((params: any) => string);
+				showDetail: boolean;
+				showDataShadow: "auto";
+				realtime: boolean;
+				textStyle: EChartsOptionV2TextStyle;
+				xAxisIndex: number | number[];
+				yAxisIndex: number | number[];
+				radiusAxisIndex: number | number[];
+				angleAxisIndex: number | number[];
+				filterMode: "filter" | "weakFilter" | "empty" | "none";
+				start: number;
+				end: number;
+				startValue: number | string | Date;
+				endValue: number | string | Date;
+				minSpan: number;
+				maxSpan: number;
+				minValueSpan: number | string | Date;
+				maxValueSpan: number | string | Date;
+				orient: EChartsOptionV2VerticalOrient;
+				zoomLock: boolean;
+				throttle: number;
+				rangeMode: string[];
+				brushSelect: boolean;
+				brushStyle: {
+					color: Color;
+					opacity: number;
+				} & EChartsOptionV2Border &
+					EChartsOptionV2Shadow;
+				emphasis: {};
+		  } & EchartsOptionV2Position &
+				EchartsOptionV2Size &
+				EChartsOptionV2Border &
+				EChartsOptionV2CoordinateSystem)
+	)[];
 	visualMap: {}[];
+	axisPointer: {
+		id: string;
+		show: boolean;
+		type: "line" | "shadow" | "none";
+		snap: boolean;
+		z: number;
+		label: {
+			show: boolean;
+			precision: number | string;
+			formatter: string | ((params: any) => string);
+			margin: number;
+			lineHeight: number | null;
+			overflow: EChartsOptionV2Overflow;
+			ellipsis: string;
+			padding: number | number[];
+			backgroundColor: string;
+		} & EChartsOptionV2Size &
+			EChartsOptionV2Font &
+			EChartsOptionV2TextBorder &
+			EChartsOptionV2TextShadow &
+			EChartsOptionV2Border &
+			EChartsOptionV2Shadow;
+		lineStyle: EChartsOptionV2LineStyle;
+		shadowStyle: {
+			color: Color;
+			opacity: number;
+		} & EChartsOptionV2Shadow;
+		triggerEmphasis: boolean;
+		triggerTooltip: boolean;
+		value: number;
+		status: "show" | "hide";
+		handle: EChartsOptionV2Handle;
+		link: any[];
+		triggerOn: string;
+	};
 	tooltip: EChartsOptionV2Tooltip;
 	series: [
 		{
