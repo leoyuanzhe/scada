@@ -111,16 +111,7 @@ export const initComponent = (component: Component) => {
 function getExpressionResult(this: Component | Schema, expression: string | undefined, payload: any) {
 	const schemaStore = useSchema();
 	try {
-		const fn = new Function(
-			"state",
-			"$state",
-			"parent",
-			"root",
-			"currentRoot",
-			"schema",
-			"payload",
-			"return " + expression
-		);
+		const fn = new Function("state", "$state", "parent", "root", "schema", "payload", "return " + expression);
 		return {
 			result: fn.call(
 				this,
@@ -128,7 +119,6 @@ function getExpressionResult(this: Component | Schema, expression: string | unde
 				schemaStore.state,
 				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
 				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
-				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
 			),
@@ -191,13 +181,12 @@ function getWatcherTargetHandlerResult(this: Component | Schema, handler: string
 	const schemaStore = useSchema();
 	try {
 		return {
-			result: new Function("state", "$state", "parent", "root", "currentRoot", "schema", handler).call(
+			result: new Function("state", "$state", "parent", "root", "schema", handler).call(
 				this,
 				this.state,
 				schemaStore.state,
 				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
 				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
-				schemaStore.currentRootComponent,
 				schemaStore.$state
 			),
 		};
@@ -239,7 +228,6 @@ async function getDataSourceHandlerResult(
 				"$state",
 				"parent",
 				"root",
-				"currentRoot",
 				"schema",
 				"payload",
 				handler
@@ -251,7 +239,6 @@ async function getDataSourceHandlerResult(
 				schemaStore.state,
 				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
 				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
-				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				payload
 			),
@@ -392,7 +379,6 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				"$state",
 				"parent",
 				"root",
-				"currentRoot",
 				"schema",
 				"emits",
 				"payload",
@@ -404,7 +390,6 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 				schemaStore.state,
 				parent,
 				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
-				schemaStore.currentRootComponent,
 				schemaStore.$state,
 				emits,
 				payload,

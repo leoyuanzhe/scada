@@ -21,7 +21,11 @@ const codeIcon = generateCodeIcon<ChartProps>(props.component.propsExpression);
 			<details class="details" open>
 				<summary>标题组件</summary>
 				<fieldset>
-					<FormItem label="组件ID" for="setter-option-title-id">
+					<FormItem
+						v-if="props.component.props.option?.title?.id !== undefined"
+						label="组件ID"
+						for="setter-option-title-id"
+					>
 						<input
 							id="setter-option-title-id"
 							type="text"
@@ -29,7 +33,11 @@ const codeIcon = generateCodeIcon<ChartProps>(props.component.propsExpression);
 							@input="props.component.props.option.title.id = ($event.target as HTMLInputElement).value"
 						/>
 					</FormItem>
-					<FormItem label="显示" for="setter-option-title-show">
+					<FormItem
+						v-if="props.component.props.option?.title?.show !== undefined"
+						label="显示"
+						for="setter-option-title-show"
+					>
 						<input
 							id="setter-option-title-show"
 							type="checkbox"
@@ -39,7 +47,11 @@ const codeIcon = generateCodeIcon<ChartProps>(props.component.propsExpression);
 							"
 						/>
 					</FormItem>
-					<FormItem label="文本" for="setter-option-title-text">
+					<FormItem
+						v-if="props.component.props.option?.title?.text !== undefined"
+						label="文本"
+						for="setter-option-title-text"
+					>
 						<input
 							id="setter-option-title-text"
 							type="text"
