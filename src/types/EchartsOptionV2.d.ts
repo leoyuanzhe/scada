@@ -90,6 +90,19 @@ type EChartsOptionV2LineStyle = {
 	opacity: number;
 } & EChartsOptionV2LineBorder &
 	EChartsOptionV2Shadow;
+type EChartsOptionV2ItemStyle = {
+	color: Color;
+	opacity: number;
+} & EChartsOptionV2Border &
+	EChartsOptionV2Shadow;
+type EChartsOptionV2EmphasisIconStyle = {
+	textPosition: "left" | "right" | "top" | "bottom";
+	textFill: string;
+	textAlign: "left" | "center" | "right";
+	textBackgroundColor: string;
+	textBorderRadius: number;
+	textPadding: number;
+} & EChartsOptionV2ItemStyle;
 type EChartsOptionV2Border = {
 	borderColor: Color;
 	borderWidth: number;
@@ -172,12 +185,7 @@ type EChartsOptionV2TooltipAxisPointer = {
 		color: Color;
 		opacity: number;
 	} & EChartsOptionV2Shadow;
-	crossStyle: {
-		color: Color;
-		width: number;
-		opacity: number;
-	} & EChartsOptionV2LineBorder &
-		EChartsOptionV2Shadow;
+	crossStyle: EChartsOptionV2LineStyle;
 } & EChartsOptionV2Animation;
 type EChartsOptionV2Tooltip = {
 	show: boolean;
@@ -257,11 +265,7 @@ type EChartsOptionV2Axis = {
 	}[];
 	breakArea: {
 		show: boolean;
-		itemStyle: {
-			color: Color;
-			opacity: number;
-		} & EChartsOptionV2Border &
-			EChartsOptionV2Shadow;
+		itemStyle: EChartsOptionV2ItemStyle;
 		zigzagAmplitude: number;
 		zigzagMinSpan: number;
 		zigzagMaxSpan: number;
@@ -413,11 +417,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 		itemWidth: number;
 		itemHeight: number;
 		itemStyle: {
-			color: Color;
-			opacity: number;
 			decal: EChartsOptionV2Decal;
-		} & EChartsOptionV2Border &
-			EChartsOptionV2Shadow;
+		} & EChartsOptionV2ItemStyle;
 		lineStyle: EChartsOptionV2LineStyle;
 		symbolRotate: "inherit" | number;
 		formatter: string | ((params: any) => string);
@@ -433,11 +434,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 			name: string;
 			icon: EChartsOptionV2Symbol;
 			itemStyle: {
-				color: Color;
-				opacity: number;
 				decal: EChartsOptionV2Decal;
-			} & EChartsOptionV2Border &
-				EChartsOptionV2Shadow;
+			} & EChartsOptionV2ItemStyle;
 			lineStyle: EChartsOptionV2LineStyle;
 			symbolRotate: "inherit" | number;
 			inactiveColor: Color;
@@ -929,21 +927,13 @@ export interface EChartsOptionV2 extends EChartsOption {
 				disabled: boolean;
 				handleIcon: EChartsOptionV2Symbol;
 				handleSize: number | string;
-				handleStyle: {
-					color: Color;
-					opacity: number;
-				} & EChartsOptionV2Border &
-					EChartsOptionV2Shadow;
+				handleStyle: EChartsOptionV2ItemStyle;
 				handleLabel: {
 					show: boolean;
 				};
 				moveHandleIcon: EChartsOptionV2Symbol;
 				moveHandleSize: number | string;
-				moveHandleStyle: {
-					color: Color;
-					opacity: number;
-				} & EChartsOptionV2Border &
-					EChartsOptionV2Shadow;
+				moveHandleStyle: EChartsOptionV2ItemStyle;
 				labelPrecision: "auto" | number;
 				labelFormatter: string | ((params: any) => string);
 				showDetail: boolean;
@@ -968,25 +958,13 @@ export interface EChartsOptionV2 extends EChartsOption {
 				throttle: number;
 				rangeMode: string[];
 				brushSelect: boolean;
-				brushStyle: {
-					color: Color;
-					opacity: number;
-				} & EChartsOptionV2Border &
-					EChartsOptionV2Shadow;
+				brushStyle: EChartsOptionV2ItemStyle;
 				emphasis: {
-					handleStyle: {
-						color: Color;
-						opacity: number;
-					} & EChartsOptionV2Border &
-						EChartsOptionV2Shadow;
+					handleStyle: EChartsOptionV2ItemStyle;
 					handleLabel: {
 						show: boolean;
 					};
-					moveHandleStyle: {
-						color: Color;
-						opacity: number;
-					} & EChartsOptionV2Border &
-						EChartsOptionV2Shadow;
+					moveHandleStyle: EChartsOptionV2ItemStyle;
 				};
 		  } & EChartsOptionV2Position &
 				EChartsOptionV2Size &
@@ -1031,18 +1009,10 @@ export interface EChartsOptionV2 extends EChartsOption {
 				formatter: string | ((params: any) => string);
 				handleIcon: EChartsOptionV2Symbol;
 				handleSize: number | string;
-				handleStyle: {
-					color: Color;
-					opacity: number;
-				} & EChartsOptionV2Border &
-					EChartsOptionV2Shadow;
+				handleStyle: EChartsOptionV2ItemStyle;
 				indicatorIcon: EChartsOptionV2Symbol;
 				indicatorSize: number | string;
-				indicatorStyle: {
-					color: Color;
-					opacity: number;
-				} & EChartsOptionV2Border &
-					EChartsOptionV2Shadow;
+				indicatorStyle: EChartsOptionV2ItemStyle;
 		  } & EChartsOptionV2Position &
 				EChartsOptionV2Border &
 				EChartsOptionV2CoordinateSystem)
@@ -1090,6 +1060,7 @@ export interface EChartsOptionV2 extends EChartsOption {
 				EChartsOptionV2Border &
 				EChartsOptionV2CoordinateSystem)
 	)[];
+	tooltip: EChartsOptionV2Tooltip;
 	axisPointer: {
 		id: string;
 		show: boolean;
@@ -1125,7 +1096,134 @@ export interface EChartsOptionV2 extends EChartsOption {
 		link: any[];
 		triggerOn: string;
 	};
-	tooltip: EChartsOptionV2Tooltip;
+	toolbox: {
+		id: string;
+		show: boolean;
+		orient: EChartsOptionV2VOrient;
+		itemSize: number;
+		itemGap: number;
+		showTitle: boolean;
+		feature: {
+			saveAsImage: {
+				type: "png" | "jpg" | "svg";
+				name: string;
+				backgroundColor: Color;
+				connectedBackgroundColor: Color;
+				excludeComponents: string[];
+				show: boolean;
+				title: string;
+				icon: EChartsOptionV2Symbol;
+				iconStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					iconStyle: EChartsOptionV2EmphasisIconStyle;
+				};
+				pixelRatio: number;
+			};
+			restore: {
+				show: boolean;
+				title: string;
+				icon: EChartsOptionV2Symbol;
+				iconStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					iconStyle: EChartsOptionV2EmphasisIconStyle;
+				};
+			};
+			dataView: {
+				show: boolean;
+				title: string;
+				icon: EChartsOptionV2Symbol;
+				iconStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					iconStyle: EChartsOptionV2EmphasisIconStyle;
+				};
+				readOnly: boolean;
+				optionToContent: (option: any) => string;
+				contentToOption: (container: HTMLDomElement, option: any) => any;
+				lang: string[];
+				backgroundColor: string;
+				textareaColor: string;
+				textareaBorderColor: string;
+				textColor: string;
+				buttonColor: string;
+				buttonTextColor: string;
+			};
+			dataZoom: {
+				show: boolean;
+				title: {
+					zoom: string;
+					back: string;
+				};
+				title: {
+					zoom: string;
+					back: string;
+				};
+				iconStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					iconStyle: EChartsOptionV2EmphasisIconStyle;
+				};
+				filterMode: "filter";
+				xAxisIndex: number | number[];
+				yAxisIndex: number | number[];
+				brushStyle: EChartsOptionV2ItemStyle;
+			};
+			magicType: {
+				show: boolean;
+				type: string[];
+				title: {
+					line: string;
+					bar: string;
+					stack: string;
+					tiled: string;
+				};
+				icon: {
+					line: EChartsOptionV2Symbol;
+					bar: EChartsOptionV2Symbol;
+					stack: EChartsOptionV2Symbol;
+				};
+				iconStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					iconStyle: EChartsOptionV2EmphasisIconStyle;
+				};
+				option: {
+					line: any;
+					bar: any;
+					stack: any;
+				};
+				seriesIndex: {
+					line: number | string | (number | string)[];
+					bar: number | string | (number | string)[];
+				};
+			};
+			brush: {
+				type: "rect" | "polygon" | "lineX" | "lineY" | "keep" | "clear";
+				icon: {
+					rect: EChartsOptionV2Symbol;
+					polygon: EChartsOptionV2Symbol;
+					lineX: EChartsOptionV2Symbol;
+					lineY: EChartsOptionV2Symbol;
+					keep: EChartsOptionV2Symbol;
+					clear: EChartsOptionV2Symbol;
+				};
+				title: {
+					rect: string;
+					polygon: string;
+					lineX: string;
+					lineY: string;
+					keep: string;
+					clear: string;
+				};
+			};
+		};
+		iconStyle: EChartsOptionV2ItemStyle;
+		emphasis: {
+			iconStyle: EChartsOptionV2EmphasisIconStyle;
+		};
+		zlevel: number;
+		z: number;
+		tooltip: EChartsOptionV2Tooltip;
+	} & EChartsOptionV2Position &
+		EChartsOptionV2Size &
+		EChartsOptionV2CoordinateSystem;
 	series: [
 		{
 			name: string;
