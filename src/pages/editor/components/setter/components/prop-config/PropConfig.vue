@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Component } from "@/types/Component";
 import ComponentizationConfig from "./component/ComponentizationConfig.vue";
+import PageConfig from "./component/PageConfig.vue";
 import ContainerConfig from "./component/ContainerConfig.vue";
 import TextConfig from "./component/TextConfig.vue";
 import DialogConfig from "./component/DialogConfig.vue";
@@ -13,6 +14,7 @@ const props = withDefaults(defineProps<{ component: Component<any> }>(), {});
 	<form class="form" @submit.prevent>
 		<h1>属性</h1>
 		<ComponentizationConfig :component="props.component" />
+		<PageConfig v-if="props.component.key === 'page'" :component="props.component" />
 		<ContainerConfig v-if="props.component.key === 'container'" :component="props.component" />
 		<TextConfig v-if="props.component.key === 'text'" :component="props.component" />
 		<DialogConfig v-if="props.component.key === 'dialog'" :component="props.component" />
