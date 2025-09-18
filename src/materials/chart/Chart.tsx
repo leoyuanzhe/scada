@@ -7,13 +7,14 @@ import ChartComponent from "./Chart.vue";
 const props = deepClone({
 	option: {
 		title: {
-			id: "",
 			show: true,
 			text: "ECharts 入门示例",
-			link: "",
 		},
-		tooltip: {},
+		tooltip: {
+			show: true,
+		},
 		legend: {
+			show: true,
 			data: ["销量"],
 		},
 		xAxis: {

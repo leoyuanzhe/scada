@@ -19,6 +19,7 @@ onMounted(() => {
 	watch(
 		() => props.component.props.option,
 		() => {
+			instance.value?.clear();
 			instance.value?.setOption(props.component.props.option);
 		},
 		{ deep: true, immediate: true }
