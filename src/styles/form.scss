@@ -32,6 +32,8 @@ details.details {
 	border-radius: 10px;
 	summary {
 		cursor: pointer;
+		font-size: 16px;
+		line-height: 20px;
 		@include text-ellipsis();
 		&::before {
 			content: "\23F5";

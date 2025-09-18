@@ -18,6 +18,7 @@ type EChartsOptionV2Symbol =
 	| "none"
 	| string;
 type EChartsOptionV2Overflow = "none" | "truncate" | "break" | "breakAll";
+export type EChartsOptionV2SeriesType = "bar";
 type EChartsOptionV2Position = {
 	left?: "auto" | "left" | "center" | "right" | string | number;
 	top?: "auto" | "top" | "middle" | "bottom" | string | number;

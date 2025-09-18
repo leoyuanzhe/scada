@@ -157,7 +157,13 @@ const getResponseDataShow = (dataSource: DataSource) => {
 									/>
 								</td>
 								<td>
-									<MyButton variant="danger">删除</MyButton>
+									<MyButton
+										v-if="i2 !== v.request.headers.length"
+										variant="danger"
+										@click="v.request.headers.splice(i2, 1)"
+									>
+										删除
+									</MyButton>
 								</td>
 							</tr>
 						</tbody>
@@ -203,7 +209,13 @@ const getResponseDataShow = (dataSource: DataSource) => {
 									/>
 								</td>
 								<td>
-									<MyButton variant="danger">删除</MyButton>
+									<MyButton
+										v-if="i2 !== v.request.params.length"
+										variant="danger"
+										@click="v.request.params.splice(i2, 1)"
+									>
+										删除
+									</MyButton>
 								</td>
 							</tr>
 						</tbody>
