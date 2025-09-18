@@ -4,7 +4,7 @@ import type { Component, ComponentWithLayout } from "@/types/Component";
 import type { Schema } from "@/types/Schema";
 import { useUndoStack } from "./useUndoStack";
 import { useDragger } from "@/hooks/useDragger";
-import { getFlatedComponents, initState } from "@/helpers/schema";
+import { getFlatedComponents, initDataSources, initState, initWatchers } from "@/helpers/schema";
 import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
@@ -73,7 +73,7 @@ export const useSchema = defineStore("schema", {
 	},
 	actions: {
 		// 初始化
-		init() {
+		async init() {
 			try {
 				const dragger = useDragger();
 				const schemaJson = localStorage.getItem("schema");
@@ -89,6 +89,8 @@ export const useSchema = defineStore("schema", {
 				console.error(error);
 			}
 			initState(this.$state);
+			await initDataSources(this.$state);
+			initWatchers(this.$state);
 		},
 		isRoot(componentId: string) {
 			return this.components.some((v) => v.id === componentId);

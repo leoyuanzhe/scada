@@ -23,6 +23,5 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 
 <style lang="scss" scoped>
 .page {
-	background: url("http://www.deskcar.com/desktop/else/201298120921/2.jpg") no-repeat center / cover;
 }
 </style>

@@ -195,7 +195,7 @@ function getWatcherTargetHandlerResult(this: Component | Schema, handler: string
 	}
 }
 // 初始化监听器
-export function initWatchers(component: Component) {
+export function initWatchers(component: Schema | Component) {
 	const payload = {};
 	component.watchers.forEach((watcher) => {
 		try {
@@ -248,7 +248,7 @@ async function getDataSourceHandlerResult(
 	}
 }
 // 初始化数据源
-export async function initDataSources(component: Component) {
+export async function initDataSources(component: Schema | Component) {
 	const payload = {};
 	for (let dataSource of component.dataSources) {
 		if (dataSource.autoRequest) await requestDataSource(dataSource, component, payload);
@@ -264,8 +264,7 @@ export async function requestDataSource(dataSource: DataSource, component: Schem
 			payload
 		);
 		if (beforeError) throw new Error(beforeError);
-		if (!beforeResult)
-			throw new Error(`"${component.title}" "${dataSource.name}" before handler trigger disrupted.`);
+		if (!beforeResult) throw new Error("before handler trigger disrupted.");
 		await fetch(getUrl(), {
 			method: dataSource.request.method,
 			headers: getHeaders(),
@@ -360,7 +359,7 @@ export async function requestDataSource(dataSource: DataSource, component: Schem
 			);
 		}
 	} catch (error) {
-		console.error(error);
+		console.error("【" + component.title + "】数据【" + dataSource.name + "】请求错误", error);
 	}
 }
 // 获取事件处理器结果
@@ -401,7 +400,12 @@ async function getActionHandlerResult(this: Component | Schema, handler: string,
 	}
 }
 // 触发事件
-export const triggerEmit = async (emit: Watcher | EmitEvent, component: Component, payload: any, event?: any) => {
+export const triggerEmit = async (
+	emit: Watcher | EmitEvent,
+	component: Schema | Component,
+	payload: any,
+	event?: any
+) => {
 	await delay(emit.timeout);
 	switch (emit.executeType) {
 		case "concurrent": {

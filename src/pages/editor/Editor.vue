@@ -23,11 +23,11 @@ const layout = reactive({
 	setterWidth: 400,
 });
 init();
-function init() {
+async function init() {
 	clientStore.init();
 	materialStore.init();
 	assetStore.init();
-	schemaStore.init();
+	await schemaStore.init();
 	watch(
 		() => route.query.id,
 		(id) => {
