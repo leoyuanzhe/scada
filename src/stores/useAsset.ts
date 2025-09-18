@@ -53,6 +53,12 @@ export const useAsset = defineStore("asset", {
 					b4.layout.top = 320;
 					container.components.push(b1, b2, b3, b4);
 					page.components.push(container);
+					for (let i = 0; i < 500; i++) {
+						const text = Text();
+						text.layout.left = 10 + Math.random() * 960;
+						text.layout.top = 10 + Math.random() * 960;
+						page.components.push(text);
+					}
 					return page;
 				})(),
 			});
