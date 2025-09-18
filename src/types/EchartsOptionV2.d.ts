@@ -429,45 +429,48 @@ export type EChartsOptionV2 = EChartsOption & {
 		textStyle?: EChartsOptionV2TextStyle & EChartsOptionV2Border & EChartsOptionV2Shadow;
 		tooltip?: EChartsOptionV2Tooltip;
 		icon?: EChartsOptionV2Symbol;
-		data?: ({
-			name?: string;
-			icon?: EChartsOptionV2Symbol;
-			itemStyle?: {
-				decal?: EChartsOptionV2Decal;
-			} & EChartsOptionV2ItemStyle;
-			lineStyle?: EChartsOptionV2LineStyle;
-			symbolRotate?: "inherit" | number;
-			inactiveColor?: Color;
-			inactiveBorderColor?: Color;
-			inactiveBorderWidth?: "auto" | "inherit" | number;
-			textStyle?: EChartsOptionV2TextStyle;
-			backgroundColor?: Color;
-			scrollDataIndex?: number;
-			pageButtonItemGap?: number;
-			pageButtonGap?: number;
-			pageButtonPosition?: "start" | "end";
-			pageFormatter?: string | ((params?: any) => string);
-			pageIcons?: {
-				horizontal?: string[];
-				vertical?: string[];
-			};
-			pageIconColor?: string;
-			pageIconInactiveColor?: string;
-			pageIconSize?: number | number[];
-			pageTextStyle?: EChartsOptionV2TextStyle;
-			animation?: boolean;
-			animationDurationUpdate?: number;
-			emphasis?: {
-				selectorLabel?: EChartsOptionV2Label;
-			};
-			selector?: boolean | string[] | { type?: "all" | "inverse"; title?: string }[];
-			selectorLabel?: EChartsOptionV2Label;
-			selectorPosition?: "auto" | "start" | "end";
-			selectorItemGap?: number;
-			selectorButtonGap?: number;
-			triggerEvent?: boolean;
-		} & EChartsOptionV2Border &
-			EChartsOptionV2Shadow)[];
+		data?: (
+			| string
+			| ({
+					name?: string;
+					icon?: EChartsOptionV2Symbol;
+					itemStyle?: {
+						decal?: EChartsOptionV2Decal;
+					} & EChartsOptionV2ItemStyle;
+					lineStyle?: EChartsOptionV2LineStyle;
+					symbolRotate?: "inherit" | number;
+					inactiveColor?: Color;
+					inactiveBorderColor?: Color;
+					inactiveBorderWidth?: "auto" | "inherit" | number;
+					textStyle?: EChartsOptionV2TextStyle;
+					backgroundColor?: Color;
+					scrollDataIndex?: number;
+					pageButtonItemGap?: number;
+					pageButtonGap?: number;
+					pageButtonPosition?: "start" | "end";
+					pageFormatter?: string | ((params?: any) => string);
+					pageIcons?: {
+						horizontal?: string[];
+						vertical?: string[];
+					};
+					pageIconColor?: string;
+					pageIconInactiveColor?: string;
+					pageIconSize?: number | number[];
+					pageTextStyle?: EChartsOptionV2TextStyle;
+					animation?: boolean;
+					animationDurationUpdate?: number;
+					emphasis?: {
+						selectorLabel?: EChartsOptionV2Label;
+					};
+					selector?: boolean | string[] | { type?: "all" | "inverse"; title?: string }[];
+					selectorLabel?: EChartsOptionV2Label;
+					selectorPosition?: "auto" | "start" | "end";
+					selectorItemGap?: number;
+					selectorButtonGap?: number;
+					triggerEvent?: boolean;
+			  } & EChartsOptionV2Border &
+					EChartsOptionV2Shadow)
+		)[];
 	} & EChartsOptionV2Position &
 		EChartsOptionV2Size &
 		EChartsOptionV2CoordinateSystem;
