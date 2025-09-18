@@ -34,6 +34,9 @@ type EChartsOptionV2Font = {
 	fontWeight: EChartsOptionV2FontWeight;
 	fontFamily: string;
 	fontSize: number;
+	lineHeight: number | null;
+	backgroundColor: EChartsOptionV2TextBackgroundColor;
+	padding: number | number[];
 };
 type EChartsOptionV2TextBackgroundColor =
 	| string
@@ -55,9 +58,6 @@ type EChartsOptionV2TextShadow = {
 type EChartsOptionV2TextStyle = {
 	align: EChartsOptionV2Align;
 	verticalAlign: EChartsOptionV2VerticalAlign;
-	lineHeight: number | null;
-	backgroundColor: EChartsOptionV2TextBackgroundColor;
-	padding: number | number[];
 	overflow: EChartsOptionV2Overflow;
 	ellipsis: string;
 	rich: EChartsOptionV2Rich;
@@ -66,14 +66,17 @@ type EChartsOptionV2TextStyle = {
 	EChartsOptionV2Font &
 	EChartsOptionV2TextBorder &
 	EChartsOptionV2TextShadow;
+type EChartsOptionV2Label = {
+	show: boolean;
+	distance: number;
+	rotate: number;
+	offset: number[];
+} & EChartsOptionV2TextStyle;
 type EChartsOptionV2Rich = Record<
 	string,
 	{
 		align: EChartsOptionV2Align;
 		verticalAlign: EChartsOptionV2VerticalAlign;
-		lineHeight: number | null;
-		backgroundColor: EChartsOptionV2TextBackgroundColor;
-		padding: number | number[];
 	} & EChartsOptionV2Size &
 		EChartsOptionV2Font &
 		EChartsOptionV2TextBorder &
@@ -169,11 +172,8 @@ type EChartsOptionV2TooltipAxisPointer = {
 		precision: number | string;
 		formatter: string | ((params: any) => string);
 		margin: number;
-		lineHeight: number | null;
 		overflow: EChartsOptionV2Overflow;
 		ellipsis: string;
-		padding: number | number[];
-		backgroundColor: string;
 	} & EChartsOptionV2Size &
 		EChartsOptionV2Font &
 		EChartsOptionV2TextBorder &
@@ -341,11 +341,8 @@ type EChartsOptionV2Axis = {
 			precision: number | string;
 			formatter: string | ((params: any) => string);
 			margin: number;
-			lineHeight: number | null;
 			overflow: EChartsOptionV2Overflow;
 			ellipsis: string;
-			padding: number | number[];
-			backgroundColor: string;
 		} & EChartsOptionV2Size &
 			EChartsOptionV2Font &
 			EChartsOptionV2TextBorder &
@@ -380,7 +377,7 @@ type EChartsOptionV2Axis = {
 	}[];
 } & EChartsOptionV2Name &
 	EChartsOptionV2Animation;
-export interface EChartsOptionV2 extends EChartsOption {
+export type EChartsOptionV2 = EChartsOption & {
 	title: {
 		id: string | null;
 		show: boolean;
@@ -459,48 +456,10 @@ export interface EChartsOptionV2 extends EChartsOption {
 			animation: boolean;
 			animationDurationUpdate: number;
 			emphasis: {
-				selectorLabel: {
-					show: boolean;
-					distance: number;
-					rotate: number;
-					offset: number[];
-					align: EChartsOptionV2Align;
-					verticalAlign: EChartsOptionV2VerticalAlign;
-					lineHeight: number | null;
-					backgroundColor: EChartsOptionV2TextBackgroundColor;
-					padding: number | number[];
-					overflow: EChartsOptionV2Overflow;
-					ellipsis: string;
-					rich: EChartsOptionV2Rich;
-					richInheritPlainLabel: boolean;
-				} & EChartsOptionV2Size &
-					EChartsOptionV2Font &
-					EChartsOptionV2Border &
-					EChartsOptionV2Shadow &
-					EChartsOptionV2TextBorder &
-					EChartsOptionV2TextShadow;
+				selectorLabel: EChartsOptionV2Label;
 			};
 			selector: boolean | string[] | { type: "all" | "inverse"; title: string }[];
-			selectorLabel: {
-				show: boolean;
-				distance: number;
-				rotate: number;
-				offset: number[];
-				align: EChartsOptionV2Align;
-				verticalAlign: EChartsOptionV2VerticalAlign;
-				lineHeight: number | null;
-				backgroundColor: EChartsOptionV2TextBackgroundColor;
-				padding: number | number[];
-				overflow: EChartsOptionV2Overflow;
-				ellipsis: string;
-				rich: EChartsOptionV2Rich;
-				richInheritPlainLabel: boolean;
-			} & EChartsOptionV2Size &
-				EChartsOptionV2Font &
-				EChartsOptionV2Border &
-				EChartsOptionV2Shadow &
-				EChartsOptionV2TextBorder &
-				EChartsOptionV2TextShadow;
+			selectorLabel: EChartsOptionV2Label;
 			selectorPosition: "auto" | "start" | "end";
 			selectorItemGap: number;
 			selectorButtonGap: number;
@@ -639,11 +598,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 				precision: number | string;
 				formatter: string | ((params: any) => string);
 				margin: number;
-				lineHeight: number | null;
 				overflow: EChartsOptionV2Overflow;
 				ellipsis: string;
-				padding: number | number[];
-				backgroundColor: string;
 			} & EChartsOptionV2Size &
 				EChartsOptionV2Font &
 				EChartsOptionV2TextBorder &
@@ -762,11 +718,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 				precision: number | string;
 				formatter: string | ((params: any) => string);
 				margin: number;
-				lineHeight: number | null;
 				overflow: EChartsOptionV2Overflow;
 				ellipsis: string;
-				padding: number | number[];
-				backgroundColor: string;
 			} & EChartsOptionV2Size &
 				EChartsOptionV2Font &
 				EChartsOptionV2TextBorder &
@@ -811,11 +764,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 		axisName: {
 			show: boolean;
 			formatter: string | ((params: any) => string);
-			lineHeight: number | null;
 			overflow: EChartsOptionV2Overflow;
 			ellipsis: string;
-			padding: number | number[];
-			backgroundColor: string;
 			rich: EChartsOptionV2Rich;
 			richInheritPlainLabel: boolean;
 		} & EChartsOptionV2Size &
@@ -1072,11 +1022,8 @@ export interface EChartsOptionV2 extends EChartsOption {
 			precision: number | string;
 			formatter: string | ((params: any) => string);
 			margin: number;
-			lineHeight: number | null;
 			overflow: EChartsOptionV2Overflow;
 			ellipsis: string;
-			padding: number | number[];
-			backgroundColor: string;
 		} & EChartsOptionV2Size &
 			EChartsOptionV2Font &
 			EChartsOptionV2TextBorder &
@@ -1224,11 +1171,547 @@ export interface EChartsOptionV2 extends EChartsOption {
 	} & EChartsOptionV2Position &
 		EChartsOptionV2Size &
 		EChartsOptionV2CoordinateSystem;
+	brush: {
+		id: string;
+		toolbox: ("rect" | "polygon" | "lineX" | "lineY" | "keep" | "clear")[];
+		brushLink: "all" | number[] | null;
+		seriesIndex: number | string | (number | string)[];
+		geoIndex: number | string | (number | string)[];
+		xAxisIndex: number | string | (number | string)[];
+		yAxisIndex: number | string | (number | string)[];
+		brushType: "rect" | "polygon" | "lineX" | "lineY";
+		brushMode: "single" | "multiple";
+		transformable: boolean;
+		brushStyle: any;
+		throttleType: "debounce" | "fixRate";
+		throttleDelay: number;
+		removeOnClick: boolean;
+		inBrush: any;
+		outOfBrush: any;
+		z: number;
+	};
+	geo: {
+		id: string;
+		show: boolean;
+		map: string;
+		projection: {
+			project: (coord: [number, number]) => [number, number];
+			unproject: (point: [number, number]) => [number, number];
+			stream: Function;
+		};
+		center: (number | string)[];
+		zoom: number;
+		scaleLimit: {
+			min: number;
+			max: number;
+		};
+		roam: boolean | "scale" | "zoom" | "move" | "pan";
+		roamTrigger: "selfRect" | "global";
+		aspectScale: number;
+		boundingCoords: number[][];
+		nameMap: Record<string, string>;
+		nameProperty: any[];
+		selectedMode: boolean;
+		label: {
+			position: stirng | (string | number)[];
+			formatter: string | ((params: any) => string);
+		} & EChartsOptionV2Label;
+		itemStyle: {
+			areaColor: Color;
+		} & EChartsOptionV2ItemStyle;
+		emphasis: {
+			disabled: boolean;
+			focus: "none" | "self";
+			label: {
+				position: stirng | (string | number)[];
+				formatter: string | ((params: any) => string);
+			} & EChartsOptionV2Label;
+			itemStyle: {
+				areaColor: Color;
+			} & EChartsOptionV2ItemStyle;
+		};
+		select: {
+			disabled: boolean;
+			label: {
+				position: stirng | (string | number)[];
+				formatter: string | ((params: any) => string);
+			} & EChartsOptionV2Label;
+			itemStyle: {
+				areaColor: Color;
+			} & EChartsOptionV2ItemStyle;
+		};
+		blur: {
+			label: {
+				position: stirng | (string | number)[];
+				formatter: string | ((params: any) => string);
+			} & EChartsOptionV2Label;
+			itemStyle: {
+				areaColor: Color;
+			} & EChartsOptionV2ItemStyle;
+		};
+		zlevel: number;
+		z: number;
+		layoutCenter: (stirng | number)[];
+		layoutSize: string | number;
+		preserveAspect: boolean | string;
+		preserveAspectAlign: string;
+		preserveAspectVerticalAlign: string;
+		clip: boolean;
+		regions: {
+			name: string;
+			selected: boolean;
+			itemStyle: {
+				areaColor: Color;
+			} & EChartsOptionV2ItemStyle;
+			emphasis: {
+				disabled: boolean;
+				focus: "none" | "self";
+				label: {
+					position: stirng | (string | number)[];
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				itemStyle: {
+					areaColor: Color;
+				} & EChartsOptionV2ItemStyle;
+			};
+			select: {
+				disabled: boolean;
+				label: {
+					position: stirng | (string | number)[];
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				itemStyle: {
+					areaColor: Color;
+				} & EChartsOptionV2ItemStyle;
+			};
+			blur: {
+				label: {
+					position: stirng | (string | number)[];
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				itemStyle: {
+					areaColor: Color;
+				} & EChartsOptionV2ItemStyle;
+			};
+			silent: boolean;
+			tooltip: {
+				show: boolean;
+				position: string | (string | number)[];
+				formatter: string | ((params: any) => string);
+				backgroundColor: Color;
+				padding: number | number[];
+				textStyle: EChartsOptionV2TextStyle;
+				extraCssText: string;
+			} & EChartsOptionV2Border;
+		}[];
+		silent: boolean;
+		tooltip: {
+			show: boolean;
+			position: string | (string | number)[];
+			formatter: string | ((params: any) => string);
+			backgroundColor: Color;
+			padding: number | number[];
+			textStyle: EChartsOptionV2TextStyle;
+			extraCssText: string;
+		} & EChartsOptionV2Border;
+	} & EChartsOptionV2Position &
+		EChartsOptionV2Size &
+		EChartsOptionV2CoordinateSystem;
+	// ...
 	series: [
 		{
+			type: "type";
+			id: string;
 			name: string;
-			type: "bar";
-			data: number[];
-		}
+			colorBy: "series" | "data";
+			legendHoverLink: boolean;
+			xAxisIndex: number;
+			xAxisId: string | null;
+			yAxisIndex: number;
+			yAxisId: string | null;
+			polarIndex: number;
+			polarId: string | null;
+			roundCap: boolean;
+			realtimeSort: boolean;
+			showBackground: boolean;
+			backgroundStyle: {
+				color: Color;
+				opacity: number;
+			} & EChartsOptionV2Border &
+				EChartsOptionV2Shadow;
+			label: {
+				textMargin: number | number[];
+				minMargin: number;
+				formatter: string | ((params: any) => string);
+			} & EChartsOptionV2Label;
+			lableLine: {
+				show: boolean;
+				lineStyle: EChartsOptionV2LineStyle;
+			};
+			itemStyle: EChartsOptionV2ItemStyle;
+			labelLayout: {
+				hideOverlap: boolean;
+				moveOverlap: string;
+				x: number | string;
+				y: number | string;
+				dx: number;
+				dy: number;
+				rotate: number;
+				align: EChartsOptionV2Align;
+				verticalAlign: EChartsOptionV2VerticalAlign;
+				fontSize: number;
+				draggable: boolean;
+				labelLinePoints: number[][];
+			} & EChartsOptionV2Size;
+			emphasis: {
+				disabled: boolean;
+				focus: "none" | "self";
+				blurScope: "coordinateSystem" | "series" | "global";
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				lableLine: {
+					show: boolean;
+					lineStyle: EChartsOptionV2LineStyle;
+				};
+				itemStyle: EChartsOptionV2ItemStyle;
+			};
+			select: {
+				disabled: boolean;
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				lableLine: {
+					show: boolean;
+					lineStyle: EChartsOptionV2LineStyle;
+				};
+				itemStyle: EChartsOptionV2ItemStyle;
+			};
+			blur: {
+				disabled: boolean;
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				lableLine: {
+					show: boolean;
+					lineStyle: EChartsOptionV2LineStyle;
+				};
+				itemStyle: EChartsOptionV2ItemStyle;
+			};
+			selectedMode: boolean | string;
+			stack: "value" | "log";
+			stackStrategy: "samesign" | "all" | "positive" | "negative";
+			stackOrder: "seriesAsc" | "seriesDesc";
+			sampling: "lttb" | "average" | "min" | "max" | "minmax" | "sum";
+			cursor: string;
+			barWidth: number | string;
+			barMaxWidth: number | string;
+			barMinWidth: number | string;
+			barMinHeight: number;
+			barMinAngle: number;
+			barGap: string;
+			barCategoryGap: number | string;
+			large: boolean;
+			largeThreshold: number;
+			progressive: number;
+			progressiveThreshold: number;
+			progressiveChunkMode: "sequential" | "mod";
+			dimensions: any[];
+			encode: any;
+			seriesLayoutBy: "column" | "row";
+			datasetIndex: number;
+			dataGroupId: string;
+			clip: boolean;
+			markPoint: {
+				symbol: EChartsOptionV2Symbol;
+				symbolSize: number;
+				symbolKeepAspect: boolean;
+				symbolOffset: (number | string)[];
+				silent: boolean;
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				itemStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					disabled: boolean;
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					itemStyle: EChartsOptionV2ItemStyle;
+				};
+				blur: {
+					disabled: boolean;
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					itemStyle: EChartsOptionV2ItemStyle;
+				};
+				z: number;
+				data: {
+					name: string;
+					type: "min" | "max" | "average";
+					valueIndex: number;
+					valueDim: string;
+					coord: Array | number | string;
+					x: number;
+					y: number;
+					z2: number;
+					relativeTo: string;
+					value: number;
+					symbol: EChartsOptionV2Symbol;
+					symbolSize: number | number[];
+					symbolRotate: number;
+					symbolKeepAspect: boolean;
+					symbolOffset: number[];
+					label: {
+						position: stirng | (string | number)[];
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					itemStyle: EChartsOptionV2ItemStyle;
+					emphasis: {
+						disabled: boolean;
+						label: {
+							position: stirng | (string | number)[];
+							formatter: string | ((params: any) => string);
+						} & EChartsOptionV2Label;
+						itemStyle: EChartsOptionV2ItemStyle;
+					};
+				}[];
+			} & EChartsOptionV2Animation;
+			markLine: {
+				silent: boolean;
+				symbol: EChartsOptionV2Symbol;
+				symbolSize: number;
+				symbolOffset: (number | string)[];
+				precision: number;
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				lineStyle: {
+					curveness: number;
+				} & EChartsOptionV2LineStyle;
+				emphasis: {
+					disabled: boolean;
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					lineStyle: {
+						curveness: number;
+					} & EChartsOptionV2LineStyle;
+				};
+				blur: {
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					lineStyle: {
+						curveness: number;
+					} & EChartsOptionV2LineStyle;
+				};
+				z: number;
+				data: Record<
+					0 | 1,
+					{
+						type: "min" | "max" | "average" | "median";
+						valueIndex: number;
+						valueDim: string;
+						coord: Array | number | string;
+						x: number;
+						y: number;
+						z2: number;
+						xAxis: number | string;
+						yAxis: number | string;
+						value: number;
+						symbol: EChartsOptionV2Symbol;
+						symbolSize: number | number[];
+						symbolRotate: number;
+						symbolKeepAspect: boolean;
+						symbolOffset: number[];
+						label: {
+							position: stirng | (string | number)[];
+							formatter: string | ((params: any) => string);
+						} & EChartsOptionV2Label;
+						lineStyle: {
+							curveness: number;
+						} & EChartsOptionV2LineStyle;
+						emphasis: {
+							disabled: boolean;
+							label: {
+								position: stirng | (string | number)[];
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							lineStyle: {
+								curveness: number;
+							} & EChartsOptionV2LineStyle;
+						};
+						blur: {
+							label: {
+								position: stirng | (string | number)[];
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							lineStyle: {
+								curveness: number;
+							} & EChartsOptionV2LineStyle;
+						};
+					}
+				>;
+			} & EChartsOptionV2Animation;
+			markArea: {
+				silent: boolean;
+				label: {
+					formatter: string | ((params: any) => string);
+				} & EChartsOptionV2Label;
+				itemStyle: EChartsOptionV2ItemStyle;
+				emphasis: {
+					disabled: boolean;
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					itemStyle: EChartsOptionV2ItemStyle;
+				};
+				blur: {
+					label: {
+						formatter: string | ((params: any) => string);
+					} & EChartsOptionV2Label;
+					itemStyle: EChartsOptionV2ItemStyle;
+				};
+				z: number;
+				data: Record<
+					0 | 1,
+					{
+						type: "min" | "max" | "average";
+						valueIndex: number;
+						valueDim: string;
+						coord: Array | number | string;
+						x: number;
+						y: number;
+						z2: number;
+						value: number;
+						label: {
+							position: stirng | (string | number)[];
+							formatter: string | ((params: any) => string);
+						} & EChartsOptionV2Label;
+						itemStyle: EChartsOptionV2ItemStyle;
+						emphasis: {
+							disabled: boolean;
+							label: {
+								position: stirng | (string | number)[];
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							itemStyle: EChartsOptionV2ItemStyle;
+						};
+						blur: {
+							label: {
+								position: stirng | (string | number)[];
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							itemStyle: EChartsOptionV2ItemStyle;
+						};
+					}
+				>;
+			} & EChartsOptionV2Animation;
+			universalTransition: {
+				enabled: boolean;
+				seriesKey: string[];
+				divideShape: "split" | "clone";
+				delay: (index: number, count: number) => number;
+			};
+			tooltip: {
+				show: boolean;
+				position: string | (string | number)[];
+				formatter: string | ((params: any) => string);
+				backgroundColor: Color;
+				padding: number | number[];
+				textStyle: EChartsOptionV2TextStyle;
+				extraCssText: string;
+			} & EChartsOptionV2Border;
+			data:
+				| number[]
+				| number[][]
+				| {
+						name: string;
+						value: number;
+						groupId: string;
+						childGroupId: string;
+						label: {
+							position: string | (string | number)[];
+							textMargin: number | number[];
+							minMargin: number;
+							formatter: string | ((params: any) => string);
+						} & EChartsOptionV2Label;
+						labelLine: {
+							show: boolean;
+						} & EChartsOptionV2LineStyle;
+						itemStyle: {
+							decal: EChartsOptionV2Decal;
+						} & EChartsOptionV2ItemStyle;
+						emphasis: {
+							disabled: boolean;
+							label: {
+								position: string | (string | number)[];
+								textMargin: number | number[];
+								minMargin: number;
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							labelLine: {
+								show: boolean;
+							} & EChartsOptionV2LineStyle;
+							itemStyle: {
+								decal: EChartsOptionV2Decal;
+							} & EChartsOptionV2ItemStyle;
+						};
+						blur: {
+							label: {
+								position: string | (string | number)[];
+								textMargin: number | number[];
+								minMargin: number;
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							labelLine: {
+								show: boolean;
+							} & EChartsOptionV2LineStyle;
+							itemStyle: {
+								decal: EChartsOptionV2Decal;
+							} & EChartsOptionV2ItemStyle;
+						};
+						select: {
+							disabled: boolean;
+							label: {
+								position: string | (string | number)[];
+								textMargin: number | number[];
+								minMargin: number;
+								formatter: string | ((params: any) => string);
+							} & EChartsOptionV2Label;
+							labelLine: {
+								show: boolean;
+							} & EChartsOptionV2LineStyle;
+							itemStyle: {
+								decal: EChartsOptionV2Decal;
+							} & EChartsOptionV2ItemStyle;
+						};
+						clip: boolean;
+				  }[];
+		} & EChartsOptionV2CoordinateSystem
+		// ...
 	];
-}
+	darkMode: boolean;
+	color: string[];
+	backgroundColor: Color;
+	textStyle: EChartsOptionV2TextStyle;
+	stateAnimation: {
+		duration: number;
+		easing: string;
+	};
+	blendMode: string;
+	hoverLayerThreshold: number;
+	useUTC: boolean;
+	richInheritPlainLabel: boolean;
+	options: any;
+	media: {
+		query: {
+			minWidth: number | null;
+			maxWidth: number | null;
+			minAspectRatio: number | null;
+		};
+		option: any;
+	}[];
+} & EChartsOptionV2Animation;
