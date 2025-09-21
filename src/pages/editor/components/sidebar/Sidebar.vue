@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import Layer from "./components/layer/Layer.vue";
 import Asset from "./components/Asset.vue";
+import Layer from "./components/layer/Layer.vue";
 
-const current = ref<"asset" | "layer">("layer");
+const current = ref<"asset" | "layer">("asset");
 </script>
 
 <template>
 	<div class="sidebar">
 		<menu>
-			<button :class="{ actived: current === 'layer' }" @click="current = 'layer'">图层</button>
 			<button :class="{ actived: current === 'asset' }" @click="current = 'asset'">资产</button>
+			<button :class="{ actived: current === 'layer' }" @click="current = 'layer'">图层</button>
 		</menu>
 		<div class="container">
-			<Layer v-if="current === 'layer'" />
 			<Asset v-if="current === 'asset'" />
+			<Layer v-if="current === 'layer'" />
 		</div>
 	</div>
 </template>

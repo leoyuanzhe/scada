@@ -79,7 +79,7 @@ const getResponseDataShow = (dataSource: DataSource) => {
 
 <template>
 	<form class="form" @submit.prevent>
-		<MyButton variant="success" @click="addDataSource()">添加数据源</MyButton>
+		<MyButton variant="success" @click="addDataSource()">添加数据</MyButton>
 		<details v-for="(v, i) in props.component.dataSources" :key="v.name" open class="details">
 			<summary>
 				<span>{{ v.name }}</span>
