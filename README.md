@@ -1,10 +1,10 @@
-# Bsyy组态数据大屏低代码平台
+# 一款基于Vite + Vue3 + TS组态数据大屏低代码平台
 
 ## 简介
 
 一款功能强大、轻量级、自定义性高、适合二开的数据大屏低代码平台。
 
-- [x] Vite + Vue3 + VueJsx + TS + Pinia + VueRouter + Sass + ECharts
+- [x] Vite + Vue3 + TS + Pinia + VueJsx + VueRouter + Sass + ECharts
 - [x] 功能强大，组件属性与状态双向绑定
 - [x] 轻量级，无不必要的插件，不臃肿
 - [x] 自定义性高，样式、逻辑底层手动实现，拒绝过度封装，适合二开
