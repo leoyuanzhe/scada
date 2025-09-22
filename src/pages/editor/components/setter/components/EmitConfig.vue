@@ -270,14 +270,14 @@ const changeType = (e: Event, action: Action) => {
 				<FormItem
 					label="执行动作前"
 					for="setter-action-before-handler"
-					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler', 'actionHandler') }]"
 				>
 					<textarea id="setter-action-before-handler" readonly v-model="v.beforeHandler"></textarea>
 				</FormItem>
 				<FormItem
 					label="执行动作后"
 					for="setter-action-after-handler"
-					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler', 'actionHandler') }]"
 				>
 					<textarea id="setter-action-after-handler" readonly v-model="v.afterHandler"></textarea>
 				</FormItem>

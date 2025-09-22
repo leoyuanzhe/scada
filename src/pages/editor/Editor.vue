@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
 import { useAsset } from "@/stores/useAsset";
@@ -13,6 +13,7 @@ import Renderer from "@/components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
 
 const route = useRoute();
+const router = useRouter();
 const clientStore = useClient();
 const materialStore = useMaterial();
 const assetStore = useAsset();
@@ -32,6 +33,8 @@ async function init() {
 		() => route.query.id,
 		(id) => {
 			if (id) schemaStore.currentRootId = id as string;
+			if (!schemaStore.currentRootComponent && schemaStore.components[0]?.id)
+				router.replace("/editor?id=" + schemaStore.components[0].id);
 		},
 		{ immediate: true }
 	);

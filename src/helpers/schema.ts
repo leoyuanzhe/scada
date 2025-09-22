@@ -83,10 +83,40 @@ type StringKeyOf<T> = {
 export const editObjectValue = <T extends Partial<Record<string, any>>>(
 	object: T,
 	key: StringKeyOf<T>,
-	defaultValue?: string
+	type: "expression" | "dataSourceHandler" | "actionHandler" | "watchHandler" = "expression"
 ): Promise<null> => {
 	return new Promise((resolve) => {
-		CodeEditor(defaultValue ?? object[key])
+		const { prefix, suffix } = (() => {
+			switch (type) {
+				case "expression":
+					return {
+						prefix: "(\n  state: 当前组件状态,\n  $state: 项目状态,\n  parent: 父组件,\n  root: 根组件 | null,\n  schema: Schema,\n  payload: 负载\n) => () =>",
+						suffix: "",
+					};
+				case "dataSourceHandler":
+					return {
+						prefix: "(\n  response: Response,\n  data: 响应数据,\n  state: 当前组件状态,\n  $state: 项目状态,\n  parent: 父组件,\n  root: 根组件 | null,\n  schema: Schema,\n  payload: 负载\n) => {",
+						suffix: "}",
+					};
+				case "watchHandler":
+					return {
+						prefix: "(\n  state: 当前组件状态,\n  $state: 项目状态,\n  parent: 父组件,\n  root: 根组件 | null,\n  schema: Schema,\n) => {",
+						suffix: "}",
+					};
+				case "actionHandler":
+					return {
+						prefix: "(\n  state: 当前组件状态,\n  $state: 项目状态,\n  parent: 父组件,\n  root: 根组件 | null,\n  schema: Schema,\n  emits: (key: string, data: any) => Promise<void>,\n  payload: 负载,\n  event?: Event\n) => {",
+						suffix: "}",
+					};
+				default:
+					return { prefix: "", suffix: "" };
+			}
+		})();
+		CodeEditor({
+			prefix,
+			suffix,
+			value: object[key],
+		})
 			.then((value) => {
 				object[key as keyof T] = value as T[keyof T];
 				resolve(null);
@@ -175,41 +205,6 @@ export function initProps(component: Component) {
 		if (error) console.error(error);
 		else component.props[key] = result;
 	}
-}
-// 获取监听处理器结果
-function getWatcherTargetHandlerResult(this: Component | Schema, handler: string) {
-	const schemaStore = useSchema();
-	try {
-		return {
-			result: new Function("state", "$state", "parent", "root", "schema", handler).call(
-				this,
-				this.state,
-				schemaStore.state,
-				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
-				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
-				schemaStore.$state
-			),
-		};
-	} catch (error: any) {
-		return { error };
-	}
-}
-// 初始化监听器
-export function initWatchers(component: Schema | Component) {
-	const payload = {};
-	component.watchers.forEach((watcher) => {
-		try {
-			const { error, result } = getWatcherTargetHandlerResult.call(component, watcher.sourceHandler);
-			if (error) throw new Error(error);
-			watch(result, () => triggerEmit(watcher, component, payload), {
-				immediate: watcher.immediate,
-				deep: watcher.deep,
-				once: watcher.once,
-			});
-		} catch (error) {
-			console.error(error);
-		}
-	});
 }
 // 获取数据源处理器结果
 async function getDataSourceHandlerResult(
@@ -361,6 +356,41 @@ export async function requestDataSource(dataSource: DataSource, component: Schem
 	} catch (error) {
 		console.error("【" + component.title + "】数据【" + dataSource.name + "】请求错误", error);
 	}
+}
+// 获取监听处理器结果
+function getWatcherTargetHandlerResult(this: Component | Schema, handler: string) {
+	const schemaStore = useSchema();
+	try {
+		return {
+			result: new Function("state", "$state", "parent", "root", "schema", handler).call(
+				this,
+				this.state,
+				schemaStore.state,
+				!schemaStore.isSchema(this) ? schemaStore.findParent(this.id).parent : null,
+				!schemaStore.isSchema(this) ? schemaStore.findRoot(this) : null,
+				schemaStore.$state
+			),
+		};
+	} catch (error: any) {
+		return { error };
+	}
+}
+// 初始化监听器
+export function initWatchers(component: Schema | Component) {
+	const payload = {};
+	component.watchers.forEach((watcher) => {
+		try {
+			const { error, result } = getWatcherTargetHandlerResult.call(component, watcher.sourceHandler);
+			if (error) throw new Error(error);
+			watch(result, () => triggerEmit(watcher, component, payload), {
+				immediate: watcher.immediate,
+				deep: watcher.deep,
+				once: watcher.once,
+			});
+		} catch (error) {
+			console.error(error);
+		}
+	});
 }
 // 获取事件处理器结果
 async function getActionHandlerResult(this: Component | Schema, handler: string, payload: any, event?: any) {

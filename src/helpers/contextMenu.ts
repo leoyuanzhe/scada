@@ -62,7 +62,7 @@ export const openFileMenu = (position: MenuPosition) => {
 				const schemaStore = useSchema();
 				const oldSchema = deepClone(schemaStore.$state);
 				try {
-					CodeEditor(JSON.stringify(schemaStore.$state, null, 4))
+					CodeEditor({ value: JSON.stringify(schemaStore.$state, null, 4) })
 						.then((value) => {
 							if (value) {
 								const newSchema = JSON.parse(value!);

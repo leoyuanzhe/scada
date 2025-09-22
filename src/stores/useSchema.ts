@@ -9,6 +9,7 @@ import { generateId } from "@/utils/tool";
 import { deepClone } from "@/utils/conversion";
 import { Container } from "@/materials/container/Container";
 import defaultSchema from "@/assets/data/default_schema.json";
+import { Page } from "@/materials/page/Page";
 
 export const useSchema = defineStore("schema", {
 	state() {
@@ -82,6 +83,7 @@ export const useSchema = defineStore("schema", {
 					this.setSchema(schema);
 				} else {
 					this.setSchema(deepClone(defaultSchema as Schema));
+					this.components.push(Page());
 				}
 				dragger.computedSelector();
 			} catch (error) {

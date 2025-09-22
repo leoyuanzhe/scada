@@ -46,15 +46,15 @@ const RenderComponent = () =>
 			root: schemaStore.isRoot(props.component.id),
 			locked: !clientStore.previewing && props.component.locked,
 			target: !clientStore.previewing && schemaStore.targetComponentId === props.component.id,
-			moveable: schemaStore.getComponentLevel(component.id) === 2,
+			moveable: schemaStore.getComponentLevel(props.component.id) === 2 && props.component.moveable,
 			actived: !clientStore.previewing && props.component.actived,
 		}"
 		v-show="!props.component.hidden"
 		:style="styleV2"
-		@mousedown="dragger.componentOnMouseDown($event, component)"
-		@dragover.prevent="dragger.componentOnDragOver($event, component)"
-		@dragleave.stop="dragger.componentOnDragLeave(component)"
-		@drop.stop="dragger.componentOnDrop($event, component)"
+		@mousedown="dragger.componentOnMouseDown($event, props.component)"
+		@dragover.prevent="dragger.componentOnDragOver($event, props.component)"
+		@dragleave.stop="dragger.componentOnDragLeave(props.component)"
+		@drop.stop="dragger.componentOnDrop($event, props.component)"
 		@contextmenu.prevent.stop="openComponentMenu(computedMousePosition($event))"
 	/>
 </template>

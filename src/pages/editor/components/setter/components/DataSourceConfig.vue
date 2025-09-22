@@ -394,14 +394,16 @@ const getResponseDataShow = (dataSource: DataSource) => {
 				<FormItem
 					label="执行动作前"
 					for="setter-data-source-before-handler"
-					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler') }]"
+					:icons="[
+						{ href: '#code', onClick: () => editObjectValue(v, 'beforeHandler', 'dataSourceHandler') },
+					]"
 				>
 					<textarea id="setter-data-source-before-handler" readonly v-model="v.beforeHandler"></textarea>
 				</FormItem>
 				<FormItem
 					label="执行动作后"
 					for="setter-data-source-after-handler"
-					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler') }]"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'afterHandler', 'dataSourceHandler') }]"
 				>
 					<textarea id="setter-data-source-after-handler" readonly v-model="v.afterHandler"></textarea>
 				</FormItem>

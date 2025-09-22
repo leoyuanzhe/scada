@@ -4,6 +4,8 @@ import MyButton from "@/components/my-button/MyButton.vue";
 import MyDialog from "@/components/my-dialog/MyDialog.vue";
 
 interface Props {
+	prefix?: string;
+	suffix?: string;
 	value: string;
 }
 interface Emits {
@@ -35,7 +37,9 @@ defineExpose({
 <template>
 	<MyDialog ref="oDialog" @close="onClose($event)">
 		<form class="code-editor" @submit.prevent>
+			<code v-if="props.prefix">{{ props.prefix }}</code>
 			<textarea v-model="value"></textarea>
+			<code v-if="props.suffix">{{ props.suffix }}</code>
 			<aside>
 				<MyButton @click="close()">取消</MyButton>
 				<MyButton variant="warning" @click="emits('confirm', undefined)">清除</MyButton>
@@ -51,7 +55,11 @@ defineExpose({
 	display: flex;
 	flex-direction: column;
 	background-color: #232323;
-	row-gap: 20px;
+	row-gap: 10px;
+	code {
+		font-size: 12px;
+		white-space: pre;
+	}
 	textarea {
 		padding: 10px;
 		width: 800px;
@@ -61,6 +69,7 @@ defineExpose({
 		border-radius: 10px;
 	}
 	aside {
+		margin-top: 10px;
 		display: flex;
 		column-gap: 10px;
 	}
