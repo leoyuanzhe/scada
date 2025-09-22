@@ -61,7 +61,7 @@ const editName = (name: string) => {
 				<FormItem
 					label="监听源"
 					for="setter-watcher-source-handler"
-					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'sourceHandler') }]"
+					:icons="[{ href: '#code', onClick: () => editObjectValue(v, 'sourceHandler', 'watchHandler') }]"
 				>
 					<textarea id="setter-watcher-source-handler" readonly :value="v.sourceHandler"></textarea>
 				</FormItem>
@@ -101,7 +101,7 @@ const editName = (name: string) => {
 										: v.actionsName.push(v2.name)
 								"
 							/>
-							<span>{{ v.name }}</span>
+							<span>{{ v2.name }}</span>
 						</label>
 					</div>
 				</FormItem>
