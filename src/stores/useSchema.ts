@@ -93,6 +93,7 @@ export const useSchema = defineStore("schema", {
 			initState(this.$state);
 			await initDataSources(this.$state);
 			initWatchers(this.$state);
+			console.info("[Progress]:", "Schema加载完成");
 		},
 		isRoot(componentId: string) {
 			return this.components.some((v) => v.id === componentId);

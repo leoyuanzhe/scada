@@ -37,7 +37,7 @@ const resizerOnMouseDown = (e: MouseEvent) => {
 	const startWidth = props.width;
 	function onMouseMove(e: MouseEvent) {
 		const moveX = e.clientX - startX;
-		emits("update:width", startWidth - moveX);
+		emits("update:width", Math.max(startWidth - moveX, 200));
 	}
 	function onMouseUp() {
 		document.body.removeEventListener("mousemove", onMouseMove);

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useConsole } from "@/stores/useConsole";
 import { useClient } from "@/stores/useClient";
 import { useMaterial } from "@/stores/useMaterial";
 import { useAsset } from "@/stores/useAsset";
@@ -11,9 +12,11 @@ import MenuBar from "./components/MenuBar.vue";
 import Sidebar from "./components/sidebar/Sidebar.vue";
 import Renderer from "@/components/renderer/Renderer.vue";
 import Setter from "./components/setter/Setter.vue";
+import Console from "./components/Console.vue";
 
 const route = useRoute();
 const router = useRouter();
+const consoleStore = useConsole();
 const clientStore = useClient();
 const materialStore = useMaterial();
 const assetStore = useAsset();
@@ -22,9 +25,11 @@ const dragger = useDragger();
 const ruler = useRuler();
 const layout = reactive({
 	setterWidth: 400,
+	consoleHeight: 55,
 });
 init();
 async function init() {
+	consoleStore.init();
 	clientStore.init();
 	materialStore.init();
 	assetStore.init();
@@ -51,6 +56,10 @@ const onUpdateSetterWidth = (e: number) => {
 	layout.setterWidth = e;
 	ruler.drawRulerH();
 };
+const onUpdateConsoleHeight = (e: number) => {
+	layout.consoleHeight = e;
+	ruler.drawRulerH();
+};
 </script>
 
 <template>
@@ -59,6 +68,7 @@ const onUpdateSetterWidth = (e: number) => {
 		<Sidebar class="sidebar" />
 		<Renderer class="renderer" />
 		<Setter class="setter" :width="layout.setterWidth" @update:width="onUpdateSetterWidth($event)" />
+		<Console class="console" :height="layout.consoleHeight" @update:height="onUpdateConsoleHeight($event)" />
 	</div>
 </template>
 
@@ -69,8 +79,9 @@ const onUpdateSetterWidth = (e: number) => {
 	background-color: #232323;
 	grid-template-areas:
 		"menu-bar menu-bar menu-bar"
-		"sidebar renderer setter";
-	grid-template-rows: 40px auto;
+		"sidebar renderer setter"
+		"console console console";
+	grid-template-rows: 40px 1fr auto;
 	.menu-bar {
 		grid-area: menu-bar;
 		box-shadow: 0 0 3px 1px #666;
@@ -86,6 +97,11 @@ const onUpdateSetterWidth = (e: number) => {
 	}
 	.setter {
 		grid-area: setter;
+		box-shadow: 0 0 3px 1px #666;
+		z-index: 1;
+	}
+	.console {
+		grid-area: console;
 		box-shadow: 0 0 3px 1px #666;
 		z-index: 1;
 	}
