@@ -13,6 +13,7 @@ export const useCommand = defineStore("command", {
 	},
 	actions: {
 		createRootComponent(component: Component) {
+			console.info("[Exec]:", "createRootComponent", component);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -23,6 +24,7 @@ export const useCommand = defineStore("command", {
 			return tempComponent;
 		},
 		createComponent(component: Component, parent?: Component) {
+			console.info("[Exec]:", "createComponent", component, parent);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -34,6 +36,7 @@ export const useCommand = defineStore("command", {
 			schemaStore.recordStack(oldSchema);
 		},
 		replaceComponent(component: Component, bone: Component) {
+			console.info("[Exec]:", "replaceComponent", component, bone);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			if (component.autoReplace && bone.autoReplace) return;
@@ -55,24 +58,28 @@ export const useCommand = defineStore("command", {
 			}
 		},
 		moveUp() {
+			console.info("[Exec]:", "moveUp");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.top--);
 			dragger.computedSelector();
 		},
 		moveDown() {
+			console.info("[Exec]:", "moveDown");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.top++);
 			dragger.computedSelector();
 		},
 		moveLeft() {
+			console.info("[Exec]:", "moveLeft");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.left--);
 			dragger.computedSelector();
 		},
 		moveRight() {
+			console.info("[Exec]:", "moveRight");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			schemaStore.activedMoveableFlatedComponents.forEach((v) => v.layout.left++);
@@ -80,6 +87,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 导出
 		async export() {
+			console.info("[Exec]:", "export");
 			try {
 				const schemaStore = useSchema();
 				const clonedSchema = deepClone(schemaStore.$state as Schema);
@@ -98,6 +106,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 导入
 		import() {
+			console.info("[Exec]:", "import");
 			const schemaStore = useSchema();
 			const input = document.createElement("input");
 			input.type = "file";
@@ -121,6 +130,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 保存
 		save() {
+			console.info("[Exec]:", "save");
 			const schemaStore = useSchema();
 			const clonedSchema = deepClone(schemaStore.$state as Schema);
 			schemaStore.clearComponent(clonedSchema);
@@ -129,6 +139,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 预览
 		preview() {
+			console.info("[Exec]:", "preview");
 			const schemaStore = useSchema();
 			const clonedSchema = deepClone(schemaStore.$state as Schema);
 			schemaStore.clearComponent(clonedSchema);
@@ -138,6 +149,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换触发操作
 		toggleOperate(enabled?: boolean) {
+			console.info("[Exec]:", "toggleOperate", enabled);
 			const clientStore = useClient();
 			if (enabled) clientStore.enableOperate();
 			else if (enabled === false) clientStore.disableOperate();
@@ -145,6 +157,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换标尺
 		toggleRuler(enabled?: boolean) {
+			console.info("[Exec]:", "toggleRuler", enabled);
 			const clientStore = useClient();
 			if (enabled) clientStore.ruler.show = true;
 			else if (enabled === false) clientStore.ruler.show = false;
@@ -152,6 +165,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换参考线
 		toggleGuide(enabled?: boolean) {
+			console.info("[Exec]:", "toggleGuide", enabled);
 			const clientStore = useClient();
 			if (enabled) clientStore.guide.enable;
 			else if (enabled === false) clientStore.guide.enable = false;
@@ -159,6 +173,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换网格
 		toggleGrid(enabled?: boolean) {
+			console.info("[Exec]:", "toggleGrid", enabled);
 			const clientStore = useClient();
 			if (enabled) clientStore.grid.enable = true;
 			else if (enabled === false) clientStore.grid.enable = false;
@@ -166,6 +181,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换吸附
 		toggleSnap(enabled?: boolean) {
+			console.info("[Exec]:", "toggleSnap", enabled);
 			const clientStore = useClient();
 			if (enabled) clientStore.snap.enable = true;
 			else if (enabled === false) clientStore.snap.enable = false;
@@ -173,22 +189,26 @@ export const useCommand = defineStore("command", {
 		},
 		// 撤销
 		undo() {
+			console.info("[Exec]:", "undo");
 			const undoStackStore = useUndoStack();
 			undoStackStore.undo();
 		},
 		// 重做
 		redo() {
+			console.info("[Exec]:", "redo");
 			const undoStackStore = useUndoStack();
 			undoStackStore.redo();
 		},
 		// 复制
 		copy() {
+			console.info("[Exec]:", "copy");
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			clientStore.copyComponents(schemaStore.activedFlatedComponents);
 		},
 		// 剪切
 		cut() {
+			console.info("[Exec]:", "cut");
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			const dragger = useDragger();
@@ -200,6 +220,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 粘贴
 		paste() {
+			console.info("[Exec]:", "paste");
 			const clientStore = useClient();
 			const schemaStore = useSchema();
 			const dragger = useDragger();
@@ -213,6 +234,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 删除
 		delete() {
+			console.info("[Exec]:", "delete");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -222,6 +244,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换锁定
 		toggleLocked(locked?: boolean) {
+			console.info("[Exec]:", "toggleLocked", locked);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -244,6 +267,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 切换隐藏
 		toggleHidden(hidden?: boolean) {
+			console.info("[Exec]:", "toggleHidden", hidden);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -266,6 +290,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 创建分组
 		createGroup() {
+			console.info("[Exec]:", "createGroup");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -280,6 +305,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 移出分组
 		moveOut() {
+			console.info("[Exec]:", "moveOut");
 			const schemaStore = useSchema();
 			const oldSchema = deepClone(schemaStore.$state);
 			schemaStore.activedFlatedComponents.forEach((v) => schemaStore.moveOut(v));
@@ -287,6 +313,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 加入分组
 		joinGroup(componentId: string, newParentId: string) {
+			console.info("[Exec]:", "joinGroup", componentId, newParentId);
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
@@ -302,6 +329,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 插入到组件之前
 		insertBefore(componentId: string, targetId: string) {
+			console.info("[Exec]:", "insertBefore", componentId, targetId);
 			const schemaStore = useSchema();
 			const oldSchema = deepClone(schemaStore.$state);
 			const component = schemaStore.findComponent(componentId);
@@ -312,6 +340,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 插入到组件之后
 		insertAfter(componentId: string, targetId: string) {
+			console.info("[Exec]:", "insertAfter", componentId, targetId);
 			const schemaStore = useSchema();
 			const oldSchema = deepClone(schemaStore.$state);
 			const component = schemaStore.findComponent(componentId);
@@ -322,6 +351,7 @@ export const useCommand = defineStore("command", {
 		},
 		// 展开子组件到父组件
 		flatChildrenToParent() {
+			console.info("[Exec]:", "flatChildrenToParent");
 			const schemaStore = useSchema();
 			const dragger = useDragger();
 			const oldSchema = deepClone(schemaStore.$state);
