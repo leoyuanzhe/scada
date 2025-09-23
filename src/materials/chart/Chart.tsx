@@ -29,6 +29,7 @@ const props = deepClone({
 			},
 		],
 	} as EChartsOptionV2,
+	backgroundColor: "transparent",
 });
 export type ChartProps = typeof props;
 export type ChartEmitKey = "click";

@@ -29,16 +29,11 @@ export const useAsset = defineStore("asset", {
 				cover: boneCover,
 				categories: ["模版"],
 				component: (() => {
-					const page = Page();
-					page.title = "页面";
-					page.props.backgroundColor = "#000000";
-					page.layout.width = 1980;
-					page.layout.height = 1080;
 					const container = Container();
-					container.layout.left = 10;
-					container.layout.top = 10;
-					container.layout.width = 980;
-					container.layout.height = 980;
+					container.title = "页面";
+					container.props.backgroundColor = "#000000";
+					container.layout.width = 610;
+					container.layout.height = 610;
 					const b1 = Bone();
 					b1.layout.left = 10;
 					b1.layout.top = 10;
@@ -52,8 +47,7 @@ export const useAsset = defineStore("asset", {
 					b4.layout.left = 320;
 					b4.layout.top = 320;
 					container.components.push(b1, b2, b3, b4);
-					page.components.push(container);
-					return page;
+					return container;
 				})(),
 			});
 			this.assets.push({

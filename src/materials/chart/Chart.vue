@@ -35,6 +35,7 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 	<div
 		ref="oChart"
 		class="chart"
+		:style="{ backgroundColor: props.component.props.backgroundColor }"
 		@click="triggerEmit(props.component.emits.click, props.component, payload, $event)"
 	></div>
 </template>

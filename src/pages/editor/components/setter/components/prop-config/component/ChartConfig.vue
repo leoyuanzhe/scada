@@ -296,6 +296,19 @@ const codeIcon = generateCodeIcon<ChartProps>(props.component.propsExpression);
 			</template>
 		</fieldset>
 	</details>
+	<details class="details" open>
+		<summary>背景</summary>
+		<fieldset>
+			<FormItem label="背景颜色" for="setter-background-color" :icons="[codeIcon('backgroundColor')]">
+				<input
+					id="setter-background-color"
+					type="color"
+					:value="props.component.props.backgroundColor"
+					@input="props.component.props.backgroundColor = ($event.target as HTMLInputElement).value"
+				/>
+			</FormItem>
+		</fieldset>
+	</details>
 </template>
 
 <style lang="scss" scoped>
