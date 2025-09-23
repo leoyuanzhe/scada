@@ -48,10 +48,13 @@ export const useClient = defineStore("client", {
 			theme: {
 				"--primary-color": "#1677ff",
 			},
+			console: {
+				show: false,
+			},
 		};
 	},
 	actions: {
-		init() {
+		init(editMode: boolean = false) {
 			this.innerWidth = window.innerWidth;
 			this.innerHeight = window.innerHeight;
 			window.addEventListener("resize", () => {
@@ -88,135 +91,145 @@ export const useClient = defineStore("client", {
 							this.keyboard.pressingKey += key;
 							break;
 					}
+					console.log(this.keyboard.pressingKey);
+
 					switch (this.keyboard.pressingKey) {
-						case "arrowup": {
-							e.preventDefault();
-							const schemaStore = useSchema();
-							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
-							commandStore.moveUp();
-							document.addEventListener("keyup", keyUp);
-							function keyUp() {
-								if (oldSchema) schemaStore.recordStack(oldSchema);
-								oldSchema = null;
-								document.removeEventListener("keyup", keyUp);
-							}
+						case "`": {
+							this.console.show = !this.console.show;
 							break;
 						}
-						case "arrowdown": {
-							e.preventDefault();
-							const schemaStore = useSchema();
-							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
-							commandStore.moveDown();
-							document.addEventListener("keyup", keyUp);
-							function keyUp() {
-								if (oldSchema) schemaStore.recordStack(oldSchema);
-								oldSchema = null;
-								document.removeEventListener("keyup", keyUp);
+					}
+					if (editMode) {
+						switch (this.keyboard.pressingKey) {
+							case "arrowup": {
+								e.preventDefault();
+								const schemaStore = useSchema();
+								if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+								commandStore.moveUp();
+								document.addEventListener("keyup", keyUp);
+								function keyUp() {
+									if (oldSchema) schemaStore.recordStack(oldSchema);
+									oldSchema = null;
+									document.removeEventListener("keyup", keyUp);
+								}
+								break;
 							}
-							break;
-						}
-						case "arrowleft": {
-							e.preventDefault();
-							const schemaStore = useSchema();
-							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
-							commandStore.moveLeft();
-							document.addEventListener("keyup", keyUp);
-							function keyUp() {
-								if (oldSchema) schemaStore.recordStack(oldSchema);
-								oldSchema = null;
-								document.removeEventListener("keyup", keyUp);
+							case "arrowdown": {
+								e.preventDefault();
+								const schemaStore = useSchema();
+								if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+								commandStore.moveDown();
+								document.addEventListener("keyup", keyUp);
+								function keyUp() {
+									if (oldSchema) schemaStore.recordStack(oldSchema);
+									oldSchema = null;
+									document.removeEventListener("keyup", keyUp);
+								}
+								break;
 							}
-							break;
-						}
-						case "arrowright": {
-							e.preventDefault();
-							const schemaStore = useSchema();
-							if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
-							commandStore.moveRight();
-							document.addEventListener("keyup", keyUp);
-							function keyUp() {
-								if (oldSchema) schemaStore.recordStack(oldSchema);
-								oldSchema = null;
-								document.removeEventListener("keyup", keyUp);
+							case "arrowleft": {
+								e.preventDefault();
+								const schemaStore = useSchema();
+								if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+								commandStore.moveLeft();
+								document.addEventListener("keyup", keyUp);
+								function keyUp() {
+									if (oldSchema) schemaStore.recordStack(oldSchema);
+									oldSchema = null;
+									document.removeEventListener("keyup", keyUp);
+								}
+								break;
 							}
-							break;
+							case "arrowright": {
+								e.preventDefault();
+								const schemaStore = useSchema();
+								if (!oldSchema) oldSchema = deepClone(schemaStore.$state);
+								commandStore.moveRight();
+								document.addEventListener("keyup", keyUp);
+								function keyUp() {
+									if (oldSchema) schemaStore.recordStack(oldSchema);
+									oldSchema = null;
+									document.removeEventListener("keyup", keyUp);
+								}
+								break;
+							}
+							case "ctrl+shift+s":
+								e.preventDefault();
+								commandStore.export();
+								break;
+							case "ctrl+i":
+								e.preventDefault();
+								commandStore.import();
+								break;
+							case "ctrl+s":
+								e.preventDefault();
+								commandStore.save();
+								break;
+							case "ctrl+p":
+								e.preventDefault();
+								commandStore.preview();
+								break;
+							case "ctrl+z":
+								e.preventDefault();
+								commandStore.undo();
+								break;
+							case "ctrl+y":
+								e.preventDefault();
+								commandStore.redo();
+								break;
+							case "ctrl+o":
+								e.preventDefault();
+								commandStore.toggleOperate();
+								break;
+							case "ctrl+r":
+								e.preventDefault();
+								commandStore.toggleRuler();
+								break;
+							case "ctrl+'":
+								e.preventDefault();
+								commandStore.toggleGrid();
+								break;
+							case "ctrl+;":
+								e.preventDefault();
+								commandStore.toggleGuide();
+								break;
+							case "ctrl+shift+;":
+								e.preventDefault();
+								commandStore.toggleSnap();
+								break;
+							case "ctrl+c":
+								e.preventDefault();
+								commandStore.copy();
+								break;
+							case "ctrl+x":
+								e.preventDefault();
+								commandStore.cut();
+								break;
+							case "ctrl+v":
+								e.preventDefault();
+								commandStore.paste();
+								break;
+							case "delete":
+								e.preventDefault();
+								commandStore.delete();
+								break;
+							case "ctrl+l":
+								e.preventDefault();
+								commandStore.toggleLocked();
+								break;
+							case "ctrl+h":
+								e.preventDefault();
+								commandStore.toggleHidden();
+								break;
+							case "ctrl+g":
+								e.preventDefault();
+								commandStore.createGroup();
+								break;
+							case "ctrl+shift+g":
+								e.preventDefault();
+								commandStore.flatChildrenToParent();
+								break;
 						}
-						case "ctrl+shift+s":
-							e.preventDefault();
-							commandStore.export();
-							break;
-						case "ctrl+i":
-							e.preventDefault();
-							commandStore.import();
-							break;
-						case "ctrl+s":
-							e.preventDefault();
-							commandStore.save();
-							break;
-						case "ctrl+p":
-							e.preventDefault();
-							commandStore.preview();
-							break;
-						case "ctrl+z":
-							e.preventDefault();
-							commandStore.undo();
-							break;
-						case "ctrl+y":
-							e.preventDefault();
-							commandStore.redo();
-							break;
-						case "ctrl+o":
-							e.preventDefault();
-							commandStore.toggleOperate();
-							break;
-						case "ctrl+r":
-							e.preventDefault();
-							commandStore.toggleRuler();
-							break;
-						case "ctrl+'":
-							e.preventDefault();
-							commandStore.toggleGrid();
-							break;
-						case "ctrl+;":
-							e.preventDefault();
-							commandStore.toggleGuide();
-							break;
-						case "ctrl+shift+;":
-							e.preventDefault();
-							commandStore.toggleSnap();
-							break;
-						case "ctrl+c":
-							e.preventDefault();
-							commandStore.copy();
-							break;
-						case "ctrl+x":
-							e.preventDefault();
-							commandStore.cut();
-							break;
-						case "ctrl+v":
-							e.preventDefault();
-							commandStore.paste();
-							break;
-						case "delete":
-							e.preventDefault();
-							commandStore.delete();
-							break;
-						case "ctrl+l":
-							e.preventDefault();
-							commandStore.toggleLocked();
-							break;
-						case "ctrl+h":
-							e.preventDefault();
-							commandStore.toggleHidden();
-							break;
-						case "ctrl+g":
-							e.preventDefault();
-							commandStore.createGroup();
-							break;
-						case "ctrl+shift+g":
-							e.preventDefault();
-							commandStore.flatChildrenToParent();
-							break;
 					}
 				}
 			});
