@@ -91,8 +91,6 @@ export const useClient = defineStore("client", {
 							this.keyboard.pressingKey += key;
 							break;
 					}
-					console.log(this.keyboard.pressingKey);
-
 					switch (this.keyboard.pressingKey) {
 						case "`": {
 							this.console.show = !this.console.show;
