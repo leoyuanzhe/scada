@@ -23,7 +23,12 @@ watch(
 );
 onMounted(() => {
 	oDialog.value?.showModal();
+	value.value = "";
 });
+const onClose = () => {
+	value.value = "";
+	clientStore.console.show = false;
+};
 const submit = () => {
 	console.log(value.value);
 	try {
@@ -42,7 +47,7 @@ const submit = () => {
 </script>
 
 <template>
-	<dialog ref="oDialog" class="console" @close="clientStore.console.show = false">
+	<dialog ref="oDialog" class="console" @close="onClose()">
 		<code ref="oCode">
 			<pre v-for="(v, i) in consoleStore.logs" :key="i" :class="{ [v.type]: true }">{{ v.message }}</pre>
 		</code>
