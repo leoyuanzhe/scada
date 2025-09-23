@@ -145,7 +145,7 @@ export const useCommand = defineStore("command", {
 			schemaStore.clearComponent(clonedSchema);
 			const json = JSON.stringify(clonedSchema);
 			localStorage.setItem("schema", json);
-			window.open("/preview", "_blank");
+			window.open(import.meta.env.BASE_URL + "/preview", "_blank");
 		},
 		// 切换触发操作
 		toggleOperate(enabled?: boolean) {
