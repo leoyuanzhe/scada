@@ -24,6 +24,7 @@ function init() {
 		() => route.query.id,
 		(id) => {
 			if (id) schemaStore.currentRootId = id as string;
+			document.title = [schemaStore.title, schemaStore.currentRootComponent?.title ?? "Scada"].join(" - ");
 		},
 		{ immediate: true }
 	);
