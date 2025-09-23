@@ -5,14 +5,13 @@ import TextComponent from "./Text.vue";
 
 const props = deepClone({
 	content: "文本",
-	fontColor: "#ffffff",
+	color: "#ffffff",
 	fontSize: 16,
 	fontStyle: "normal" as "normal" | "italic",
 	fontWeight: "normal" as "normal" | "bold",
-	fontFamily: "serif" as "serif",
+	lineHeight: 30,
 	textAlign: "center" as "left" | "center" | "right",
 	textDecorationLine: "none" as "none" | "overline" | "underline" | "line-through",
-	lineHeight: 30,
 	backgroundColor: "transparent",
 	borderWidth: 0,
 	borderColor: "transparent",

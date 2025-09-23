@@ -5,12 +5,10 @@ import vueJsx from "@vitejs/plugin-vue-jsx";
 
 // https://vite.dev/config/
 export default defineConfig({
-	base: "/",
+	base: "/scada",
 	server: {
 		host: true,
-		proxy: {
-			// "/api": "http://xxx",
-		},
+		proxy: {},
 	},
 	resolve: {
 		alias: { "@": resolve(import.meta.dirname, "src") },
