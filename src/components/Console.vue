@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { nextTick, ref, useTemplateRef, watch } from "vue";
+import { nextTick, onMounted, ref, useTemplateRef, watch } from "vue";
 import { useConsole } from "@/stores/useConsole";
+import { useClient } from "@/stores/useClient";
 import { useCommand } from "@/stores/useCommand";
 
 const consoleStore = useConsole();
+const clientStore = useClient();
 const commandStore = useCommand();
-interface Props {
-	height: number;
-}
-interface Emits {
-	(e: "update:height", height: number): void;
-}
-const props = withDefaults(defineProps<Props>(), {});
-const emits = defineEmits<Emits>();
+const oDialog = useTemplateRef("oDialog");
 const oCode = useTemplateRef("oCode");
 const value = ref("");
 watch(
@@ -26,20 +21,9 @@ watch(
 	},
 	{ deep: true, immediate: true }
 );
-const resizerOnMouseDown = (e: MouseEvent) => {
-	document.body.addEventListener("mousemove", onMouseMove);
-	document.body.addEventListener("mouseup", onMouseUp);
-	const startY = e.clientY;
-	const startHeight = props.height;
-	function onMouseMove(e: MouseEvent) {
-		const moveY = e.clientY - startY;
-		emits("update:height", Math.max(startHeight - moveY, 55));
-	}
-	function onMouseUp() {
-		document.body.removeEventListener("mousemove", onMouseMove);
-		document.body.removeEventListener("mouseup", onMouseUp);
-	}
-};
+onMounted(() => {
+	oDialog.value?.showModal();
+});
 const submit = () => {
 	console.log(value.value);
 	try {
@@ -47,7 +31,7 @@ const submit = () => {
 		if (commandStore[command as keyof typeof commandStore]) {
 			(commandStore[command as keyof typeof commandStore] as Function)(...args);
 		} else {
-			console.log("未知命令");
+			console.log("[Info]:", "未知命令");
 		}
 	} catch (error) {
 		console.error(error);
@@ -58,26 +42,33 @@ const submit = () => {
 </script>
 
 <template>
-	<div class="console" :style="{ height: props.height + 'px' }">
+	<dialog ref="oDialog" class="console" @close="clientStore.console.show = false">
 		<code ref="oCode">
 			<pre v-for="(v, i) in consoleStore.logs" :key="i" :class="{ [v.type]: true }">{{ v.message }}</pre>
 		</code>
 		<form @submit.prevent="submit()">
-			<input type="text" v-model="value" />
+			<label for="console-input">></label>
+			<input id="console-input" type="text" v-model="value" />
 		</form>
-		<div class="resizer" @mousedown="resizerOnMouseDown($event)"></div>
-	</div>
+	</dialog>
 </template>
 
 <style scoped lang="scss">
 .console {
-	position: relative;
-	background-color: #111;
+	margin: 0;
+	padding: 0;
+	max-width: none;
+	width: 100%;
+	max-height: none;
+	height: 800px;
+	background-color: #232323cc;
+	border: none;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
 	code {
 		flex: 1;
+		padding: 2px;
 		white-space: pre;
 		overflow: auto;
 		pre {
@@ -105,37 +96,21 @@ const submit = () => {
 	form {
 		box-sizing: border-box;
 		flex-shrink: 0;
+		padding: 0 10px;
 		height: 30px;
-		border: none;
-		background-color: #232323;
-		border-top: 1px solid transparent;
-		transition: border-color 0.2s;
+		display: flex;
+		align-items: center;
+		label {
+			margin-right: 6px;
+			font-size: 12px;
+		}
 		input {
 			box-sizing: border-box;
-			padding: 0 8px;
 			width: 100%;
 			color: #fff;
 			font-size: 14px;
 			line-height: 30px;
 			font-family: "Courier New", Courier, monospace;
-		}
-		&:focus-within {
-			border-color: var(--primary-color);
-		}
-	}
-	.resizer {
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 4px;
-		background-color: var(--primary-color);
-		transition: opacity 0.2s;
-		cursor: row-resize;
-		z-index: 1;
-		opacity: 0;
-		&:hover {
-			opacity: 1;
 		}
 	}
 }
