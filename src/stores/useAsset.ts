@@ -26,7 +26,7 @@ export const useAsset = defineStore("asset", {
 			this.assets.push({
 				id: generateId(),
 				title: "模版1",
-				cover: "",
+				cover: boneCover,
 				categories: ["模版"],
 				component: (() => {
 					const page = Page();
