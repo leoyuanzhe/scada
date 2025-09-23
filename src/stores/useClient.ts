@@ -1,3 +1,4 @@
+import { watch } from "vue";
 import { defineStore } from "pinia";
 import type { Schema } from "@/types/Schema";
 import type { Component } from "@/types/Component";
@@ -6,7 +7,6 @@ import { useSchema } from "./useSchema";
 import { useDragger } from "@/hooks/useDragger";
 import { deepClone } from "@/utils/conversion";
 import { getFlatedComponents } from "@/helpers/schema";
-import { watch } from "vue";
 
 export const useClient = defineStore("client", {
 	state() {
