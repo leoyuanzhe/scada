@@ -9,11 +9,10 @@ interface Props {
 }
 const props = withDefaults(defineProps<Props>(), {});
 const styleV2 = computed(() => ({
-	color: props.component.props.fontColor,
+	color: props.component.props.color,
 	fontSize: props.component.props.fontSize + "px",
 	fontStyle: props.component.props.fontStyle,
 	fontWeight: props.component.props.fontWeight,
-	fontFamily: props.component.props.fontFamily,
 	textAlign: props.component.props.textAlign,
 	textDecorationLine: props.component.props.textDecorationLine,
 	lineHeight: props.component.props.lineHeight + "px",
@@ -48,6 +47,9 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 
 <style lang="scss" scoped>
 .text {
+	box-sizing: border-box;
 	display: block;
+	white-space: pre-wrap;
+	word-break: break-all;
 }
 </style>
