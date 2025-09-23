@@ -20,8 +20,3 @@ onBeforeUnmount(() => triggerEmit(props.component.emits.beforeUnmount, props.com
 		<ComponentCreator v-for="v in props.component.components" :key="v.id" :component="v" />
 	</div>
 </template>
-
-<style lang="scss" scoped>
-.page {
-}
-</style>

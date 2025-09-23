@@ -35,6 +35,7 @@ async function init() {
 			if (id) schemaStore.currentRootId = id as string;
 			if (!schemaStore.currentRootComponent && schemaStore.components[0]?.id)
 				router.replace("/editor?id=" + schemaStore.components[0].id);
+			document.title = [schemaStore.title, schemaStore.currentRootComponent?.title ?? "Scada"].join(" - ");
 		},
 		{ immediate: true }
 	);
