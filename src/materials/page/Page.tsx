@@ -4,7 +4,7 @@ import { deepClone } from "@/utils/conversion";
 import PageComponent from "./Page.vue";
 
 const props = deepClone({
-	backgroundColor: "#00000000",
+	backgroundColor: "#000000",
 });
 export type PageProps = typeof props;
 export const Page = (): MaterialWithLayout<PageProps> => ({
