@@ -104,8 +104,9 @@ const categories = computed(() => {
 			}
 			figcaption {
 				flex-shrink: 0;
-				height: 20px;
+				line-height: 20px;
 				font-size: 12px;
+				text-align: center;
 			}
 			&:hover {
 				box-shadow: 0 0 3px 1px var(--primary-color);
