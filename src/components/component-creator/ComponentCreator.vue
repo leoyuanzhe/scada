@@ -44,7 +44,11 @@ const RenderComponent = () =>
 		:class="{
 			component: true,
 			root: schemaStore.isRoot(props.component.id),
-			locked: !clientStore.previewing && props.component.locked,
+			locked:
+				!clientStore.previewing &&
+				(((dragger.dataTransfer.dragStartAsset || dragger.dataTransfer.dragStartComponent) &&
+					!props.component.nestable) ||
+					props.component.locked),
 			target: !clientStore.previewing && schemaStore.targetComponentId === props.component.id,
 			moveable: schemaStore.getComponentLevel(props.component.id) === 2 && props.component.moveable,
 			actived: !clientStore.previewing && props.component.actived,

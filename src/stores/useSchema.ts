@@ -348,7 +348,7 @@ export const useSchema = defineStore("schema", {
 						return v;
 					})
 				);
-				this.deleteComponent(component.id);
+				if (component.autoLayout) this.deleteComponent(component.id);
 			}
 		},
 		// 展开子组件到根组件

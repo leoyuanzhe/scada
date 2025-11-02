@@ -183,6 +183,11 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 	if (clientStore.keyboard.spaceKey || !component.selectable) return;
 	if (!schemaStore.isRoot(component.id)) e.stopPropagation();
 	if (clientStore.previewing || clientStore.enabledOperate || schemaStore.isRoot(component.id)) return;
+	const parent = schemaStore.findParent(component.id).parent;
+	if (parent && !schemaStore.isRoot(parent.id) && !schemaStore.isSchema(parent)) {
+		componentOnMouseDown(e, parent);
+		return;
+	}
 	focusComponent(e, component);
 	if (!component.moveable || schemaStore.getComponentLevel(component.id) !== 2) return;
 	const oldSchema = deepClone(schemaStore.$state);
@@ -345,16 +350,16 @@ const componentOnDragLeave = (component: Component) => {
 const componentOnDrop = (e: DragEvent, parent: Component) => {
 	const commandStore = useCommand();
 	const schemaStore = useSchema();
-	let newComponent = null;
-	if (dataTransfer.dragStartAsset) {
-		newComponent = assetTransferComponent(dataTransfer.dragStartAsset);
-	} else if (dataTransfer.dragStartComponent) {
-		newComponent = dataTransfer.dragStartComponent;
-		schemaStore.deleteComponent(newComponent.id);
-	}
-	if (newComponent) {
-		const { left, top } = getOffsetFromRoot(parent);
-		if (parent.nestable) {
+	if (parent.nestable) {
+		let newComponent = null;
+		if (dataTransfer.dragStartAsset) {
+			newComponent = assetTransferComponent(dataTransfer.dragStartAsset);
+		} else if (dataTransfer.dragStartComponent) {
+			newComponent = dataTransfer.dragStartComponent;
+			schemaStore.deleteComponent(newComponent.id);
+		}
+		if (newComponent) {
+			const { left, top } = getOffsetFromRoot(parent);
 			if (parent.autoReplace) {
 				if (newComponent?.layout && parent.layout) {
 					newComponent.layout.left = left;
@@ -376,19 +381,12 @@ const componentOnDrop = (e: DragEvent, parent: Component) => {
 				commandStore.createComponent(newComponent);
 				schemaStore.joinGroup(newComponent, parent);
 			}
-		} else {
-			if (newComponent.layout) {
-				newComponent.layout.left = e.offsetX + left - (newComponent.layout.width ?? 0) / 2;
-				newComponent.layout.top = e.offsetY + top - (newComponent.layout.height ?? 0) / 2;
-			}
-			commandStore.createComponent(newComponent);
-			schemaStore.joinGroup(newComponent, schemaStore.currentRootComponent!);
+			dataTransfer.dragStartAsset = null;
+			dataTransfer.dragStartComponent = null;
+			dataTransfer.dragOverComponent = null;
+			dataTransfer.layerPosition = null;
 		}
 	}
-	dataTransfer.dragStartAsset = null;
-	dataTransfer.dragStartComponent = null;
-	dataTransfer.dragOverComponent = null;
-	dataTransfer.layerPosition = null;
 };
 const layerOnMouseDown = (e: MouseEvent, component: Component, router?: Router) => {
 	const schemaStore = useSchema();

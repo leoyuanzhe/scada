@@ -33,13 +33,13 @@ onMounted(() => {
 	);
 });
 const onHMouseEnter = (e: MouseEvent) => {
-	v = Math.round(dragger.getLogicalTop(e.offsetX + 20));
+	v = Math.round(dragger.getLogicalLeft(e.offsetX + 20));
 	clientStore.guide.line.v.push(v);
 };
 const onHMouseMove = (e: MouseEvent) => {
 	if (v !== null) {
 		clientStore.guide.line.v[clientStore.guide.line.v.length - 1] = Math.round(
-			dragger.getLogicalTop(e.offsetX + 20)
+			dragger.getLogicalLeft(e.offsetX + 20)
 		);
 	}
 };
@@ -55,13 +55,13 @@ const onHMouseLeave = () => {
 	}
 };
 const onVMouseEnter = (e: MouseEvent) => {
-	h = Math.round(dragger.getLogicalLeft(e.offsetY + 20));
+	h = Math.round(dragger.getLogicalTop(e.offsetY + 20));
 	clientStore.guide.line.h.push(h);
 };
 const onVMouseMove = (e: MouseEvent) => {
 	if (h !== null) {
 		clientStore.guide.line.h[clientStore.guide.line.h.length - 1] = Math.round(
-			dragger.getLogicalLeft(e.offsetY + 20)
+			dragger.getLogicalTop(e.offsetY + 20)
 		);
 	}
 };
