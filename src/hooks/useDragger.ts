@@ -272,7 +272,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index]!.left - startSelectorLeft) + left;
 			});
 			snapLine.v = left;
 		} else if (middleV !== undefined) {
@@ -280,7 +280,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const left = middle - getScaledOffset(selector.width / 2);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index]!.left - startSelectorLeft) + left;
 			});
 			snapLine.v = middle;
 		} else if (rightV !== undefined) {
@@ -288,14 +288,14 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const left = right - getScaledOffset(selector.width);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index]!.left - startSelectorLeft) + left;
 			});
 			snapLine.v = right;
 		} else {
 			const logicalDragLeft = getLogicalLeft(dragLeft); // 将当前位置转换为逻辑坐标（未缩放）
 			const snappedLogicalLeft = Math.round(getNearestGridLinePosition(logicalDragLeft)); // 获取最接近的网格线位置（逻辑坐标）
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-				const originalLeft = getLogicalLeft(startActiveComponentsPosition[index].left);
+				const originalLeft = getLogicalLeft(startActiveComponentsPosition[index]!.left);
 				component.layout.left = originalLeft + (snappedLogicalLeft - getLogicalLeft(startSelectorLeft));
 			});
 			snapLine.v = null;
@@ -311,7 +311,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index]!.top - startSelectorTop) + top;
 			});
 			snapLine.h = top;
 		} else if (middleH !== undefined) {
@@ -319,7 +319,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const top = middle - getScaledOffset(selector.height / 2);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index]!.top - startSelectorTop) + top;
 			});
 			snapLine.h = middle;
 		} else if (bottomH !== undefined) {
@@ -327,14 +327,14 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const top = right - getScaledOffset(selector.height);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index]!.top - startSelectorTop) + top;
 			});
 			snapLine.h = right;
 		} else {
 			const logicalDragTop = getLogicalTop(dragTop);
 			const snappedLogicalTop = Math.round(getNearestGridLinePosition(logicalDragTop));
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
-				const originalTop = getLogicalTop(startActiveComponentsPosition[index].top);
+				const originalTop = getLogicalTop(startActiveComponentsPosition[index]!.top);
 				component.layout.top = originalTop + (snappedLogicalTop - getLogicalTop(startSelectorTop));
 			});
 			snapLine.h = null;

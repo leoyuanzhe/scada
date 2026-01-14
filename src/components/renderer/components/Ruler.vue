@@ -45,7 +45,7 @@ const onHMouseMove = (e: MouseEvent) => {
 };
 const onHMouseDown = () => {
 	if (v !== null) {
-		clientStore.guide.line.v.unshift(clientStore.guide.line.v[clientStore.guide.line.v.length - 1]);
+		clientStore.guide.line.v.unshift(clientStore.guide.line.v[clientStore.guide.line.v.length - 1]!);
 	}
 };
 const onHMouseLeave = () => {
@@ -67,7 +67,7 @@ const onVMouseMove = (e: MouseEvent) => {
 };
 const onVMouseDown = () => {
 	if (h !== null) {
-		clientStore.guide.line.h.unshift(clientStore.guide.line.h[clientStore.guide.line.h.length - 1]);
+		clientStore.guide.line.h.unshift(clientStore.guide.line.h[clientStore.guide.line.h.length - 1]!);
 	}
 };
 const onVMouseLeave = () => {

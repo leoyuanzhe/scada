@@ -24,14 +24,14 @@ export const useUndoStack = defineStore("undoStack", {
 		},
 		undo() {
 			if (this.current > -1) {
-				this.stacks[this.current].undo();
+				this.stacks[this.current]!.undo();
 				this.current--;
 			}
 		},
 		redo() {
 			if (this.current < this.stacks.length - 1) {
 				this.current++;
-				this.stacks[this.current].redo();
+				this.stacks[this.current]!.redo();
 			}
 		},
 	},

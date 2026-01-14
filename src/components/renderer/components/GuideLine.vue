@@ -5,7 +5,7 @@ import { useDragger } from "@/hooks/useDragger";
 const clientStore = useClient();
 const dragger = useDragger();
 const vMouseDown = (e: MouseEvent, index: number) => {
-	const startLeft = clientStore.guide.line.v[index];
+	const startLeft = clientStore.guide.line.v[index]!;
 	const startX = e.clientX;
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);
@@ -19,7 +19,7 @@ const vMouseDown = (e: MouseEvent, index: number) => {
 	}
 };
 const hMouseDown = (e: MouseEvent, index: number) => {
-	const startTop = clientStore.guide.line.h[index];
+	const startTop = clientStore.guide.line.h[index]!;
 	const startY = e.clientY;
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);

@@ -123,13 +123,13 @@ export const useSchema = defineStore("schema", {
 			const findInComponents = (parent: Schema | Component): T => {
 				for (let i = 0; i < parent.components.length; i++) {
 					const component = parent.components[i];
-					if (component.id === componentId)
+					if (component!.id === componentId)
 						return {
 							parent,
 							index: i,
 						} as T;
-					if (component.components && component.components.length > 0) {
-						const result = findInComponents(component);
+					if (component!.components && component!.components.length > 0) {
+						const result = findInComponents(component!);
 						if (result.parent) return result;
 					}
 				}
@@ -185,7 +185,7 @@ export const useSchema = defineStore("schema", {
 		},
 		// 创建分组
 		createGroup(componentsId: string[]) {
-			const parent = this.findParent(componentsId[0]).parent?.id ?? "";
+			const parent = this.findParent(componentsId[0]!).parent?.id ?? "";
 			if (componentsId.length > 1 && componentsId.every((v) => this.findParent(v).parent?.id === parent)) {
 				const container = this.createComponent(Container());
 				container.layout.left = 0;
@@ -248,10 +248,10 @@ export const useSchema = defineStore("schema", {
 				}
 			};
 			if (parent && index !== -1) {
-				if (parent.components[index].layout) {
-					const { left, top } = dragger.getOffsetFromRoot(parent.components[index]);
-					parent.components[index].layout.left = left;
-					parent.components[index].layout.top = top;
+				if (parent.components[index]!.layout) {
+					const { left, top } = dragger.getOffsetFromRoot(parent.components[index]!);
+					parent.components[index]!.layout.left = left;
+					parent.components[index]!.layout.top = top;
 				}
 				const component = parent.components.splice(index, 1)[0];
 				beforeCheckCallBack?.();

@@ -1631,6 +1631,7 @@ export type EChartsOptionV2 = EChartsOption & {
 				extraCssText?: string;
 			} & EChartsOptionV2Border;
 			data?:
+				| string[]
 				| number[]
 				| number[][]
 				| {

@@ -20,7 +20,7 @@ const editKey = (key: string) => {
 	if (newKey !== null) {
 		try {
 			if (oldKeys.some((k) => k === newKey)) throw new Error("键已存在");
-			const value = props.component.stateExpression[key];
+			const value = props.component.stateExpression[key]!;
 			delete props.component.stateExpression[key];
 			props.component.stateExpression[newKey] = value;
 		} catch (error: any) {

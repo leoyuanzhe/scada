@@ -381,10 +381,10 @@ export const openComponentMenu = (position: MenuPosition) => {
 				const assetStore = useAsset();
 				assetStore.assets.push({
 					id: generateId(),
-					title: schemaStore.activedComponents[0].title,
+					title: schemaStore.activedComponents[0]!.title,
 					cover: "",
 					categories: ["模版"],
-					component: deepClone(schemaStore.activedComponents[0]),
+					component: deepClone(schemaStore.activedComponents[0]!),
 				});
 			},
 		},

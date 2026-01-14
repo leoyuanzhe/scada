@@ -68,7 +68,7 @@ const editCustomEmitKey = (key: string) => {
 			if (oldKeys.some((k) => k === newKey) || props.component.emits[newKey]) throw new Error("键已存在");
 			const item = props.component.customEmits.find((v) => v.key === key);
 			item!.key = newKey;
-			const value = props.component.emits[key];
+			const value = props.component.emits[key]!;
 			delete props.component.emits[key];
 			props.component.emits[newKey] = value;
 		} catch (error: any) {

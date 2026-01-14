@@ -291,7 +291,7 @@ const changeType = (e: Event, action: Action) => {
 			<summary>{{ emit_dict[k] ?? k }}</summary>
 			<fieldset>
 				<FormItem label="类型" for="setter-emit-execute-type">
-					<select id="setter-emit-execute-type" v-model="props.component.emits[k].executeType">
+					<select id="setter-emit-execute-type" v-model="props.component.emits[k]!.executeType">
 						<option value="sequential">顺序执行</option>
 						<option value="concurrent">并发执行</option>
 					</select>
@@ -301,14 +301,14 @@ const changeType = (e: Event, action: Action) => {
 						<label v-for="v in props.component.actions" :key="v.name">
 							<input
 								type="checkbox"
-								:checked="props.component.emits[k].actionsName.includes(v.name)"
+								:checked="props.component.emits[k]!.actionsName.includes(v.name)"
 								@change="
-									props.component.emits[k].actionsName.includes(v.name)
-										? props.component.emits[k].actionsName.splice(
-												props.component.emits[k].actionsName.indexOf(v.name),
+									props.component.emits[k]!.actionsName.includes(v.name)
+										? props.component.emits[k]!.actionsName.splice(
+												props.component.emits[k]!.actionsName.indexOf(v.name),
 												1
 										  )
-										: props.component.emits[k].actionsName.push(v.name)
+										: props.component.emits[k]!.actionsName.push(v.name)
 								"
 							/>
 							<span>{{ v.name }}</span>

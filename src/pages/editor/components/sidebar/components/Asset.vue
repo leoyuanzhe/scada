@@ -19,7 +19,7 @@ const categories = computed(() => {
 			}
 		});
 	});
-	if (!current.value && res.length) current.value = res[0].category;
+	if (!current.value && res.length) current.value = res[0]!.category;
 	return res;
 });
 </script>
