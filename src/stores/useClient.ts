@@ -51,6 +51,7 @@ export const useClient = defineStore("client", {
 			console: {
 				show: false,
 			},
+			mousePosition: { x: 0, y: 0 },
 		};
 	},
 	actions: {
@@ -73,7 +74,7 @@ export const useClient = defineStore("client", {
 					const commandStore = useCommand();
 					this.keyboard.pressingKey = "";
 					const key = e.key.toLowerCase();
-					if (e.ctrlKey) this.keyboard.pressingKey += "ctrl+";
+					if (e.ctrlKey || e.metaKey) this.keyboard.pressingKey += "ctrl+";
 					else if (e.metaKey) this.keyboard.pressingKey += "ctrl+";
 					if (e.altKey) this.keyboard.pressingKey += "alt+";
 					if (e.shiftKey) this.keyboard.pressingKey += "shift+";

@@ -10,17 +10,10 @@ import { deepClone } from "@/utils/conversion";
 import { useCommand } from "@/stores/useCommand";
 
 // 框选器
-const selector = reactive({
-	left: 0,
-	top: 0,
-	width: 0,
-	height: 0,
-});
+const selector = reactive({ left: 0, top: 0, width: 0, height: 0 });
 // 吸附对齐线
-const snapLine = reactive({
-	v: null as number | null,
-	h: null as number | null,
-});
+const snapLine = reactive({ v: null as number | null, h: null as number | null });
+// 拖拽中的组件
 const dataTransfer = reactive({
 	dragStartAsset: null as Asset | null,
 	dragStartComponent: null as Component | null,
@@ -42,24 +35,44 @@ const assetOnDragStart = (asset: Asset) => {
 };
 const rendererOnWheel = (e: WheelEvent) => {
 	const clientStore = useClient();
-	if (e.ctrlKey) {
+	if ((e.ctrlKey || e.metaKey) && clientStore.oRenderer) {
 		e.preventDefault();
-		if (e.deltaY > 0) {
-			clientStore.canvas.scale = Number(Math.max(clientStore.canvas.scale - 0.02, 0.1).toFixed(2));
-		} else {
-			clientStore.canvas.scale = Number(Math.min(clientStore.canvas.scale + 0.02, 5).toFixed(2));
-		}
+		console.log(e);
+		const offsetX = e.clientX - clientStore.oRenderer.offsetLeft - clientStore.canvas.left;
+		const offsetY = e.clientY - clientStore.oRenderer.offsetTop - clientStore.canvas.top;
+		const originalOffsetX = offsetX / clientStore.canvas.scale;
+		const originalOffsetY = offsetY / clientStore.canvas.scale;
+		let newScale = 0;
+		if (e.deltaY > 0) newScale = Math.max(clientStore.canvas.scale - e.deltaY / 800, 0.1);
+		else newScale = Math.min(clientStore.canvas.scale - e.deltaY / 800, 5);
+		const newOffsetX = originalOffsetX * newScale;
+		const newOffsetY = originalOffsetY * newScale;
+		const newLeft = clientStore.canvas.left + (offsetX - newOffsetX);
+		const newTop = clientStore.canvas.top + (offsetY - newOffsetY);
+		clientStore.canvas.left = newLeft;
+		clientStore.canvas.top = newTop;
+		clientStore.canvas.scale = newScale;
 		computedSelector();
+	}
+};
+const rendererOnMouseMove = (e: MouseEvent) => {
+	const clientStore = useClient();
+	if (clientStore.oRenderer && !clientStore.previewing) {
+		clientStore.mousePosition.x = getScaledOffset(
+			e.clientX - clientStore.oRenderer.offsetLeft - clientStore.canvas.left
+		);
+		clientStore.mousePosition.y = getScaledOffset(
+			e.clientY - clientStore.oRenderer.offsetTop - clientStore.canvas.top
+		);
 	}
 };
 const rendererOnMouseDown = (e: MouseEvent) => {
 	if (e.button === 0) {
 		const clientStore = useClient();
 		const schemaStore = useSchema();
-		if (!clientStore.previewing && !clientStore.enabledOperate) {
-			const oRenderer = document.querySelector<HTMLDivElement>(".renderer");
-			const offsetX = e.pageX - oRenderer!.offsetLeft; // 选择器的offsetX
-			const offsetY = e.pageY - oRenderer!.offsetTop;
+		if (!clientStore.previewing && !clientStore.enabledOperate && clientStore.oRenderer) {
+			const offsetX = e.pageX - clientStore.oRenderer.offsetLeft; // 选择器的offsetX
+			const offsetY = e.pageY - clientStore.oRenderer.offsetTop;
 			if (clientStore.keyboard.spaceKey) {
 				// 移动画布
 				document.body.addEventListener("mousemove", mouseMove);
@@ -124,8 +137,8 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 						schemaStore.moveableVisibleUnlockedSelectableComponents.forEach((component) => {
 							const left = getActualLeft(component.layout.left);
 							const top = getActualTop(component.layout.top);
-							const width = getScaledOffset(component.layout.width);
-							const height = getScaledOffset(component.layout.height);
+							const width = getUnscaledOffset(component.layout.width);
+							const height = getUnscaledOffset(component.layout.height);
 							if (
 								left >= selector.left &&
 								left + width <= selector.left + selector.width &&
@@ -139,8 +152,8 @@ const rendererOnMouseDown = (e: MouseEvent) => {
 						schemaStore.moveableVisibleUnlockedSelectableComponents.forEach((component) => {
 							const left = getActualLeft(component.layout.left);
 							const top = getActualTop(component.layout.top);
-							const width = getScaledOffset(component.layout.width);
-							const height = getScaledOffset(component.layout.height);
+							const width = getUnscaledOffset(component.layout.width);
+							const height = getUnscaledOffset(component.layout.height);
 							if (
 								left < selector.left + selector.width &&
 								left + width > selector.left &&
@@ -248,34 +261,34 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 		moved = true;
 		const moveX = e.clientX - startX; // 移动的X轴距离
 		const dragLeft = startSelectorLeft + moveX; // 拖拽后的相对于渲染器的left值
-		const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
+		const leftV = snapLines.v.find((v) => Math.abs(v - dragLeft) < getUnscaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
 		const middleV = snapLines.v.find(
-			(v) => Math.abs(v - dragLeft - selector.width / 2) < getScaledOffset(clientStore.snap.distance)
+			(v) => Math.abs(v - dragLeft - selector.width / 2) < getUnscaledOffset(clientStore.snap.distance)
 		);
 		const rightV = snapLines.v.find(
-			(v) => Math.abs(v - dragLeft - selector.width) < getScaledOffset(clientStore.snap.distance)
+			(v) => Math.abs(v - dragLeft - selector.width) < getUnscaledOffset(clientStore.snap.distance)
 		);
 		if (leftV !== undefined) {
 			const left = getLogicalLeft(leftV); // 将吸附线left值转换为画布的left值
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 			});
 			snapLine.v = left;
 		} else if (middleV !== undefined) {
 			const middle = getLogicalLeft(middleV);
-			const left = middle - getUnscaledOffset(selector.width / 2);
+			const left = middle - getScaledOffset(selector.width / 2);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 			});
 			snapLine.v = middle;
 		} else if (rightV !== undefined) {
 			const right = getLogicalLeft(rightV);
-			const left = right - getUnscaledOffset(selector.width);
+			const left = right - getScaledOffset(selector.width);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.left =
-					getUnscaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
+					getScaledOffset(startActiveComponentsPosition[index].left - startSelectorLeft) + left;
 			});
 			snapLine.v = right;
 		} else {
@@ -289,7 +302,7 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 		}
 		const moveY = e.clientY - startY;
 		const dragTop = startSelectorTop + moveY; // 拖拽后的相对于渲染器的left值
-		const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < getScaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
+		const topH = snapLines.h.find((v) => Math.abs(v - dragTop) < getUnscaledOffset(clientStore.snap.distance)); // 组件的左边定位到的垂直吸附线
 		const middleH = snapLines.h.find(
 			(v) => Math.abs(v - dragTop - selector.height / 2) < clientStore.snap.distance
 		);
@@ -298,23 +311,23 @@ const componentOnMouseDown = (e: MouseEvent, component: Component) => {
 			const top = getLogicalTop(topH); // 将吸附线left值转换为画布的left值
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 			});
 			snapLine.h = top;
 		} else if (middleH !== undefined) {
 			const middle = getLogicalTop(middleH);
-			const top = middle - getUnscaledOffset(selector.height / 2);
+			const top = middle - getScaledOffset(selector.height / 2);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 			});
 			snapLine.h = middle;
 		} else if (bottomH !== undefined) {
 			const right = getLogicalTop(bottomH);
-			const top = right - getUnscaledOffset(selector.height);
+			const top = right - getScaledOffset(selector.height);
 			schemaStore.activedMoveableFlatedComponents.forEach((component, index) => {
 				component.layout.top =
-					getUnscaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
+					getScaledOffset(startActiveComponentsPosition[index].top - startSelectorTop) + top;
 			});
 			snapLine.h = right;
 		} else {
@@ -475,8 +488,8 @@ const selectorDirectionOnMouseDown = (e: MouseEvent, direction: "t" | "tr" | "r"
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);
 		function mouseMove(e: MouseEvent) {
-			const moveX = Math.round(getUnscaledOffset(e.clientX - startX)); // 移动的X轴距离
-			const moveY = Math.round(getUnscaledOffset(e.clientY - startY)); // 移动的X轴距离
+			const moveX = Math.round(getScaledOffset(e.clientX - startX)); // 移动的X轴距离
+			const moveY = Math.round(getScaledOffset(e.clientY - startY)); // 移动的X轴距离
 			const dragLeft = startLeft + moveX;
 			const dragTop = startTop + moveY;
 			switch (direction) {
@@ -622,7 +635,7 @@ function getNearestGridLinePosition(position: number) {
 		return Math.round(position / clientStore.grid.span) * clientStore.grid.span;
 	} else return position;
 }
-// 获取逻辑左边距（组件相对于渲染器->组件相对于画布）
+// 获取逻辑左边距（像素->画布逻辑单位）
 function getLogicalLeft(left: number) {
 	const clientStore = useClient();
 	return (left - clientStore.canvas.left) / clientStore.canvas.scale;
@@ -632,7 +645,7 @@ function getLogicalTop(top: number) {
 	const clientStore = useClient();
 	return (top - clientStore.canvas.top) / clientStore.canvas.scale;
 }
-// 获取实际左边距（组件相对于画布->组件相对于渲染器）
+// 获取实际左边距（画布逻辑单位->像素）
 function getActualLeft(left: number) {
 	const clientStore = useClient();
 	return left * clientStore.canvas.scale + clientStore.canvas.left;
@@ -642,13 +655,13 @@ function getActualTop(top: number) {
 	const clientStore = useClient();
 	return top * clientStore.canvas.scale + clientStore.canvas.top;
 }
-// 获取缩放的值
-function getScaledOffset(number: number) {
+// 获取实际坐标（画布逻辑单位->像素）
+function getUnscaledOffset(number: number) {
 	const clientStore = useClient();
 	return number * clientStore.canvas.scale;
 }
-// 获取未缩放的值
-function getUnscaledOffset(number: number) {
+// 获取逻辑坐标（像素->画布逻辑单位）
+function getScaledOffset(number: number) {
 	const clientStore = useClient();
 	return number / clientStore.canvas.scale;
 }
@@ -659,6 +672,7 @@ export const useDragger = () => ({
 	dataTransfer,
 	assetOnDragStart,
 	rendererOnWheel,
+	rendererOnMouseMove,
 	rendererOnMouseDown,
 	rendererOnDrop,
 	layerOnMouseDown,
@@ -681,6 +695,6 @@ export const useDragger = () => ({
 	getLogicalTop,
 	getActualLeft,
 	getActualTop,
-	getScaledOffset,
 	getUnscaledOffset,
+	getScaledOffset,
 });

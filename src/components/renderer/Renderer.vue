@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import { useClient } from "@/stores/useClient";
 import { useDragger } from "@/hooks/useDragger";
 import RootComponent from "./components/RootComponent.vue";
+import MousePosition from "./components/MousePosition.vue";
 import GridLine from "./components/GridLine.vue";
 import Ruler from "./components/Ruler.vue";
 import GuideLine from "./components/GuideLine.vue";
@@ -29,12 +30,14 @@ onMounted(() => {
 			operating: clientStore.enabledOperate,
 		}"
 		@wheel="dragger.rendererOnWheel($event)"
+		@mousemove="dragger.rendererOnMouseMove($event)"
 		@mousedown="dragger.rendererOnMouseDown($event)"
 		@dragover.prevent
 		@drop="dragger.rendererOnDrop(router)"
 	>
 		<GridLine />
 		<RootComponent />
+		<MousePosition />
 		<GuideLine />
 		<SnapLine />
 		<Ruler />
