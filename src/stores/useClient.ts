@@ -94,6 +94,7 @@ export const useClient = defineStore("client", {
 					}
 					switch (this.keyboard.pressingKey) {
 						case "`": {
+							e.preventDefault();
 							this.console.show = !this.console.show;
 							break;
 						}
@@ -208,6 +209,7 @@ export const useClient = defineStore("client", {
 								e.preventDefault();
 								commandStore.paste();
 								break;
+							case "ctrl+backspace":
 							case "delete":
 								e.preventDefault();
 								commandStore.delete();
@@ -246,7 +248,7 @@ export const useClient = defineStore("client", {
 						document.documentElement.style.setProperty(key, this.theme[key as keyof typeof this.theme]);
 					}
 				},
-				{ immediate: true, deep: true }
+				{ immediate: true, deep: true },
 			);
 		},
 		// 重置渲染器视角
@@ -258,9 +260,9 @@ export const useClient = defineStore("client", {
 				this.canvas.scale = Math.max(
 					Math.min(
 						(this.oRenderer.offsetWidth - 40) / (schemaStore.currentRootComponent?.layout?.width ?? 0),
-						5
+						5,
 					),
-					0.1
+					0.1,
 				);
 			}
 		},
@@ -300,7 +302,7 @@ export const useClient = defineStore("client", {
 			if (this.copiedComponents) {
 				if (
 					schemaStore.allFlatedComponents.some((v) =>
-						this.copiedComponents!.flatMap((v) => getFlatedComponents(v).map((v) => v.id)).includes(v.id)
+						this.copiedComponents!.flatMap((v) => getFlatedComponents(v).map((v) => v.id)).includes(v.id),
 					)
 				) {
 					this.copiedComponents.forEach((v) => schemaStore.assignComponentId(v));
